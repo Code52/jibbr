@@ -1,4 +1,4 @@
-﻿namespace Jabbot
+﻿namespace Jabbot.Models
 {
     public class ChatMessage
     {

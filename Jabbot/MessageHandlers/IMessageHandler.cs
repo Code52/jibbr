@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using Jabbot.Models;
 
 namespace Jabbot.MessageHandlers
 {

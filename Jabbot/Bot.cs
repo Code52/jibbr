@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using Jabbot.MessageHandlers;
+using Jabbot.Models;
 using SignalR.Client.Hubs;
 
 namespace Jabbot
