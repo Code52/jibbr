@@ -6,6 +6,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
+using System.Net;
 using Jabbot.Models;
 using Jabbot.Sprokets;
 using SignalR.Client.Hubs;
@@ -23,7 +24,7 @@ namespace Jabbot
         private const string ExtensionsFolder = "Sprokets";
 
         [ImportMany(AllowRecomposition = true)]
-        public IEnumerable<ISproket> Sprokets { get; set; }
+        private IEnumerable<ISproket> Sprokets { get; set; }
 
         public Bot(string url, string name, string password)
         {
@@ -102,6 +103,16 @@ namespace Jabbot
         /// <param name="what">what to say</param>
         public void Say(string what)
         {
+            if (what == null)
+            {
+                throw new ArgumentNullException("what");
+            }
+
+            if (what.StartsWith("/"))
+            {
+                throw new InvalidOperationException("Commands are not allowed");
+            }
+
             _chat.Invoke("send", what).Wait();
         }
 
@@ -112,7 +123,32 @@ namespace Jabbot
         /// <param name="what">what you want the bot to say</param>
         public void Reply(string who, string what)
         {
+            if (who == null)
+            {
+                throw new ArgumentNullException("who");
+            }
+
+            if (what == null)
+            {
+                throw new ArgumentNullException("what");
+            }
+
             Say(String.Format("@{0} {1}", who, what));
+        }
+
+        public void PrivateReply(string who, string what)
+        {
+            if (who == null)
+            {
+                throw new ArgumentNullException("who");
+            }
+
+            if (what == null)
+            {
+                throw new ArgumentNullException("what");
+            }
+
+            _chat.Invoke("send", String.Format("/msg {0} {1}", who, what)).Wait();
         }
 
         /// <summary>
@@ -149,7 +185,6 @@ namespace Jabbot
 
         private void ProcessMessage(dynamic message)
         {
-
             string content = message.Content;
             string name = message.User.Name;
 
@@ -160,7 +195,7 @@ namespace Jabbot
             }
 
             // We're going to process commands for the bot here
-            var chatMessage = new ChatMessage(content, name);
+            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name);
 
             if (MessageReceived != null)
             {
