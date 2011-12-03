@@ -7,6 +7,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Web.Hosting;
 using Jabbot.Models;
 using Jabbot.Sprokets;
 using SignalR.Client.Hubs;
@@ -51,7 +52,7 @@ namespace Jabbot
         /// <summary>
         /// Connects to the chat session
         /// </summary>
-        public void Initialize()
+        public void PowerUp()
         {
             if (!_connection.IsActive)
             {
@@ -248,7 +249,7 @@ namespace Jabbot
 
         private void InitializeContainer()
         {
-            string extensionsPath = Path.Combine(Directory.GetCurrentDirectory(), ExtensionsFolder);
+            string extensionsPath = GetExtensionsPath();
             ComposablePartCatalog catalog = null;
 
             // If the extensions folder exists then use them
@@ -265,6 +266,22 @@ namespace Jabbot
 
             var container = new CompositionContainer(catalog);
             container.ComposeParts(this);
+        }
+
+        private static string GetExtensionsPath()
+        {
+            string rootPath = null;
+            if (HostingEnvironment.IsHosted)
+            {
+
+                rootPath = HostingEnvironment.ApplicationPhysicalPath;
+            }
+            else
+            {
+                rootPath = Directory.GetCurrentDirectory();
+            }
+
+            return Path.Combine(rootPath, ExtensionsFolder);
         }
     }
 }
