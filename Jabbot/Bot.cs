@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using Jabbot.MessageHandlers;
 using SignalR.Client.Hubs;
 
 namespace Jabbot
@@ -136,20 +138,31 @@ namespace Jabbot
 
         private void ProcessMessage(dynamic message)
         {
+
+            string content = message.Content;
+            string name = message.User.Name;
+
+            // Ignore replies from self
+            if (name.Equals(_name, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            // We're going to process commands for the bot here
+            var chatMessage = new ChatMessage(content, name);
+
             if (MessageReceived != null)
             {
-                string content = message.Content;
-                string name = message.User.Name;
-
-                // Ignore replies from self
-                if (name.Equals(_name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-
-                // We're going to process commands for the bot here
-                var chatMessage = new ChatMessage(content, name);
                 MessageReceived(chatMessage);
+            }
+
+            foreach (var handler in GetMessageHandlers())
+            {
+                // Stop at the first one that handled the message
+                if (handler.Handle(chatMessage, this))
+                {
+                    break;
+                }
             }
         }
 
@@ -160,7 +173,7 @@ namespace Jabbot
 
         private void OnJoin(dynamic user)
         {
-            AddUser(user);   
+            AddUser(user);
         }
 
         private void RemoveUser(dynamic user)
@@ -179,6 +192,13 @@ namespace Jabbot
                 Name = name,
                 GravatarHash = hash
             };
+        }
+
+        private IList<IMessageHandler> GetMessageHandlers()
+        {
+            // TODO: Allow passing a directory where we look for commands that get added/removed dynamically
+            var container = new CompositionContainer(new AssemblyCatalog(typeof(Bot).Assembly));
+            return container.GetExportedValues<IMessageHandler>().ToList();
         }
 
     }
