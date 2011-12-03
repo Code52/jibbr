@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.Composition;
 using Jabbot.Models;
 
-namespace Jabbot.MessageHandlers
+namespace Jabbot.Sprokets
 {
     /// <summary>
-    /// Extension point for bots. When an incoming message comes in, a message handler
+    /// Sprokets are extension points for bots. When an incoming message comes in, a sproket
     /// will get a change to do something with it.
     /// </summary>
     [InheritedExport]
-    public interface IMessageHandler
+    public interface ISproket
     {
         /// <summary>
         /// Allows the user to handle a message incoming from the bot's room

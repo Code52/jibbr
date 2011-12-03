@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
+using System.IO;
 using System.Linq;
-using Jabbot.MessageHandlers;
 using Jabbot.Models;
+using Jabbot.Sprokets;
 using SignalR.Client.Hubs;
 
 namespace Jabbot
@@ -16,6 +19,11 @@ namespace Jabbot
         private readonly string _name;
         private readonly string _password;
         private readonly ConcurrentDictionary<string, ChatUser> _users = new ConcurrentDictionary<string, ChatUser>(StringComparer.OrdinalIgnoreCase);
+
+        private const string ExtensionsFolder = "Sprokets";
+
+        [ImportMany(AllowRecomposition = true)]
+        public IEnumerable<ISproket> Sprokets { get; set; }
 
         public Bot(string url, string name, string password)
         {
@@ -46,6 +54,8 @@ namespace Jabbot
         {
             if (!_connection.IsActive)
             {
+                InitializeContainer();
+
                 _chat.On("addMessage", ProcessMessage);
 
                 _chat.On("leave", OnLeave);
@@ -157,7 +167,13 @@ namespace Jabbot
                 MessageReceived(chatMessage);
             }
 
-            foreach (var handler in GetMessageHandlers())
+            // No extensions
+            if (Sprokets == null)
+            {
+                return;
+            }
+
+            foreach (var handler in Sprokets)
             {
                 // Stop at the first one that handled the message
                 if (handler.Handle(chatMessage, this))
@@ -195,12 +211,25 @@ namespace Jabbot
             };
         }
 
-        private IList<IMessageHandler> GetMessageHandlers()
+        private void InitializeContainer()
         {
-            // TODO: Allow passing a directory where we look for commands that get added/removed dynamically
-            var container = new CompositionContainer(new AssemblyCatalog(typeof(Bot).Assembly));
-            return container.GetExportedValues<IMessageHandler>().ToList();
-        }
+            string extensionsPath = Path.Combine(Directory.GetCurrentDirectory(), ExtensionsFolder);
+            ComposablePartCatalog catalog = null;
 
+            // If the extensions folder exists then use them
+            if (Directory.Exists(extensionsPath))
+            {
+                catalog = new AggregateCatalog(
+                            new AssemblyCatalog(typeof(Bot).Assembly),
+                            new DirectoryCatalog(extensionsPath, "*.dll"));
+            }
+            else
+            {
+                catalog = new AssemblyCatalog(typeof(Bot).Assembly);
+            }
+
+            var container = new CompositionContainer(catalog);
+            container.ComposeParts(this);
+        }
     }
 }

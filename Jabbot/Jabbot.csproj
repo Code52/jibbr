@@ -50,7 +50,7 @@
     <Compile Include="Bot.cs" />
     <Compile Include="Models\ChatMessage.cs" />
     <Compile Include="Models\ChatUser.cs" />
-    <Compile Include="MessageHandlers\IMessageHandler.cs" />
+    <Compile Include="Sprockets\ISprocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
