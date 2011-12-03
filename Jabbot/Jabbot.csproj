@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Bot.cs" />
     <Compile Include="ChatMessage.cs" />
+    <Compile Include="ChatUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

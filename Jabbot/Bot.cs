@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using SignalR.Client.Hubs;
 
 namespace Jabbot
@@ -9,6 +12,7 @@ namespace Jabbot
         private readonly IHubProxy _chat;
         private readonly string _name;
         private readonly string _password;
+        private readonly ConcurrentDictionary<string, ChatUser> _users = new ConcurrentDictionary<string, ChatUser>(StringComparer.OrdinalIgnoreCase);
 
         public Bot(string url, string name, string password)
         {
@@ -41,6 +45,10 @@ namespace Jabbot
             {
                 _chat.On("addMessage", ProcessMessage);
 
+                _chat.On("leave", OnLeave);
+
+                _chat.On("addUser", OnJoin);
+
                 // Start the connection and wait
                 _connection.Start().Wait();
 
@@ -51,7 +59,7 @@ namespace Jabbot
                 {
                     // Setup the name of the bot
                     string nickCommand = String.Format("/nick {0} {1}", _name, _password);
-                    _chat.Invoke("send", nickCommand).Wait();   
+                    _chat.Invoke("send", nickCommand).Wait();
                 }
             }
         }
@@ -65,6 +73,14 @@ namespace Jabbot
             _chat.Invoke("send", "/join " + room).Wait();
 
             _chat["activeRoom"] = room;
+
+            // Extract users from this room and store them locally
+            dynamic roomInfo = _chat.Invoke<dynamic>("GetRoomInfo", room).Result;
+
+            foreach (dynamic user in roomInfo.Users)
+            {
+                AddUser(user);
+            }
         }
 
         /// <summary>
@@ -87,6 +103,30 @@ namespace Jabbot
         }
 
         /// <summary>
+        /// Returns users in the current room
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ChatUser> GetUsers()
+        {
+            return _users.Values.ToList();
+        }
+
+        /// <summary>
+        /// Returns user from the current room by name
+        /// </summary>
+        /// <param name="name">name of the user</param>
+        public ChatUser GetUserByName(string name)
+        {
+            ChatUser user;
+            if (_users.TryGetValue(name, out user))
+            {
+                return user;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Disconnect the bot from the chat session
         /// </summary>
         public void ShutDown()
@@ -95,7 +135,7 @@ namespace Jabbot
         }
 
         private void ProcessMessage(dynamic message)
-        {            
+        {
             if (MessageReceived != null)
             {
                 string content = message.Content;
@@ -112,5 +152,34 @@ namespace Jabbot
                 MessageReceived(chatMessage);
             }
         }
+
+        private void OnLeave(dynamic user)
+        {
+            RemoveUser(user);
+        }
+
+        private void OnJoin(dynamic user)
+        {
+            AddUser(user);   
+        }
+
+        private void RemoveUser(dynamic user)
+        {
+            string name = user.Name;
+            ChatUser dummy;
+            _users.TryRemove(name, out dummy);
+        }
+
+        private void AddUser(dynamic user)
+        {
+            string name = user.Name;
+            string hash = user.Hash;
+            _users[name] = new ChatUser
+            {
+                Name = name,
+                GravatarHash = hash
+            };
+        }
+
     }
 }
