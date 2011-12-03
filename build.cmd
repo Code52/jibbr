@@ -3,4 +3,6 @@ set config=%1
 if "%config%" == "" (
    set config=debug
 )
-%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Jabbot.sln /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=Normal /nr:false
+
+md artifacts
+%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Jabbot.sln /p:Configuration="%config%";BuildPackage=true;PackageOutputDir=../artifacts /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=Normal /nr:false
