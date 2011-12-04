@@ -7,19 +7,17 @@ namespace Jabbot.Sprockets
 {
     public abstract class RegexSproket : ISproket
     {
-        public abstract string Pattern { get; }
+        public abstract Regex Pattern { get; }
 
         public bool Handle(ChatMessage message, Bot bot)
         {
-            if (String.IsNullOrEmpty(Pattern))
+            if (Pattern == null)
             {
                 return false;
             }
-
-            var regex = new Regex(Pattern);
-
+            
             Match match;
-            if (!(match = regex.Match(message.Content)).Success)
+            if (!(match = Pattern.Match(message.Content)).Success)
             {
                 return false;
             }
