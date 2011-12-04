@@ -21,6 +21,7 @@ namespace Jabbot
         private readonly string _password;
         private readonly ConcurrentDictionary<string, ChatUser> _users = new ConcurrentDictionary<string, ChatUser>(StringComparer.OrdinalIgnoreCase);
         private readonly List<ISproket> _sprokets = new List<ISproket>();
+        private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private const string ExtensionsFolder = "Sprokets";
 
@@ -97,6 +98,8 @@ namespace Jabbot
 
                 _chat.On("addUser", OnJoin);
 
+                _chat.On<IEnumerable<string>>("logOn", OnLogOn);
+
                 // Start the connection and wait
                 _connection.Start().Wait();
 
@@ -106,8 +109,7 @@ namespace Jabbot
                 if (!success)
                 {
                     // Setup the name of the bot
-                    string nickCommand = String.Format("/nick {0} {1}", _name, _password);
-                    _chat.Invoke("send", nickCommand).Wait();
+                    Send(String.Format("/nick {0} {1}", _name, _password));
                 }
             }
         }
@@ -115,12 +117,15 @@ namespace Jabbot
         /// <summary>
         /// Joins a chat room. Changes this to the active room for future messages.
         /// </summary>
-        /// <param name="room">room to join</param>
         public void Join(string room)
         {
-            _chat.Invoke("send", "/join " + room).Wait();
+            Send("/join " + room);
 
+            // Set the active room
             _chat["activeRoom"] = room;
+
+            // Add the room to the list
+            _rooms.Add(room);
 
             // Extract users from this room and store them locally
             dynamic roomInfo = _chat.Invoke<dynamic>("GetRoomInfo", room).Result;
@@ -132,7 +137,7 @@ namespace Jabbot
         }
 
         /// <summary>
-        /// Say something to the active room
+        /// Say something to the active room.
         /// </summary>
         /// <param name="what">what to say</param>
         public void Say(string what)
@@ -147,7 +152,7 @@ namespace Jabbot
                 throw new InvalidOperationException("Commands are not allowed");
             }
 
-            _chat.Invoke("send", what).Wait();
+            Send(what);
         }
 
         /// <summary>
@@ -182,7 +187,7 @@ namespace Jabbot
                 throw new ArgumentNullException("what");
             }
 
-            _chat.Invoke("send", String.Format("/msg {0} {1}", who, what)).Wait();
+            Send(String.Format("/msg {0} {1}", who, what));
         }
 
         /// <summary>
@@ -210,10 +215,16 @@ namespace Jabbot
         }
 
         /// <summary>
-        /// Disconnect the bot from the chat session
+        /// Disconnect the bot from the chat session. Leaves all rooms the bot entered
         /// </summary>
         public void ShutDown()
         {
+            // Leave all the rooms ever joined
+            foreach (var room in _rooms)
+            {
+                Send(String.Format("/leave {0}", room));
+            }
+
             _connection.Stop();
         }
 
@@ -255,6 +266,14 @@ namespace Jabbot
         private void OnJoin(dynamic user)
         {
             AddUser(user);
+        }
+
+        private void OnLogOn(IEnumerable<string> rooms)
+        {
+            foreach (var room in rooms)
+            {
+                _rooms.Add(room);
+            }
         }
 
         private void RemoveUser(dynamic user)
@@ -315,6 +334,11 @@ namespace Jabbot
             }
 
             return Path.Combine(rootPath, ExtensionsFolder);
+        }
+
+        private void Send(string command)
+        {
+            _chat.Invoke("send", command).Wait();
         }
     }
 }
