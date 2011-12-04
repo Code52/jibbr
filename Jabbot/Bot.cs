@@ -32,6 +32,18 @@ namespace Jabbot
             _chat = _connection.CreateProxy("JabbR.Chat");
         }
 
+        public ICredentials Credentials
+        {
+            get
+            {
+                return _connection.Credentials;
+            }
+            set
+            {
+                _connection.Credentials = value;
+            }
+        }
+
         public event Action Disconnected
         {
             add
