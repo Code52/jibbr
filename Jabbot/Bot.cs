@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.IO;
@@ -21,11 +20,9 @@ namespace Jabbot
         private readonly string _name;
         private readonly string _password;
         private readonly ConcurrentDictionary<string, ChatUser> _users = new ConcurrentDictionary<string, ChatUser>(StringComparer.OrdinalIgnoreCase);
+        private readonly List<ISproket> _sprokets = new List<ISproket>();
 
         private const string ExtensionsFolder = "Sprokets";
-
-        [ImportMany(AllowRecomposition = true)]
-        private IEnumerable<ISproket> Sprokets { get; set; }
 
         public Bot(string url, string name, string password)
         {
@@ -48,6 +45,30 @@ namespace Jabbot
         }
 
         public event Action<ChatMessage> MessageReceived;
+
+        /// <summary>
+        /// Add a sproket to the bot instance
+        /// </summary>
+        public void AddSproket(ISproket sproket)
+        {
+            _sprokets.Add(sproket);
+        }
+
+        /// <summary>
+        /// Remove a sproket from the bot instance
+        /// </summary>
+        public void RemoveSproket(ISproket sproket)
+        {
+            _sprokets.Remove(sproket);
+        }
+
+        /// <summary>
+        /// Remove all sprokets
+        /// </summary>
+        public void ClearSprokets()
+        {
+            _sprokets.Clear();
+        }
 
         /// <summary>
         /// Connects to the chat session
@@ -203,13 +224,8 @@ namespace Jabbot
                 MessageReceived(chatMessage);
             }
 
-            // No extensions
-            if (Sprokets == null)
-            {
-                return;
-            }
-
-            foreach (var handler in Sprokets)
+            // Loop over the registered sprokets
+            foreach (var handler in _sprokets)
             {
                 // Stop at the first one that handled the message
                 if (handler.Handle(chatMessage, this))
@@ -265,7 +281,12 @@ namespace Jabbot
             }
 
             var container = new CompositionContainer(catalog);
-            container.ComposeParts(this);
+
+            // Add all the sprokets to the sproket list
+            foreach (var sproket in container.GetExportedValues<ISproket>())
+            {
+                AddSproket(sproket);
+            }
         }
 
         private static string GetExtensionsPath()
