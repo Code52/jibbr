@@ -15,7 +15,6 @@ namespace Jabbot
     {
         private readonly HubConnection _connection;
         private readonly IHubProxy _chat;
-        private readonly string _name;
         private readonly string _password;
         private readonly List<ISproket> _sprokets = new List<ISproket>();
         private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -24,11 +23,13 @@ namespace Jabbot
 
         public Bot(string url, string name, string password)
         {
-            _name = name;
+            Name = name;
             _password = password;
             _connection = new HubConnection(url);
             _chat = _connection.CreateProxy("JabbR.Chat");
         }
+
+        public string Name { get; private set; }
 
         public ICredentials Credentials
         {
@@ -106,7 +107,7 @@ namespace Jabbot
                 if (!success)
                 {
                     // Setup the name of the bot
-                    Send(String.Format("/nick {0} {1}", _name, _password));
+                    Send(String.Format("/nick {0} {1}", Name, _password));
                 }
             }
         }
@@ -237,7 +238,7 @@ namespace Jabbot
             string name = message.User.Name;
 
             // Ignore replies from self
-            if (name.Equals(_name, StringComparison.OrdinalIgnoreCase))
+            if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
