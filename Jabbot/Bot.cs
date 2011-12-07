@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Web.Hosting;
 using Jabbot.Models;
@@ -19,7 +17,6 @@ namespace Jabbot
         private readonly IHubProxy _chat;
         private readonly string _name;
         private readonly string _password;
-        private readonly ConcurrentDictionary<string, ChatUser> _users = new ConcurrentDictionary<string, ChatUser>(StringComparer.OrdinalIgnoreCase);
         private readonly List<ISproket> _sprokets = new List<ISproket>();
         private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -92,7 +89,7 @@ namespace Jabbot
             {
                 InitializeContainer();
 
-                _chat.On("addMessage", ProcessMessage);
+                _chat.On<dynamic, string>("addMessage", ProcessMessage);
 
                 _chat.On("leave", OnLeave);
 
@@ -115,44 +112,47 @@ namespace Jabbot
         }
 
         /// <summary>
+        /// Creates a new room
+        /// </summary>
+        /// <param name="room">room to create</param>
+        public void CreateRoom(string room)
+        {
+            Send("/create " + room);
+
+            // Add the room to the list
+            _rooms.Add(room);
+        }
+
+        /// <summary>
         /// Joins a chat room. Changes this to the active room for future messages.
         /// </summary>
         public void Join(string room)
         {
             Send("/join " + room);
 
-            // Set the active room
-            _chat["activeRoom"] = room;
-
             // Add the room to the list
             _rooms.Add(room);
-
-            // Extract users from this room and store them locally
-            dynamic roomInfo = _chat.Invoke<dynamic>("GetRoomInfo", room).Result;
-
-            foreach (dynamic user in roomInfo.Users)
-            {
-                AddUser(user);
-            }
         }
 
         /// <summary>
         /// Say something to the active room.
         /// </summary>
         /// <param name="what">what to say</param>
-        public void Say(string what)
+        /// <param name="room">the room to say it to</param>
+        public void Say(string what, string room)
         {
-            if (what == null)
+            try
             {
-                throw new ArgumentNullException("what");
-            }
+                // Set the active room
+                _chat["activeRoom"] = room;
 
-            if (what.StartsWith("/"))
-            {
-                throw new InvalidOperationException("Commands are not allowed");
+                Say(what);
             }
+            finally {
 
-            Send(what);
+                // Reset the active room to null
+                _chat["activeRoom"] = null;
+            }
         }
 
         /// <summary>
@@ -160,7 +160,8 @@ namespace Jabbot
         /// </summary>
         /// <param name="who">the person you want the bot to reply to</param>
         /// <param name="what">what you want the bot to say</param>
-        public void Reply(string who, string what)
+        /// <param name="room">the room to say it to</param>
+        public void Reply(string who, string what, string room)
         {
             if (who == null)
             {
@@ -172,7 +173,7 @@ namespace Jabbot
                 throw new ArgumentNullException("what");
             }
 
-            Say(String.Format("@{0} {1}", who, what));
+            Say(String.Format("@{0} {1}", who, what), room);
         }
 
         public void PrivateReply(string who, string what)
@@ -191,27 +192,14 @@ namespace Jabbot
         }
 
         /// <summary>
-        /// Returns users in the current room
+        /// List of rooms the bot is in.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<ChatUser> GetUsers()
+        public IEnumerable<string> Rooms
         {
-            return _users.Values.ToList();
-        }
-
-        /// <summary>
-        /// Returns user from the current room by name
-        /// </summary>
-        /// <param name="name">name of the user</param>
-        public ChatUser GetUserByName(string name)
-        {
-            ChatUser user;
-            if (_users.TryGetValue(name, out user))
+            get
             {
-                return user;
+                return _rooms;
             }
-
-            return null;
         }
 
         /// <summary>
@@ -228,7 +216,22 @@ namespace Jabbot
             _connection.Stop();
         }
 
-        private void ProcessMessage(dynamic message)
+        private void Say(string what)
+        {
+            if (what == null)
+            {
+                throw new ArgumentNullException("what");
+            }
+
+            if (what.StartsWith("/"))
+            {
+                throw new InvalidOperationException("Commands are not allowed");
+            }
+
+            Send(what);
+        }
+
+        private void ProcessMessage(dynamic message, string room)
         {
             string content = message.Content;
             string name = message.User.Name;
@@ -240,7 +243,7 @@ namespace Jabbot
             }
 
             // We're going to process commands for the bot here
-            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name);
+            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
 
             if (MessageReceived != null)
             {
@@ -260,12 +263,12 @@ namespace Jabbot
 
         private void OnLeave(dynamic user)
         {
-            RemoveUser(user);
+            
         }
 
         private void OnJoin(dynamic user)
         {
-            AddUser(user);
+            
         }
 
         private void OnLogOn(IEnumerable<string> rooms)
@@ -274,24 +277,6 @@ namespace Jabbot
             {
                 _rooms.Add(room);
             }
-        }
-
-        private void RemoveUser(dynamic user)
-        {
-            string name = user.Name;
-            ChatUser dummy;
-            _users.TryRemove(name, out dummy);
-        }
-
-        private void AddUser(dynamic user)
-        {
-            string name = user.Name;
-            string hash = user.Hash;
-            _users[name] = new ChatUser
-            {
-                Name = name,
-                GravatarHash = hash
-            };
         }
 
         private void InitializeContainer()
