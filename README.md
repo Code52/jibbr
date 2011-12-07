@@ -12,7 +12,7 @@ It's as easy as:
 var bot = new Bot("http://myjabbot", "username", "password");
 bot.PowerUp();
 bot.Join("someroom");
-bot.Say("Hello");
+bot.Say("Hello", "someroom");
 bot.Say("Ok I'm off");
 bot.ShutDown();
 ```
@@ -26,9 +26,9 @@ ISproket into a Sprokets folder and you're done. Here's an port of the [math.cof
 ```csharp
 public class MathSproket : RegexSproket
 {
-    public override string Pattern
+    public override Regex Pattern
     {
-        get { return "(calc|calculate|convert|math)( me)? (.*)"; }
+        get { return new Regex("(calc|calculate|convert|math)( me)? (.*)"); }
     }
 
     protected override void ProcessMatch(Match match, ChatMessage message, Bot bot)
@@ -48,7 +48,7 @@ public class MathSproket : RegexSproket
 
                           string solution = json.rhs;
 
-                          bot.Reply(message.FromUser, solution ?? "Could not compute.");
+                          bot.Reply(message.FromUser, solution ?? "Could not compute.", message.Room);
                       });
                   }
               });
