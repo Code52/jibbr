@@ -21,7 +21,7 @@ namespace Jabbot.ConsoleBotHost
             {
                 bot.Join(_defaultIdleRoom);
                 bot.Say("Greetings, I live.", _defaultIdleRoom);
-                Console.Write("Press enter to quit...");
+                Console.Write("Press enter to quit...");    
                 Console.ReadLine();
             }
             else
