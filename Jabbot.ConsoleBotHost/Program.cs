@@ -2,42 +2,49 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Configuration;
 
 namespace Jabbot.ConsoleBotHost
 {
     class Program
     {
-        private static readonly string _serverUrl = "http://jabbr-bots.apphb.com";
-        private static readonly string _botName = "JabbrTheHut";
-        private static readonly string _botPassword = "DemoPassword";
-        private static readonly string _defaultIdleRoom = "The-Cantina";
+        private static readonly string _serverUrl = ConfigurationManager.AppSettings["Bot.Server"];
+        private static readonly string _botName = ConfigurationManager.AppSettings["Bot.Name"];
+        private static readonly string _botPassword = ConfigurationManager.AppSettings["Bot.Password"];
+        private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
 
         static void Main(string[] args)
         {
             Console.WriteLine("Jabbot Bot Runner Starting...");
             Bot bot = new Bot(_serverUrl, _botName, _botPassword);
             bot.PowerUp();
-            if (TryCreateRoomIfNotExists(_defaultIdleRoom, bot))
-            {
-                bot.Join(_defaultIdleRoom);
-                bot.Say("Greetings, I live.", _defaultIdleRoom);
-                Console.Write("Press enter to quit...");    
-                Console.ReadLine();
-            }
-            else
-            {
-                Console.WriteLine("An error was encoutered creating the default room.");
-            }
-
+            JoinRooms(bot);
+            Console.Write("Press enter to quit...");
+            Console.ReadLine();
             bot.ShutDown();
 
         }
-
+        private static void JoinRooms(Bot bot)
+        {
+            foreach (var room in _botRooms.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                Console.Write("Joining {0}...", room);
+                if (TryCreateRoomIfNotExists(room, bot))
+                {
+                    bot.Join(room);
+                    Console.WriteLine("OK");
+                }
+                else
+                {
+                    Console.WriteLine("Failed");
+                }
+            }
+        }
         private static bool TryCreateRoomIfNotExists(string roomName, Bot bot)
         {
             try
             {
-                bot.CreateRoom(_defaultIdleRoom);
+                bot.CreateRoom(roomName);
             }
             catch (AggregateException e)
             {
