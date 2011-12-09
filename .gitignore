@@ -8,7 +8,7 @@ deploy
 deploy/*
 *.suo
 *.cache
-[Aa]pp.config
 packages/
 msbuild.log
+artifacts/log
 artifacts/
