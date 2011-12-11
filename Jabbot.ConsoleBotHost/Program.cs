@@ -48,7 +48,7 @@ namespace Jabbot.ConsoleBotHost
             }
             catch (AggregateException e)
             {
-                if (!e.InnerExceptions.FirstOrDefault().Message.Contains("exists"))
+                if (!e.GetBaseException().Message.Contains("exists"))
                     return false;
             }
 
