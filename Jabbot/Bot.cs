@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Hosting;
 using Jabbot.Models;
 using Jabbot.Sprockets;
@@ -149,8 +151,8 @@ namespace Jabbot
 
                 Say(what);
             }
-            finally {
-
+            finally
+            {
                 // Reset the active room to null
                 _chat["activeRoom"] = null;
             }
@@ -234,42 +236,55 @@ namespace Jabbot
 
         private void ProcessMessage(dynamic message, string room)
         {
-            string content = message.Content;
-            string name = message.User.Name;
-
-            // Ignore replies from self
-            if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
+            // Run this on another thread since the signalr client doesn't like it
+            // when we spend a long time processing messages synchronously
+            Task.Factory.StartNew(() =>
             {
-                return;
-            }
+                string content = message.Content;
+                string name = message.User.Name;
 
-            // We're going to process commands for the bot here
-            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
-
-            if (MessageReceived != null)
-            {
-                MessageReceived(chatMessage);
-            }
-
-            // Loop over the registered sprockets
-            foreach (var handler in _sprockets)
-            {
-                // Stop at the first one that handled the message
-                if (handler.Handle(chatMessage, this))
+                // Ignore replies from self
+                if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    break;
+                    return;
                 }
-            }
+
+                // We're going to process commands for the bot here
+                var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+
+                if (MessageReceived != null)
+                {
+                    MessageReceived(chatMessage);
+                }
+
+                // Loop over the registered sprockets
+                foreach (var handler in _sprockets)
+                {
+                    // Stop at the first one that handled the message
+                    if (handler.Handle(chatMessage, this))
+                    {
+                        break;
+                    }
+                }
+            })
+            .ContinueWith(task =>
+            {
+                // Just write to debug output if it failed
+                if (task.IsFaulted)
+                {
+                    Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
+                }
+            });
         }
 
         private void OnLeave(dynamic user)
         {
-            
+
         }
 
         private void OnJoin(dynamic user)
         {
-            
+
         }
 
         private void OnLogOn(IEnumerable<string> rooms)
