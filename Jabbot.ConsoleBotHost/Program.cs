@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace Jabbot.ConsoleBotHost
 {
@@ -26,7 +27,7 @@ namespace Jabbot.ConsoleBotHost
         }
         private static void JoinRooms(Bot bot)
         {
-            foreach (var room in _botRooms.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var room in _botRooms.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()))
             {
                 Console.Write("Joining {0}...", room);
                 if (TryCreateRoomIfNotExists(room, bot))
