@@ -14,6 +14,7 @@ namespace Jabbot.ConsoleBotHost
         static void Main(string[] args)
         {
             Console.WriteLine("Jabbot Bot Runner Starting...");
+            Console.WriteLine(String.Format("Connecting to {0}...", _serverUrl));
             Bot bot = new Bot(_serverUrl, _botName, _botPassword);
             bot.PowerUp();
             JoinRooms(bot);
