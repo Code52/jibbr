@@ -46,8 +46,11 @@ namespace Jabbot.ConsoleBotHost
             }
             catch (AggregateException e)
             {
-                if (!e.GetBaseException().Message.Contains("exists"))
+                if (!e.GetBaseException().Message.Equals(string.Format("The room '{0}' already exists", roomName),
+                        StringComparison.OrdinalIgnoreCase))
+                {
                     return false;
+                }
             }
 
             return true;
