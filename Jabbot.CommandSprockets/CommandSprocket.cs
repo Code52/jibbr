@@ -41,7 +41,6 @@ namespace Jabbot.CommandSprockets
                 {
                     CurrentArguments = args.Skip(2).ToArray();
                     return ExecuteCommand();
-
                 }
             }
             catch (InvalidOperationException e)
