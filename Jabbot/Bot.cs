@@ -348,10 +348,10 @@ namespace Jabbot
         private void InitializeContainer()
         {
             var container = CreateCompositionContainer();
+
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
-                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
                 AddSprocket(sprocket);
             }
         }
