@@ -9,7 +9,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Jabbot.Models;
+<<<<<<< HEAD
 using Jabbot.Sprockets.Core;
+=======
+<<<<<<< HEAD
+using Jabbot.Sprockets.Core;
+=======
+using Jabbot.Sprockets;
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
 using SignalR.Client.Hubs;
 
 namespace Jabbot
@@ -20,7 +28,14 @@ namespace Jabbot
         private readonly IHubProxy _chat;
         private readonly string _password;
         private readonly List<ISprocket> _sprockets = new List<ISprocket>();
+<<<<<<< HEAD
         private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
+=======
+<<<<<<< HEAD
+        private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
+=======
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
         private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private const string ExtensionsFolder = "Sprockets";
@@ -81,6 +96,10 @@ namespace Jabbot
             _sprockets.Remove(sprocket);
         }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> Added bot initializer strategy
 
         /// <summary>
         /// Add a sprocket to the bot instance
@@ -98,6 +117,11 @@ namespace Jabbot
             _unhandledMessageSprockets.Remove(sprocket);
         }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
         /// <summary>
         /// Remove all sprockets
         /// </summary>
@@ -163,6 +187,10 @@ namespace Jabbot
         }
 
         /// <summary>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> Added bot initializer strategy
         /// Sets the Bot's gravatar email
         /// </summary>
         /// <param name="gravatarEmail"></param>
@@ -172,6 +200,11 @@ namespace Jabbot
         }
 
         /// <summary>
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
         /// Say something to the active room.
         /// </summary>
         /// <param name="what">what to say</param>
@@ -291,17 +324,33 @@ namespace Jabbot
                     MessageReceived(chatMessage);
                 }
 
+<<<<<<< HEAD
                 bool handled = false;
 
+=======
+<<<<<<< HEAD
+                bool handled = false;
+
+=======
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
                 // Loop over the registered sprockets
                 foreach (var handler in _sprockets)
                 {
                     // Stop at the first one that handled the message
                     if (handler.Handle(chatMessage, this))
                     {
+<<<<<<< HEAD
                         handled = true;
                         break;
                     }
+=======
+<<<<<<< HEAD
+                        handled = true;
+                        break;
+                    }
+<<<<<<< HEAD
+>>>>>>> Added bot initializer strategy
                 }
 
                 if (!handled)
@@ -317,6 +366,17 @@ namespace Jabbot
                     }
 
                 }
+<<<<<<< HEAD
+=======
+=======
+                 }
+>>>>>>> More on Initalization strategy
+=======
+                        break;
+                    }
+                 }
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
             })
             .ContinueWith(task =>
             {
@@ -349,11 +409,32 @@ namespace Jabbot
         private void InitializeContainer()
         {
             var container = CreateCompositionContainer();
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+            var vals = container.GetExportedValues<ISprocket>();
+>>>>>>> More on Initalization strategy
+=======
+<<<<<<< HEAD
+>>>>>>> Added bot initializer strategy
+            var vals = container.GetExportedValues<ISprocket>();
+>>>>>>> Added bot initializer strategy
+            // Add all the sprockets to the sprocket list
+            foreach (var sprocket in vals)
+            {
+                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
 
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
-                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
                 AddSprocket(sprocket);
             }
         }
@@ -370,6 +451,10 @@ namespace Jabbot
                 }
                 catch (Exception ex)
                 {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> Added bot initializer strategy
                     Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
                 }
             }
@@ -380,7 +465,18 @@ namespace Jabbot
             if (_container == null)
             {
                 {
+<<<<<<< HEAD
                     Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
+=======
+                    Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
+=======
+<<<<<<< HEAD
+                    Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
+=======
+                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
                 }
             }
         }
@@ -389,7 +485,10 @@ namespace Jabbot
         {
             if (_container == null)
             {
+<<<<<<< HEAD
             {
+=======
+>>>>>>> Added bot initializer strategy
                 string extensionsPath = GetExtensionsPath();
 
                 // If the extensions folder exists then use them
