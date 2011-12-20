@@ -349,10 +349,14 @@ namespace Jabbot
         private void InitializeContainer()
         {
             var container = CreateCompositionContainer();
+<<<<<<< HEAD
             AddSprockets(container);
         }
         private void AddSprockets(CompositionContainer container)
         {
+=======
+
+>>>>>>> Added bot initializer strategy
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
