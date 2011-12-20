@@ -11,12 +11,12 @@ namespace Jabbot.CommandSprockets
         public abstract IEnumerable<string> SupportedInitiators { get; }
         public abstract IEnumerable<string> SupportedCommands { get; }
         public abstract bool ExecuteCommand();
-        public string CurrentIntitiator { get; protected set; }
-        public string CurrentCommand { get; protected set; }
-        public string[] CurrentArguments { get; protected set; }
-        public ChatMessage CurrentMessage { get; protected set; }
+        public string Intitiator { get; protected set; }
+        public string Command { get; protected set; }
+        public string[] Arguments { get; protected set; }
+        public ChatMessage Message { get; protected set; }
         public Bot Bot { get; protected set; }
-        public bool HasArguments { get { return CurrentArguments.Length > 0; } }
+        public bool HasArguments { get { return Arguments.Length > 0; } }
 
 
         public virtual bool MayHandle(string initiator, string command)
@@ -32,20 +32,20 @@ namespace Jabbot.CommandSprockets
 
                 string[] args = message.Content
                        .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                CurrentIntitiator = args.Length > 0 ? args[0] : string.Empty;
-                CurrentCommand = args.Length > 1 ? args[1] : string.Empty;
-                CurrentMessage = message;
+                Intitiator = args.Length > 0 ? args[0] : string.Empty;
+                Command = args.Length > 1 ? args[1] : string.Empty;
+                Message = message;
                 Bot = bot;
 
-                if (MayHandle(CurrentIntitiator, CurrentCommand))
+                if (MayHandle(Intitiator, Command))
                 {
-                    CurrentArguments = args.Skip(2).ToArray();
+                    Arguments = args.Skip(2).ToArray();
                     return ExecuteCommand();
                 }
             }
             catch (InvalidOperationException e)
             {
-                Bot.PrivateReply(CurrentMessage.FromUser, e.GetBaseException().Message);
+                Bot.PrivateReply(Message.FromUser, e.GetBaseException().Message);
             }
             return false;
         }

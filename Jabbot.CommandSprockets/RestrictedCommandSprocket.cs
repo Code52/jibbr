@@ -16,7 +16,7 @@ namespace Jabbot.CommandSprockets
         {
             get
             {
-                return AllowedUserList.Any(u => u.Equals(CurrentMessage.FromUser, StringComparison.OrdinalIgnoreCase));
+                return AllowedUserList.Any(u => u.Equals(Message.FromUser, StringComparison.OrdinalIgnoreCase));
             }
         }
 
@@ -24,7 +24,7 @@ namespace Jabbot.CommandSprockets
         {
             get
             {
-                return BannedUserList.Any(u => u.Equals(CurrentMessage.FromUser, StringComparison.OrdinalIgnoreCase));
+                return BannedUserList.Any(u => u.Equals(Message.FromUser, StringComparison.OrdinalIgnoreCase));
             }
         }
         public override bool MayHandle(string initiator, string command)
@@ -42,7 +42,7 @@ namespace Jabbot.CommandSprockets
             if (RequestorIsBanned)
             {
                 throw new InvalidOperationException(String.Format(
-                   "You are not allowed to execute the {0} command", CurrentCommand));
+                   "You are not allowed to execute the {0} command", Command));
             }
 
         }
@@ -52,7 +52,7 @@ namespace Jabbot.CommandSprockets
             if (!RequestorIsAllowed)
             {
                 throw new InvalidOperationException(String.Format(
-                    "You must be an administrator to execute the {0} command", CurrentCommand));
+                    "You must be an administrator to execute the {0} command", Command));
             }
         }
     }
