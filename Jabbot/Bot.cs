@@ -377,7 +377,7 @@ namespace Jabbot
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
+                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
                 }
             }
         }
@@ -385,6 +385,7 @@ namespace Jabbot
         private CompositionContainer CreateCompositionContainer()
         {
             if (_container == null)
+            {
             {
                 string extensionsPath = GetExtensionsPath();
 
