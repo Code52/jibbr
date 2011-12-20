@@ -9,7 +9,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Jabbot.Models;
+<<<<<<< HEAD
 using Jabbot.Sprockets.Core;
+=======
+using Jabbot.Sprockets;
+>>>>>>> Added bot initializer strategy
 using SignalR.Client.Hubs;
 
 namespace Jabbot
@@ -20,7 +24,10 @@ namespace Jabbot
         private readonly IHubProxy _chat;
         private readonly string _password;
         private readonly List<ISprocket> _sprockets = new List<ISprocket>();
+<<<<<<< HEAD
         private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
+=======
+>>>>>>> Added bot initializer strategy
         private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private const string ExtensionsFolder = "Sprockets";
@@ -81,6 +88,7 @@ namespace Jabbot
             _sprockets.Remove(sprocket);
         }
 
+<<<<<<< HEAD
 
         /// <summary>
         /// Add a sprocket to the bot instance
@@ -98,6 +106,8 @@ namespace Jabbot
             _unhandledMessageSprockets.Remove(sprocket);
         }
 
+=======
+>>>>>>> Added bot initializer strategy
         /// <summary>
         /// Remove all sprockets
         /// </summary>
@@ -163,6 +173,7 @@ namespace Jabbot
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Sets the Bot's gravatar email
         /// </summary>
         /// <param name="gravatarEmail"></param>
@@ -172,6 +183,8 @@ namespace Jabbot
         }
 
         /// <summary>
+=======
+>>>>>>> Added bot initializer strategy
         /// Say something to the active room.
         /// </summary>
         /// <param name="what">what to say</param>
@@ -291,17 +304,22 @@ namespace Jabbot
                     MessageReceived(chatMessage);
                 }
 
+<<<<<<< HEAD
                 bool handled = false;
 
+=======
+>>>>>>> Added bot initializer strategy
                 // Loop over the registered sprockets
                 foreach (var handler in _sprockets)
                 {
                     // Stop at the first one that handled the message
                     if (handler.Handle(chatMessage, this))
                     {
+<<<<<<< HEAD
                         handled = true;
                         break;
                     }
+<<<<<<< HEAD
                 }
 
                 if (!handled)
@@ -317,6 +335,14 @@ namespace Jabbot
                     }
 
                 }
+=======
+                 }
+>>>>>>> More on Initalization strategy
+=======
+                        break;
+                    }
+                 }
+>>>>>>> Added bot initializer strategy
             })
             .ContinueWith(task =>
             {
@@ -349,11 +375,24 @@ namespace Jabbot
         private void InitializeContainer()
         {
             var container = CreateCompositionContainer();
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> Added bot initializer strategy
+            var vals = container.GetExportedValues<ISprocket>();
+            // Add all the sprockets to the sprocket list
+            foreach (var sprocket in vals)
+            {
+                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
+<<<<<<< HEAD
+=======
+=======
 
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
-                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
                 AddSprocket(sprocket);
             }
         }
@@ -370,6 +409,7 @@ namespace Jabbot
                 }
                 catch (Exception ex)
                 {
+<<<<<<< HEAD
                     Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
                 }
             }
@@ -381,6 +421,13 @@ namespace Jabbot
             {
                 {
                     Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
+=======
+<<<<<<< HEAD
+                    Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
+=======
+                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
+>>>>>>> Added bot initializer strategy
+>>>>>>> Added bot initializer strategy
                 }
             }
         }
