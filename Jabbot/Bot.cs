@@ -348,20 +348,10 @@ namespace Jabbot
         private void InitializeContainer()
         {
             var container = CreateCompositionContainer();
-            AddSprockets(container);
-        }
-        private void AddSprockets(CompositionContainer container)
-        {
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
-                Trace.WriteLine(String.Format("Adding sprocket {0}...", sprocket.GetType().Name));
                 AddSprocket(sprocket);
-            }
-            foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
-            {
-                Trace.WriteLine(String.Format("Adding unhandled message sprocket {0}...", sprocket.GetType().Name));
-                AddUnhandledMessageSprocket(sprocket);
             }
         }
 
@@ -376,6 +366,16 @@ namespace Jabbot
                     sprocketInitializer.Initialize(this);
                 }
                 catch (Exception ex)
+                {
+                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
+                }
+            }
+        }
+
+        private CompositionContainer CreateCompositionContainer()
+        {
+            if (_container == null)
+            {
                 {
                     Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
                 }
