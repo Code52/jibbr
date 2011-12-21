@@ -349,9 +349,9 @@ namespace Jabbot
         private void InitializeContainer()
         {
             var container = CreateCompositionContainer();
-
+            var vals = container.GetExportedValues<ISprocket>();
             // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<ISprocket>())
+            foreach (var sprocket in vals)
             {
                 Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
                 AddSprocket(sprocket);
