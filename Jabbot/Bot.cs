@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Jabbot.Models;
@@ -348,9 +349,11 @@ namespace Jabbot
         private void InitializeContainer()
         {
             var container = CreateCompositionContainer();
+            var vals = container.GetExportedValues<ISprocket>();
             // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<ISprocket>())
+            foreach (var sprocket in vals)
             {
+                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
                 AddSprocket(sprocket);
             }
         }
@@ -367,7 +370,7 @@ namespace Jabbot
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
+                    Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
                 }
             }
         }
