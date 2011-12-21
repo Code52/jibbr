@@ -5,7 +5,6 @@ using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Jabbot.Models;
