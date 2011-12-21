@@ -302,7 +302,6 @@ namespace Jabbot
                         handled = true;
                         break;
                     }
-<<<<<<< HEAD
                 }
 
                 if (!handled)
@@ -318,9 +317,6 @@ namespace Jabbot
                     }
 
                 }
-=======
-                 }
->>>>>>> More on Initalization strategy
             })
             .ContinueWith(task =>
             {
@@ -356,7 +352,6 @@ namespace Jabbot
 <<<<<<< HEAD
             AddSprockets(container);
         }
-
         private void AddSprockets(CompositionContainer container)
         {
 =======
@@ -365,11 +360,7 @@ namespace Jabbot
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in vals)
             {
-<<<<<<< HEAD
                 Trace.WriteLine(String.Format("Adding sprocket {0}...", sprocket.GetType().Name));
-=======
-                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
->>>>>>> More on Initalization strategy
                 AddSprocket(sprocket);
             }
             foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())

@@ -354,7 +354,7 @@ namespace Jabbot
         private void AddSprockets(CompositionContainer container)
         {
             // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<ISprocket>())
+            foreach (var sprocket in vals)
             {
                 Trace.WriteLine(String.Format("Adding sprocket {0}...", sprocket.GetType().Name));
                 AddSprocket(sprocket);
