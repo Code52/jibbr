@@ -349,17 +349,16 @@ namespace Jabbot
         {
             var container = CreateCompositionContainer();
 <<<<<<< HEAD
-            var vals = container.GetExportedValues<ISprocket>();
-            // Add all the sprockets to the sprocket list
-            foreach (var sprocket in vals)
-            {
+            AddSprockets(container);
+        }
+        private void AddSprockets(CompositionContainer container)
+        {
 =======
 >>>>>>> Reverted variable change used for debugging
->>>>>>> Added bot initializer strategy
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
->>>>>>> Added bot initializer strategy
+                Trace.WriteLine(String.Format("Adding sprocket {0}...", sprocket.GetType().Name));
                 AddSprocket(sprocket);
             }
             foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
@@ -381,6 +380,7 @@ namespace Jabbot
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
                 }
             }
         }
