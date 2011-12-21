@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Jabbot.Models;
@@ -301,6 +302,7 @@ namespace Jabbot
                         handled = true;
                         break;
                     }
+<<<<<<< HEAD
                 }
 
                 if (!handled)
@@ -316,6 +318,9 @@ namespace Jabbot
                     }
 
                 }
+=======
+                 }
+>>>>>>> More on Initalization strategy
             })
             .ContinueWith(task =>
             {
@@ -354,10 +359,17 @@ namespace Jabbot
 
         private void AddSprockets(CompositionContainer container)
         {
+=======
+            var vals = container.GetExportedValues<ISprocket>();
+>>>>>>> More on Initalization strategy
             // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<ISprocket>())
+            foreach (var sprocket in vals)
             {
+<<<<<<< HEAD
                 Trace.WriteLine(String.Format("Adding sprocket {0}...", sprocket.GetType().Name));
+=======
+                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
+>>>>>>> More on Initalization strategy
                 AddSprocket(sprocket);
             }
             foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
@@ -384,33 +396,6 @@ namespace Jabbot
             }
         }
 
-=======
-
-            // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<ISprocket>())
-            {
-                AddSprocket(sprocket);
-            }
-        }
-
-        private void IntializeSprockets()
-        {
-            var container = CreateCompositionContainer();
-            // Run all sprocket initializers
-            foreach (var sprocketInitializer in container.GetExportedValues<ISprocketInitializer>())
-            {
-                try
-                {
-                    sprocketInitializer.Initialize(this);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
-                }
-            }
-        }
-
->>>>>>> Added bot initializer strategy
         private CompositionContainer CreateCompositionContainer()
         {
             if (_container == null)
