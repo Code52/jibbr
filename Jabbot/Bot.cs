@@ -162,6 +162,15 @@ namespace Jabbot
         }
 
         /// <summary>
+        /// Sets the Bot's gravatar email
+        /// </summary>
+        /// <param name="gravatarEmail"></param>
+        public void Gravatar(string gravatarEmail)
+        {
+            Send("/gravatar " + gravatarEmail);
+        }
+
+        /// <summary>
         /// Say something to the active room.
         /// </summary>
         /// <param name="what">what to say</param>
