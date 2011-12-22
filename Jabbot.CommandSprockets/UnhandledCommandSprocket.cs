@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Jabbot.Models;
+using Jabbot.Sprockets.Core;
 
 namespace Jabbot.CommandSprockets
 {
-    public abstract class CommandSprocket : Jabbot.CommandSprockets.ICommandSprocket
+    public abstract class UnhandledCommandSprocket : IUnhandledMessageSprocket
     {
         public abstract IEnumerable<string> SupportedInitiators { get; }
-        public abstract IEnumerable<string> SupportedCommands { get; }
         public abstract bool ExecuteCommand();
         public string Intitiator { get; protected set; }
         public string Command { get; protected set; }
@@ -20,16 +20,16 @@ namespace Jabbot.CommandSprockets
 
         public virtual bool MayHandle(string initiator, string command)
         {
-            return SupportedInitiators.Any(i => i.Equals(initiator, StringComparison.OrdinalIgnoreCase)) &&
-                SupportedCommands.Any(c => c.Equals(command, StringComparison.OrdinalIgnoreCase));
+            return SupportedInitiators.Any(i => i.Equals(initiator, StringComparison.OrdinalIgnoreCase));
         }
 
         public virtual bool Handle(ChatMessage message, Bot bot)
         {
             try
             {
+
                 string[] args = message.Content
-                    .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                       .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 Intitiator = args.Length > 0 ? args[0] : string.Empty;
                 Command = args.Length > 1 ? args[1] : string.Empty;
                 Message = message;

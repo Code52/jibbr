@@ -54,9 +54,11 @@
     <Compile Include="Bot.cs" />
     <Compile Include="Models\ChatMessage.cs" />
     <Compile Include="Models\ChatUser.cs" />
-    <Compile Include="Sprockets\ISprocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sprockets\ISprocketInitializer.cs" />
+    <Compile Include="Sprockets\Core\IMessageHandler.cs" />
+    <Compile Include="Sprockets\Core\ISprocket.cs" />
+    <Compile Include="Sprockets\Core\ISprocketInitializer.cs" />
+    <Compile Include="Sprockets\Core\IUnhandledMessageSprocket.cs" />
     <Compile Include="Sprockets\RegexSprocket.cs" />
   </ItemGroup>
   <ItemGroup>
