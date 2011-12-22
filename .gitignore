@@ -13,3 +13,4 @@ msbuild.log
 artifacts/log
 artifacts/
 post-build*
+deploy-to-ec2*
