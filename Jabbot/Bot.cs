@@ -376,17 +376,6 @@ namespace Jabbot
         {
             if (_container == null)
             {
-                {
-                    Console.WriteLine("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message);
-                }
-            }
-        }
-
-        private CompositionContainer CreateCompositionContainer()
-        {
-            if (_container == null)
-            {
-            {
                 string extensionsPath = GetExtensionsPath();
 
                 // If the extensions folder exists then use them
