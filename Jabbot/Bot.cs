@@ -116,6 +116,8 @@ namespace Jabbot
 
 				_chat.On<dynamic, string>("addMessage", ProcessMessage);
 
+				_chat.On<string, string, string>("sendPrivateMessage", ProcessPrivateMessage);
+
 				_chat.On("leave", OnLeave);
 
 				_chat.On("addUser", OnJoin);
@@ -269,41 +271,53 @@ namespace Jabbot
 			Send(what);
 		}
 
-		private void ProcessPrivateMessage(string sender, string receiver, dynamic message)
+		private void ProcessPrivateMessage(string sender, string receiver, string message)
 		{
-			//TODO: cyberzed implement private message handling
+			if (sender.Equals(receiver))
+			{
+				return;
+			}
+
+			var chatMessage = new ChatMessage(WebUtility.HtmlDecode(message), sender, receiver);
+
+			ProcessChatMessages(chatMessage);
 		}
 
 		private void ProcessMessage(dynamic message, string room)
 		{
 			// Run this on another thread since the signalr client doesn't like it
 			// when we spend a long time processing messages synchronously
+			string content = message.Content;
+			string name = message.User.Name;
+
+			// Ignore replies from self
+			if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
+			{
+				return;
+			}
+
+			// We're going to process commands for the bot here
+			var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+
+			ProcessChatMessages(chatMessage);
+		}
+
+		private void ProcessChatMessages(ChatMessage message)
+		{
 			Task.Factory.StartNew(() =>
 			{
-				string content = message.Content;
-				string name = message.User.Name;
-
-				// Ignore replies from self
-				if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
-				{
-					return;
-				}
-
-				// We're going to process commands for the bot here
-				var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+				Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.FromUser, message.Room, message.Content));
 
 				if (MessageReceived != null)
 				{
-					MessageReceived(chatMessage);
+					MessageReceived(message);
 				}
 
-				bool handled = false;
+				var handled = false;
 
-				// Loop over the registered sprockets
 				foreach (var handler in _sprockets)
 				{
-					// Stop at the first one that handled the message
-					if (handler.Handle(chatMessage, this))
+					if (handler.Handle(message, this))
 					{
 						handled = true;
 						break;
@@ -316,7 +330,7 @@ namespace Jabbot
 					foreach (var handler in _unhandledMessageSprockets)
 					{
 						// Stop at the first one that handled the message
-						if (handler.Handle(chatMessage, this))
+						if (handler.Handle(message, this))
 						{
 							break;
 						}
@@ -332,6 +346,7 @@ namespace Jabbot
 					Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
 				}
 			});
+
 		}
 
 		private void OnLeave(dynamic user)
