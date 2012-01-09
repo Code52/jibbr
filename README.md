@@ -1,6 +1,6 @@
 ## JibbR
 
-### A JabbR proxy server and mobile experience
+### A Jabbr bot designed for collaborative projects
 
 another code52 project
 
