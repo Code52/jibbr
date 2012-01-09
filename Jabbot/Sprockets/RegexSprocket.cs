@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Jabbot.Models;
+using Jabbot.Sprockets.Core;
 
 namespace Jabbot.Sprockets
 {
