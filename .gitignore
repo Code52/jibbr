@@ -13,3 +13,6 @@ msbuild.log
 artifacts/log
 artifacts/
 post-build*
+<<<<<<< HEAD
+_ReSharper.*
+deploy-to-ec2*
