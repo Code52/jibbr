@@ -116,6 +116,8 @@ namespace Jabbot
 
                 _chat.On<dynamic, string>("addMessage", ProcessMessage);
 
+                _chat.On<string, string, string>("sendPrivateMessage", ProcessPrivateMessage);
+
                 _chat.On("leave", OnLeave);
 
                 _chat.On("addUser", OnJoin);
@@ -150,25 +152,40 @@ namespace Jabbot
             _rooms.Add(room);
         }
 
-        /// <summary>
-        /// Joins a chat room. Changes this to the active room for future messages.
-        /// </summary>
-        public void Join(string room)
-        {
-            Send("/join " + room);
+		/// <summary>
+		/// Joins a chat room. Changes this to the active room for future messages.
+		/// </summary>
+		public void Join(string room)
+		{
+            if (_rooms.Contains(room)) return;
+
+			Send("/join " + room);
 
             // Add the room to the list
             _rooms.Add(room);
         }
 
         /// <summary>
-        /// Sets the Bot's gravatar email
+        /// Leaves a chat room. 
         /// </summary>
-        /// <param name="gravatarEmail"></param>
-        public void Gravatar(string gravatarEmail)
+        public void Leave(string room)
         {
-            Send("/gravatar " + gravatarEmail);
+            if (!_rooms.Contains(room)) return;
+
+            Send("/leave " + room);
+
+            // Add the room to the list
+            _rooms.Remove(room);
         }
+
+		/// <summary>
+		/// Sets the Bot's gravatar email
+		/// </summary>
+		/// <param name="gravatarEmail"></param>
+		public void Gravatar(string gravatarEmail)
+		{
+			Send("/gravatar " + gravatarEmail);
+		}
 
         /// <summary>
         /// Say something to the active room.
@@ -267,36 +284,53 @@ namespace Jabbot
             Send(what);
         }
 
+        private void ProcessPrivateMessage(string sender, string receiver, string message)
+        {
+            if (sender.Equals(receiver))
+            {
+                return;
+            }
+
+            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(message), sender, receiver);
+
+            ProcessChatMessages(chatMessage);
+        }
+
         private void ProcessMessage(dynamic message, string room)
         {
             // Run this on another thread since the signalr client doesn't like it
             // when we spend a long time processing messages synchronously
+            string content = message.Content;
+            string name = message.User.Name;
+
+            // Ignore replies from self
+            if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            // We're going to process commands for the bot here
+            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+
+            ProcessChatMessages(chatMessage);
+        }
+
+        private void ProcessChatMessages(ChatMessage message)
+        {
             Task.Factory.StartNew(() =>
             {
-                string content = message.Content;
-                string name = message.User.Name;
-
-                // Ignore replies from self
-                if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-
-                // We're going to process commands for the bot here
-                var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.FromUser, message.Room, message.Content));
 
                 if (MessageReceived != null)
                 {
-                    MessageReceived(chatMessage);
+                    MessageReceived(message);
                 }
 
-                bool handled = false;
+                var handled = false;
 
-                // Loop over the registered sprockets
                 foreach (var handler in _sprockets)
                 {
-                    // Stop at the first one that handled the message
-                    if (handler.Handle(chatMessage, this))
+                    if (handler.Handle(message, this))
                     {
                         handled = true;
                         break;
@@ -309,7 +343,7 @@ namespace Jabbot
                     foreach (var handler in _unhandledMessageSprockets)
                     {
                         // Stop at the first one that handled the message
-                        if (handler.Handle(chatMessage, this))
+                        if (handler.Handle(message, this))
                         {
                             break;
                         }
