@@ -5,20 +5,27 @@ using System.Web;
 using System.Configuration;
 using Nancy;
 using System.Diagnostics;
+using MomentApp;
 
 namespace Jabbot.AspNetBotHost
 {
     public class BotHostModule : NancyModule
     {
+        private static readonly string _hostBaseUrl = ConfigurationManager.AppSettings["Application.HostBaseUrl"];
         private static readonly string _serverUrl = ConfigurationManager.AppSettings["Bot.Server"];
         private static readonly string _botName = ConfigurationManager.AppSettings["Bot.Name"];
         private static readonly string _botPassword = ConfigurationManager.AppSettings["Bot.Password"];
         private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
+        private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
         private static Bot _bot;
+
         public BotHostModule()
         {
             StartBot();
-
+            Get["/"] = _ =>
+            {
+                return "Jabbot AspNet Nancy Bot Runner";
+            };
             Get["/bot/start"] = _ =>
             {
                 try
@@ -36,8 +43,7 @@ namespace Jabbot.AspNetBotHost
             {
                 try
                 {
-                    _bot.ShutDown();
-                    _bot = null;
+                    ShutDownBot();
                     return "Bot Shut Down";
                 }
                 catch (Exception e)
@@ -46,11 +52,33 @@ namespace Jabbot.AspNetBotHost
                 }
             };
 
+            // This is for ensuring that the process doesn't die permanently -- 
+            // We create a task with MomentApp (TBD whether we will use this permanently
+            Get["/keepalive"] = _ =>
+            {
+                ScheduleKeepAlive(Request.Url.ToString());
+                return "OK";
+            };
+        }
 
+
+
+        private static void ScheduleKeepAlive(string Url)
+        {
+            new Moment(_momentApiKey).ScheduleJob(new Job()
+            {
+                at = DateTime.Now.AddMinutes(5),
+                method = "GET",
+                uri = new Uri(Url)
+            });
         }
 
         private static void StartBot()
         {
+            if (!_hostBaseUrl.Contains("localhost"))
+            {
+                ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
+            }
             if (_bot != null)
             {
                 _bot.ShutDown();
@@ -58,6 +86,13 @@ namespace Jabbot.AspNetBotHost
             _bot = new Bot(_serverUrl, _botName, _botPassword);
             _bot.PowerUp();
             JoinRooms(_bot);
+
+        }
+
+        private static void ShutDownBot()
+        {
+            _bot.ShutDown();
+            _bot = null;
         }
 
         private static void JoinRooms(Bot bot)
