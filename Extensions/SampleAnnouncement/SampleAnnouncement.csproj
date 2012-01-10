@@ -5,15 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</ProjectGuid>
+    <ProjectGuid>{00F173A5-6E02-412A-A885-774DFAEB9612}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jabbot.CommandSprockets</RootNamespace>
-    <AssemblyName>Jabbot.CommandSprockets</AssemblyName>
+    <RootNamespace>SampleAnnouncement</RootNamespace>
+    <AssemblyName>SampleAnnouncement</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\jibbr\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,21 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandSprocket.cs" />
-    <Compile Include="IAnnounce.cs" />
-    <Compile Include="ICommandSprocket.cs" />
-    <Compile Include="UnhandledCommandSprocket.cs" />
+    <Compile Include="EchoAnnouncement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RestrictedCommandSprocket.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Jabbot\Jabbot.csproj">
+    <ProjectReference Include="..\..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
+      <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
+      <Name>Jabbot.CommandSprockets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Jabbot\Jabbot.csproj">
       <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
       <Name>Jabbot</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <appSettings>
+<<<<<<< HEAD
+    <add key="Bot.Name" value="cyberzed-jibbrbot" />
+=======
     <add key="Bot.Name" value="cyberzed-jibbr" />
+>>>>>>> origin/master
     <add key="Bot.Password" value="somepassword" />
     <add key="Bot.Server" value="http://jabbr.net" />
     <add key="Bot.RoomList" value="Code52-testing" />
@@ -13,12 +17,9 @@
   </appSettings>
   <system.diagnostics>
     <sources>
-      <source name="System.ComponentModel.Composition"
-      switchValue="All">
+      <source name="System.ComponentModel.Composition" switchValue="All">
         <listeners>
-          <add name="fileListener"
-          type="System.Diagnostics.TextWriterTraceListener"
-          initializeData="composition.log" />
+          <add name="fileListener" type="System.Diagnostics.TextWriterTraceListener" initializeData="composition.log" />
         </listeners>
       </source>
     </sources>

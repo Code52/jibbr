@@ -2,8 +2,6 @@
 
 ### A Jabbr bot designed for collaborative projects
 
-#### another code52 project
-
 Forking from Jabbot - a bot API for [JabbR](https://github.com/davidfowl/JabbR).
 
 It's as easy as:
@@ -56,5 +54,30 @@ public class MathSproket : RegexSproket
 }
 ```
 
-code52.org
+A new extension being added to JibbR is for announcement-style extensions. You can specify how often an announcement may occur, and include code to execute for the active bot.
+
+```csharp
+[Export(typeof(IAnnounce))]
+public class EchoAnnouncement : IAnnounce
+{
+    public TimeSpan Interval
+    {
+        get { return TimeSpan.FromMinutes(5); }
+    }
+
+    public void Execute(Bot bot)
+    {
+        // TODO: something smarter
+        foreach (var room in bot.Rooms)
+        {
+            bot.Say("Hello world!", room);
+        }
+    }
+}
+```
+
+### another code52 project
+
+#### code52.org
+
 =======
