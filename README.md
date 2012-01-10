@@ -54,7 +54,11 @@ public class MathSproket : RegexSproket
               });
     }
 }
+```
 
+A new extension being added to JibbR is for announcement-style extensions. You can specify how often an announcement may occur, and include code to execute for the active bot.
+
+```csharp
 [Export(typeof(IAnnounce))]
 public class EchoAnnouncement : IAnnounce
 {
