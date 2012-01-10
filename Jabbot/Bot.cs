@@ -13,94 +13,89 @@ using SignalR.Client.Hubs;
 
 namespace Jabbot
 {
-    public class Bot
-    {
-        private readonly HubConnection _connection;
-        private readonly IHubProxy _chat;
-        private readonly string _password;
-        private readonly List<ISprocket> _sprockets = new List<ISprocket>();
-        private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
-        private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+	public class Bot
+	{
+		private readonly HubConnection _connection;
+		private readonly IHubProxy _chat;
+		private readonly string _password;
+		private readonly List<ISprocket> _sprockets = new List<ISprocket>();
+		private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
+		private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        private const string ExtensionsFolder = "Sprockets";
+		private const string ExtensionsFolder = "Sprockets";
 
-        private ComposablePartCatalog _catalog = null;
-        private CompositionContainer _container = null;
-
-
-        public Bot(string url, string name, string password)
-        {
-            Name = name;
-            _password = password;
-            _connection = new HubConnection(url);
-            _chat = _connection.CreateProxy("JabbR.Chat");
-        }
-
-        public string Name { get; private set; }
-
-        public ICredentials Credentials
-        {
-            get
-            {
-                return _connection.Credentials;
-            }
-            set
-            {
-                _connection.Credentials = value;
-            }
-        }
-
-        public event Action Disconnected
-        {
-            add
-            {
-                _connection.Closed += value;
-            }
-            remove
-            {
-                _connection.Closed -= value;
-            }
-        }
-
-        public event Action<ChatMessage> MessageReceived;
-
-        /// <summary>
-        /// Add a sprocket to the bot instance
-        /// </summary>
-        public void AddSprocket(ISprocket sprocket)
-        {
-            _sprockets.Add(sprocket);
-        }
-
-        /// <summary>
-        /// Remove a sprocket from the bot instance
-        /// </summary>
-        public void RemoveSprocket(ISprocket sprocket)
-        {
-            _sprockets.Remove(sprocket);
-        }
+		private ComposablePartCatalog _catalog = null;
+		private CompositionContainer _container = null;
 
 
-        /// <summary>
-        /// Add a sprocket to the bot instance
-        /// </summary>
-        public void AddUnhandledMessageSprocket(IUnhandledMessageSprocket sprocket)
-        {
-            _unhandledMessageSprockets.Add(sprocket);
-        }
+		public Bot(string url, string name, string password)
+		{
+			Name = name;
+			_password = password;
+			_connection = new HubConnection(url);
+			_chat = _connection.CreateProxy("JabbR.Chat");
+		}
 
-        /// <summary>
-        /// Remove a sprocket from the bot instance
-        /// </summary>
-        public void RemoveUnhandledMessageSprocket(IUnhandledMessageSprocket sprocket)
-        {
-            _unhandledMessageSprockets.Remove(sprocket);
-        }
+		public string Name { get; private set; }
 
-        public void DoSomething()
-        {
-            
-        }
+		public ICredentials Credentials
+		{
+			get
+			{
+				return _connection.Credentials;
+			}
+			set
+			{
+				_connection.Credentials = value;
+			}
+		}
+
+		public event Action Disconnected
+		{
+			add
+			{
+				_connection.Closed += value;
+			}
+			remove
+			{
+				_connection.Closed -= value;
+			}
+		}
+
+		public event Action<ChatMessage> MessageReceived;
+
+		/// <summary>
+		/// Add a sprocket to the bot instance
+		/// </summary>
+		public void AddSprocket(ISprocket sprocket)
+		{
+			_sprockets.Add(sprocket);
+		}
+
+		/// <summary>
+		/// Remove a sprocket from the bot instance
+		/// </summary>
+		public void RemoveSprocket(ISprocket sprocket)
+		{
+			_sprockets.Remove(sprocket);
+		}
+
+
+		/// <summary>
+		/// Add a sprocket to the bot instance
+		/// </summary>
+		public void AddUnhandledMessageSprocket(IUnhandledMessageSprocket sprocket)
+		{
+			_unhandledMessageSprockets.Add(sprocket);
+		}
+
+		/// <summary>
+		/// Remove a sprocket from the bot instance
+		/// </summary>
+		public void RemoveUnhandledMessageSprocket(IUnhandledMessageSprocket sprocket)
+		{
+			_unhandledMessageSprockets.Remove(sprocket);
+		}
 
         /// <summary>
         /// Remove all sprockets
@@ -121,6 +116,7 @@ namespace Jabbot
 
                 _chat.On<dynamic, string>("addMessage", ProcessMessage);
 
+				_chat.On<string, string, string>("sendPrivateMessage", ProcessPrivateMessage);
                 _chat.On("leave", OnLeave);
 
                 _chat.On("addUser", OnJoin);
@@ -272,65 +268,83 @@ namespace Jabbot
             Send(what);
         }
 
-        private void ProcessMessage(dynamic message, string room)
-        {
-            // Run this on another thread since the signalr client doesn't like it
-            // when we spend a long time processing messages synchronously
-            Task.Factory.StartNew(() =>
-            {
-                string content = message.Content;
-                string name = message.User.Name;
+		private void ProcessPrivateMessage(string sender, string receiver, string message)
+		{
+			if (sender.Equals(receiver))
+			{
+				return;
+			}
 
-                // Ignore replies from self
-                if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
+			var chatMessage = new ChatMessage(WebUtility.HtmlDecode(message), sender, receiver);
 
-                // We're going to process commands for the bot here
-                var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+			ProcessChatMessages(chatMessage);
+		}
 
-                if (MessageReceived != null)
-                {
-                    MessageReceived(chatMessage);
-                }
+		private void ProcessMessage(dynamic message, string room)
+		{
+			// Run this on another thread since the signalr client doesn't like it
+			// when we spend a long time processing messages synchronously
+			string content = message.Content;
+			string name = message.User.Name;
 
-                bool handled = false;
+			// Ignore replies from self
+			if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
+			{
+				return;
+			}
 
-                // Loop over the registered sprockets
-                foreach (var handler in _sprockets)
-                {
-                    // Stop at the first one that handled the message
-                    if (handler.Handle(chatMessage, this))
-                    {
-                        handled = true;
-                        break;
-                    }
-                }
+			// We're going to process commands for the bot here
+			var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
 
-                if (!handled)
-                {
-                    // Loop over the unhandled message sprockets
-                    foreach (var handler in _unhandledMessageSprockets)
-                    {
-                        // Stop at the first one that handled the message
-                        if (handler.Handle(chatMessage, this))
-                        {
-                            break;
-                        }
-                    }
+			ProcessChatMessages(chatMessage);
+		}
 
-                }
-            })
-            .ContinueWith(task =>
-            {
-                // Just write to debug output if it failed
-                if (task.IsFaulted)
-                {
-                    Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
-                }
-            });
-        }
+		private void ProcessChatMessages(ChatMessage message)
+		{
+			Task.Factory.StartNew(() =>
+			{
+				Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.FromUser, message.Room, message.Content));
+
+				if (MessageReceived != null)
+				{
+					MessageReceived(message);
+				}
+
+				var handled = false;
+
+				foreach (var handler in _sprockets)
+				{
+					if (handler.Handle(message, this))
+					{
+						handled = true;
+						break;
+					}
+				}
+
+				if (!handled)
+				{
+					// Loop over the unhandled message sprockets
+					foreach (var handler in _unhandledMessageSprockets)
+					{
+						// Stop at the first one that handled the message
+						if (handler.Handle(message, this))
+						{
+							break;
+						}
+					}
+
+				}
+			})
+			.ContinueWith(task =>
+			{
+				// Just write to debug output if it failed
+				if (task.IsFaulted)
+				{
+					Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
+				}
+			});
+
+		}
 
         private void OnLeave(dynamic user)
         {
@@ -405,7 +419,6 @@ namespace Jabbot
             string rootPath = null;
             if (HostingEnvironment.IsHosted)
             {
-
                 rootPath = HostingEnvironment.ApplicationPhysicalPath;
             }
             else
