@@ -1,4 +1,9 @@
-set solution=%1
+@echo off
 
-copy "%solution%\Extensions\SampleAnnouncement\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\SampleSprocket\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
+set solution_dir=%1
+set output_dir=%solution_dir%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\
+
+del %solution_dir%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\*.dll
+xcopy %solution_dir%\Extensions\SampleAnnouncement\bin\Debug\*.dll %output_dir% /C /Y
+xcopy %solution_dir%\Extensions\SampleSprocket\bin\Debug\*.dll %output_dir% /C /Y
+xcopy %solution_dir%\Extensions\HelpSprocket\bin\Debug\*.dll %output_dir% /C /Y
