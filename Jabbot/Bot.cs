@@ -135,25 +135,40 @@ namespace Jabbot
             _rooms.Add(room);
         }
 
-        /// <summary>
-        /// Joins a chat room. Changes this to the active room for future messages.
-        /// </summary>
-        public void Join(string room)
-        {
-            Send("/join " + room);
+		/// <summary>
+		/// Joins a chat room. Changes this to the active room for future messages.
+		/// </summary>
+		public void Join(string room)
+		{
+            if (_rooms.Contains(room)) return;
+
+			Send("/join " + room);
 
             // Add the room to the list
             _rooms.Add(room);
         }
 
         /// <summary>
-        /// Sets the Bot's gravatar email
+        /// Leaves a chat room. 
         /// </summary>
-        /// <param name="gravatarEmail"></param>
-        public void Gravatar(string gravatarEmail)
+        public void Leave(string room)
         {
-            Send("/gravatar " + gravatarEmail);
+            if (!_rooms.Contains(room)) return;
+
+            Send("/leave " + room);
+
+            // Add the room to the list
+            _rooms.Remove(room);
         }
+
+		/// <summary>
+		/// Sets the Bot's gravatar email
+		/// </summary>
+		/// <param name="gravatarEmail"></param>
+		public void Gravatar(string gravatarEmail)
+		{
+			Send("/gravatar " + gravatarEmail);
+		}
 
         /// <summary>
         /// Say something to the active room.
@@ -327,7 +342,6 @@ namespace Jabbot
                     Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
                 }
             });
-
         }
 
         private void OnLeave(dynamic user)
