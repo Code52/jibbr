@@ -2,7 +2,7 @@
 
 namespace Jabbot.CommandSprockets
 {
-    public interface IAnnouncement
+    public interface IAnnounce
     {
         TimeSpan Interval { get; }
         void Execute(Bot bot);

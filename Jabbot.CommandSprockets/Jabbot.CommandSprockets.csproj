@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandSprocket.cs" />
-    <Compile Include="IAnnouncement.cs" />
+    <Compile Include="IAnnounce.cs" />
     <Compile Include="ICommandSprocket.cs" />
     <Compile Include="UnhandledCommandSprocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

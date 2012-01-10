@@ -135,14 +135,14 @@ namespace Jabbot
             _rooms.Add(room);
         }
 
-		/// <summary>
-		/// Joins a chat room. Changes this to the active room for future messages.
-		/// </summary>
-		public void Join(string room)
-		{
+        /// <summary>
+        /// Joins a chat room. Changes this to the active room for future messages.
+        /// </summary>
+        public void Join(string room)
+        {
             if (_rooms.Contains(room)) return;
 
-			Send("/join " + room);
+            Send("/join " + room);
 
             // Add the room to the list
             _rooms.Add(room);
@@ -161,14 +161,14 @@ namespace Jabbot
             _rooms.Remove(room);
         }
 
-		/// <summary>
-		/// Sets the Bot's gravatar email
-		/// </summary>
-		/// <param name="gravatarEmail"></param>
-		public void Gravatar(string gravatarEmail)
-		{
-			Send("/gravatar " + gravatarEmail);
-		}
+        /// <summary>
+        /// Sets the Bot's gravatar email
+        /// </summary>
+        /// <param name="gravatarEmail"></param>
+        public void Gravatar(string gravatarEmail)
+        {
+            Send("/gravatar " + gravatarEmail);
+        }
 
         /// <summary>
         /// Say something to the active room.
@@ -414,8 +414,8 @@ namespace Jabbot
 
         private static string GetExtensionsPath()
         {
-            var rootPath = HostingEnvironment.IsHosted 
-                ? HostingEnvironment.ApplicationPhysicalPath 
+            var rootPath = HostingEnvironment.IsHosted
+                ? HostingEnvironment.ApplicationPhysicalPath
                 : Directory.GetCurrentDirectory();
 
             return Path.Combine(rootPath, ExtensionsFolder);
