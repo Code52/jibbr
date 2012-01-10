@@ -22,7 +22,6 @@ namespace Jabbot.ConsoleBotHost
                 _scheduledAnnouncements.Add(task, startTime.Add(task.Interval));
             }
 
-        
             _timer.Elapsed += HandleResult;
             _timer.Start();
         }

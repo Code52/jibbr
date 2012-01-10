@@ -22,7 +22,7 @@ namespace SampleAnnouncement
             if (offset.IsDaylightSavingTime(startingPoint))
                 now = now.AddHours(1);
 
-            var message = string.Format("The time in AEDST (Sydney time) is now {0}", now.ToString("hh:mm:ss, dd MMMM yy"));
+            var message = string.Format("The time in AEDST (Sydney time) is now {0}", now.ToString("hh:mm:ss, dd MMMM yyyy tt"));
 
             foreach (var room in bot.Rooms)
             {
