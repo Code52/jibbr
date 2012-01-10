@@ -43,7 +43,7 @@ namespace Jabbot.CommandSprockets
             }
             catch (InvalidOperationException e)
             {
-                Bot.PrivateReply(Message.FromUser, e.GetBaseException().Message);
+                Bot.PrivateReply(Message.Sender, e.GetBaseException().Message);
             }
             return false;
         }

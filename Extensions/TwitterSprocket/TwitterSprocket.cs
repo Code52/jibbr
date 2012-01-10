@@ -4,7 +4,7 @@ using System.Linq;
 using Jabbot.CommandSprockets;
 using TweetSharp;
 
-namespace Jibbr.Sprockets
+namespace TwitterSprocket
 {
 	public class TwitterSprocket : CommandSprocket
 	{
@@ -44,13 +44,13 @@ namespace Jibbr.Sprockets
 				}
 			}
 
-			Bot.Say("fetching " + tweetLimit + " message(s) from ze twitter?", Message.Room);
+			Bot.Say("fetching " + tweetLimit + " message(s) from ze twitter?", Message.Receiver);
 
 			var tweets = twitterService.ListTweetsOnSpecifiedUserTimeline("code_52").Take(tweetLimit);
 
 			foreach (var tweet in tweets)
 			{
-				Bot.Say(tweet.TextDecoded, Message.Room);
+				Bot.Say(tweet.TextDecoded, Message.Receiver);
 			}
 
 			return true;

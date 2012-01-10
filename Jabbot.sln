@@ -10,6 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C05299
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.ConsoleBotHost", "Jabbot.ConsoleBotHost\Jabbot.ConsoleBotHost.csproj", "{30F1CA67-DFD8-4FF3-A3AF-97ADD2F7792E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{820F5965-A377-4A01-8BBE-D11E3415FC04} = {820F5965-A377-4A01-8BBE-D11E3415FC04}
+		{00F173A5-6E02-412A-A885-774DFAEB9612} = {00F173A5-6E02-412A-A885-774DFAEB9612}
+		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14} = {C6B7B6F7-D895-4559-84C6-E5B5F0664B14}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.CommandSprockets", "Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj", "{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}"
 EndProject
