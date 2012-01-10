@@ -54,6 +54,24 @@ public class MathSproket : RegexSproket
               });
     }
 }
+
+[Export(typeof(IAnnounce))]
+public class EchoAnnouncement : IAnnounce
+{
+    public TimeSpan Interval
+    {
+        get { return TimeSpan.FromMinutes(5); }
+    }
+
+    public void Execute(Bot bot)
+    {
+        // TODO: something smarter
+        foreach (var room in bot.Rooms)
+        {
+            bot.Say("Hello world!", room);
+        }
+    }
+}
 ```
 
 code52.org
