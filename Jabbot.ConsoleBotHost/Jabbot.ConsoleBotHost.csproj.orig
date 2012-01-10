@@ -97,6 +97,11 @@
       <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
       <Name>Jabbot</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Jibbr.Sprockets\Jibbr.Sprockets.csproj">
+      <Project>{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}</Project>
+      <Name>Jibbr.Sprockets</Name>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -127,7 +132,16 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)get-packages.cmd" "$(SolutionDir)"</PostBuildEvent>
+<<<<<<< HEAD
+    <PostBuildEvent>REM "$(ProjectDir)post-build.cmd" $(TargetDir)
+DEL "$(TargetDir)Sprockets"
+MKDIR "$(TargetDir)Sprockets"
+MOVE "$(TargetDir)Jibbr.Sprockets.dll" "$(TargetDir)Sprockets"
+MOVE "$(TargetDir)Jibbr.Sprockets.pdb" "$(TargetDir)Sprockets"</PostBuildEvent>
+=======
+    <PostBuildEvent>$(ProjectDir)get-packages.cmd $(SolutionDir)
+</PostBuildEvent>
+>>>>>>> 1a2dc81439ca68c61d91f4580076c20e5c528925
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

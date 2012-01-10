@@ -102,10 +102,12 @@ namespace Jabbot
                 InitializeContainer();
 
                 _chat.On<dynamic, string>("addMessage", ProcessMessage);
+
                 _chat.On<string, string, string>("sendPrivateMessage", ProcessPrivateMessage);
+
                 _chat.On("leave", OnLeave);
+
                 _chat.On("addUser", OnJoin);
-				_chat.On<string, string, dynamic>("sendPrivateMessage", ProcessPrivateMessage);
 
                 _chat.On<IEnumerable<string>>("logOn", OnLogOn);
 

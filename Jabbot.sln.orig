@@ -13,13 +13,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.ConsoleBotHost", "Ja
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.CommandSprockets", "Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj", "{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}"
 EndProject
+<<<<<<< HEAD
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jibbr.Sprockets", "Jibbr.Sprockets\Jibbr.Sprockets.csproj", "{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}"
+=======
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{7170D00A-149E-427F-A7F9-FBA91CE3F9D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleAnnouncement", "Extensions\SampleAnnouncement\SampleAnnouncement.csproj", "{00F173A5-6E02-412A-A885-774DFAEB9612}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSprocket", "Extensions\SampleSprocket\SampleSprocket.csproj", "{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterSprocket", "Extensions\TwitterSprocket\TwitterSprocket.csproj", "{820F5965-A377-4A01-8BBE-D11E3415FC04}"
+>>>>>>> 1a2dc81439ca68c61d91f4580076c20e5c528925
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,18 @@ Global
 		{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}.Release|x86.ActiveCfg = Release|Any CPU
+<<<<<<< HEAD
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3A6197A8-F8D8-4AA6-B6DA-DC9A80CD95FB}.Release|x86.ActiveCfg = Release|Any CPU
+=======
 		{00F173A5-6E02-412A-A885-774DFAEB9612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{00F173A5-6E02-412A-A885-774DFAEB9612}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00F173A5-6E02-412A-A885-774DFAEB9612}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -82,16 +96,7 @@ Global
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}.Release|x86.ActiveCfg = Release|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{820F5965-A377-4A01-8BBE-D11E3415FC04}.Release|x86.ActiveCfg = Release|Any CPU
+>>>>>>> 1a2dc81439ca68c61d91f4580076c20e5c528925
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +104,5 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{00F173A5-6E02-412A-A885-774DFAEB9612} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
-		{820F5965-A377-4A01-8BBE-D11E3415FC04} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 	EndGlobalSection
 EndGlobal
