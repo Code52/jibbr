@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Globalization;
+using System.ComponentModel.Composition;
 using Jabbot;
 using Jabbot.CommandSprockets;
 
 namespace SampleAnnouncement
 {
+    [Export(typeof(IAnnounce))]
     public class EchoAnnouncement : IAnnounce
     {
         public TimeSpan Interval
@@ -14,8 +15,12 @@ namespace SampleAnnouncement
 
         public void Execute(Bot bot)
         {
-            var offset = TimeZoneInfo.FindSystemTimeZoneById("Australian Eastern Standard Time");
-            var now = DateTime.UtcNow.Add(offset.BaseUtcOffset);
+            var offset = TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time");
+            var startingPoint = DateTime.UtcNow;
+            var now = startingPoint.Add(offset.BaseUtcOffset);
+
+            if (offset.IsDaylightSavingTime(startingPoint))
+                now = now.AddHours(1);
 
             var message = string.Format("The time in AEDST (Sydney time) is now {0}", now.ToString("hh:mm:ss, dd MMMM yy"));
 
