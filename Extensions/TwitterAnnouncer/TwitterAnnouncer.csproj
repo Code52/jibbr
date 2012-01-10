@@ -8,8 +8,8 @@
     <ProjectGuid>{820F5965-A377-4A01-8BBE-D11E3415FC04}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TwitterSprocket</RootNamespace>
-    <AssemblyName>TwitterSprocket</AssemblyName>
+    <RootNamespace>TwitterAnnouncer</RootNamespace>
+    <AssemblyName>TwitterAnnouncer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\jibbr\</SolutionDir>

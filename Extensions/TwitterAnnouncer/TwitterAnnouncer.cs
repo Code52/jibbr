@@ -7,7 +7,7 @@ using Jabbot;
 using Jabbot.CommandSprockets;
 using TweetSharp;
 
-namespace TwitterSprocket
+namespace TwitterAnnouncer
 {
 	public class TwitterAnnouncer : IAnnounce
 	{
@@ -15,18 +15,11 @@ namespace TwitterSprocket
 		private static readonly string ConsumerSecret = ConfigurationManager.AppSettings["Twitter.ConsumerSecret"];
 		private static readonly string Token = ConfigurationManager.AppSettings["Twitter.Token"];
 		private static readonly string TokenSecret = ConfigurationManager.AppSettings["Twitter.TokenSecret"];
+		private static readonly string TwitterUserName = ConfigurationManager.AppSettings["Twitter.UserName"];
 
-		private readonly int tweetLimit;
-		private readonly string twitterName;
+		private readonly int tweetLimit = 5;
 		private DateTime lastRun = DateTime.Now;
 		private TwitterStatus latestTweet;
-
-		public TwitterAnnouncer()
-		{
-			tweetLimit = 5;
-
-			twitterName = "code_52";
-		}
 
 		public TimeSpan Interval
 		{
@@ -54,11 +47,11 @@ namespace TwitterSprocket
 
 			if (latestTweet == null)
 			{
-				latestTweets = twitterService.ListTweetsOnSpecifiedUserTimeline(twitterName).ToList();
+				latestTweets = twitterService.ListTweetsOnSpecifiedUserTimeline(TwitterUserName, tweetLimit).ToList();
 			}
 			else
 			{
-				latestTweets = twitterService.ListTweetsOnSpecifiedUserTimelineSince(twitterName, latestTweet.Id).ToList();
+				latestTweets = twitterService.ListTweetsOnSpecifiedUserTimelineSince(TwitterUserName, latestTweet.Id, tweetLimit).ToList();
 			}
 
 			if (!latestTweets.Any())
@@ -68,13 +61,11 @@ namespace TwitterSprocket
 
 			latestTweet = latestTweets.First();
 
-			var tweets = latestTweets.Take(tweetLimit).ToList();
-
 			foreach (var room in bot.Rooms)
 			{
-				bot.Say(string.Format("Latests tweets from @{0}", twitterName), room);
+				bot.Say(string.Format("Latests tweets from @{0}", TwitterUserName), room);
 
-				foreach (var tweet in tweets)
+				foreach (var tweet in latestTweets)
 				{
 					bot.Say(tweet.TextDecoded, room);
 				}

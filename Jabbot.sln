@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleAnnouncement", "Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSprocket", "Extensions\SampleSprocket\SampleSprocket.csproj", "{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterSprocket", "Extensions\TwitterSprocket\TwitterSprocket.csproj", "{820F5965-A377-4A01-8BBE-D11E3415FC04}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterAnnouncer", "Extensions\TwitterAnnouncer\TwitterAnnouncer.csproj", "{820F5965-A377-4A01-8BBE-D11E3415FC04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
