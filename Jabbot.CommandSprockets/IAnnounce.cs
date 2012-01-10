@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 
 namespace Jabbot.CommandSprockets
 {
-    public interface IAnnounce
-    {
-        TimeSpan Interval { get; }
-        void Execute(Bot bot);
-    }
+	[InheritedExport]
+	public interface IAnnounce
+	{
+		TimeSpan Interval { get; }
+		void Execute(Bot bot);
+	}
 }

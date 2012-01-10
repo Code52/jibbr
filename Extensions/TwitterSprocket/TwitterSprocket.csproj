@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TwitterSprocket.cs" />
+    <Compile Include="TwitterAnnouncer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">

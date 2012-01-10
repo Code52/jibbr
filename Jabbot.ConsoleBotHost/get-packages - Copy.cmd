@@ -1,5 +1,10 @@
-xcopy /Y "F:\Git Repository\jibbr\Extensions\SampleAnnouncement\bin\Debug\*.dll" "F:\Git Repository\jibbr\Jabbot.ConsoleBotHost\bin\Debug\Sprockets"
-xcopy /Y "F:\Git Repository\jibbr\Extensions\SampleAnnouncement\bin\Debug\*.pdb" "F:\Git Repository\jibbr\Jabbot.ConsoleBotHost\bin\Debug\Sprockets"
+@echo off
+set solution=%1
+set solution=%solution:"=%
 
-xcopy /Y "F:\Git Repository\jibbr\Extensions\SampleSprocket\bin\Debug\*.dll" "F:\Git Repository\jibbr\Jabbot.ConsoleBotHost\bin\Debug\Sprockets"
-xcopy /Y "F:\Git Repository\jibbr\Extensions\SampleSprocket\bin\Debug\*.pdb" "F:\Git Repository\jibbr\Jabbot.ConsoleBotHost\bin\Debug\Sprockets"
+copy "%solution%\Extensions\SampleAnnouncement\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
+copy "%solution%\Extensions\SampleAnnouncement\bin\Debug\*.pdb" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
+copy "%solution%\Extensions\SampleSprocket\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
+copy "%solution%\Extensions\SampleSprocket\bin\Debug\*.pdb" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
+copy "%solution%\Extensions\TwitterSprocket\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
+copy "%solution%\Extensions\TwitterSprocket\bin\Debug\*.pdb" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
