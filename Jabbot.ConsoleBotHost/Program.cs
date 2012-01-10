@@ -1,6 +1,11 @@
 ﻿using System;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Web.Hosting;
+using Jabbot.CommandSprockets;
 
 namespace Jabbot.ConsoleBotHost
 {
@@ -12,7 +17,9 @@ namespace Jabbot.ConsoleBotHost
         private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
         private static bool _appShouldExit = false;
 
-        
+
+        private const string ExtensionsFolder = "Sprockets";
+
         static void Main(string[] args)
         {
             Console.WriteLine("Jabbot Bot Runner Starting...");
@@ -26,13 +33,26 @@ namespace Jabbot.ConsoleBotHost
         {
             try
             {
+                var scheduler = new Scheduler();
+
+                var container = CreateCompositionContainer();
+                // Add all the sprockets to the sprocket list
+                var announcements = container.GetExportedValues<IAnnounce>();
+
                 Console.WriteLine(String.Format("Connecting to {0}...", _serverUrl));
                 Bot bot = new Bot(_serverUrl, _botName, _botPassword);
                 bot.PowerUp();
                 JoinRooms(bot);
+
+
+                scheduler.Start(announcements, bot);
+
                 Console.Write("Press enter to quit...");
                 Console.ReadLine();
+
+                scheduler.Stop();
                 bot.ShutDown();
+
                 _appShouldExit = true;
             }
             catch (Exception e)
@@ -73,6 +93,34 @@ namespace Jabbot.ConsoleBotHost
             }
 
             return true;
+        }
+
+        private static CompositionContainer CreateCompositionContainer()
+        {
+            ComposablePartCatalog catalog;
+
+            var extensionsPath = GetExtensionsPath();
+
+            // If the extensions folder exists then use them
+            if (Directory.Exists(extensionsPath))
+            {
+                catalog = new AggregateCatalog(new AssemblyCatalog(typeof(Bot).Assembly), new DirectoryCatalog(extensionsPath, "*.dll"));
+            }
+            else
+            {
+                catalog = new AssemblyCatalog(typeof(Bot).Assembly);
+            }
+
+            return new CompositionContainer(catalog);
+        }
+
+        private static string GetExtensionsPath()
+        {
+            var rootPath = HostingEnvironment.IsHosted
+                ? HostingEnvironment.ApplicationPhysicalPath
+                : Directory.GetCurrentDirectory();
+
+            return Path.Combine(rootPath, ExtensionsFolder);
         }
     }
 }
