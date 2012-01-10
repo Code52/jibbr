@@ -11,6 +11,8 @@ namespace Jabbot.ConsoleBotHost
         private static readonly string _botPassword = ConfigurationManager.AppSettings["Bot.Password"];
         private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
         private static bool _appShouldExit = false;
+
+        
         static void Main(string[] args)
         {
             Console.WriteLine("Jabbot Bot Runner Starting...");
@@ -18,7 +20,6 @@ namespace Jabbot.ConsoleBotHost
             {
                 RunBot();
             }
-
         }
 
         private static void RunBot()
