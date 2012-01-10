@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.CommandSprockets", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{7170D00A-149E-427F-A7F9-FBA91CE3F9D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleAnnouncement", "SampleAnnouncement\SampleAnnouncement.csproj", "{00F173A5-6E02-412A-A885-774DFAEB9612}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleAnnouncement", "Extensions\SampleAnnouncement\SampleAnnouncement.csproj", "{00F173A5-6E02-412A-A885-774DFAEB9612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSprocket", "SampleSprocket\SampleSprocket.csproj", "{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSprocket", "Extensions\SampleSprocket\SampleSprocket.csproj", "{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
