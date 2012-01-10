@@ -24,8 +24,8 @@ namespace Jabbot
 
         private const string ExtensionsFolder = "Sprockets";
 
-        private ComposablePartCatalog _catalog = null;
-        private CompositionContainer _container = null;
+        private ComposablePartCatalog _catalog;
+        private CompositionContainer _container;
 
 
         public Bot(string url, string name, string password)
@@ -40,26 +40,14 @@ namespace Jabbot
 
         public ICredentials Credentials
         {
-            get
-            {
-                return _connection.Credentials;
-            }
-            set
-            {
-                _connection.Credentials = value;
-            }
+            get { return _connection.Credentials; }
+            set { _connection.Credentials = value; }
         }
 
         public event Action Disconnected
         {
-            add
-            {
-                _connection.Closed += value;
-            }
-            remove
-            {
-                _connection.Closed -= value;
-            }
+            add { _connection.Closed += value; }
+            remove { _connection.Closed -= value; }
         }
 
         public event Action<ChatMessage> MessageReceived;
@@ -79,7 +67,6 @@ namespace Jabbot
         {
             _sprockets.Remove(sprocket);
         }
-
 
         /// <summary>
         /// Add a sprocket to the bot instance
@@ -115,11 +102,9 @@ namespace Jabbot
                 InitializeContainer();
 
                 _chat.On<dynamic, string>("addMessage", ProcessMessage);
-
+                _chat.On<string, string, string>("sendPrivateMessage", ProcessPrivateMessage);
                 _chat.On("leave", OnLeave);
-
                 _chat.On("addUser", OnJoin);
-
                 _chat.On<IEnumerable<string>>("logOn", OnLogOn);
 
                 // Start the connection and wait
@@ -155,10 +140,25 @@ namespace Jabbot
         /// </summary>
         public void Join(string room)
         {
+            if (_rooms.Contains(room)) return;
+
             Send("/join " + room);
 
             // Add the room to the list
             _rooms.Add(room);
+        }
+
+        /// <summary>
+        /// Leaves a chat room. 
+        /// </summary>
+        public void Leave(string room)
+        {
+            if (!_rooms.Contains(room)) return;
+
+            Send("/leave " + room);
+
+            // Add the room to the list
+            _rooms.Remove(room);
         }
 
         /// <summary>
@@ -267,36 +267,53 @@ namespace Jabbot
             Send(what);
         }
 
+        private void ProcessPrivateMessage(string sender, string receiver, string message)
+        {
+            if (sender.Equals(receiver))
+            {
+                return;
+            }
+
+            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(message), sender, receiver);
+
+            ProcessChatMessages(chatMessage);
+        }
+
         private void ProcessMessage(dynamic message, string room)
         {
             // Run this on another thread since the signalr client doesn't like it
             // when we spend a long time processing messages synchronously
+            string content = message.Content;
+            string name = message.User.Name;
+
+            // Ignore replies from self
+            if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            // We're going to process commands for the bot here
+            var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+
+            ProcessChatMessages(chatMessage);
+        }
+
+        private void ProcessChatMessages(ChatMessage message)
+        {
             Task.Factory.StartNew(() =>
             {
-                string content = message.Content;
-                string name = message.User.Name;
-
-                // Ignore replies from self
-                if (name.Equals(Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-
-                // We're going to process commands for the bot here
-                var chatMessage = new ChatMessage(WebUtility.HtmlDecode(content), name, room);
+                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.FromUser, message.Room, message.Content));
 
                 if (MessageReceived != null)
                 {
-                    MessageReceived(chatMessage);
+                    MessageReceived(message);
                 }
 
-                bool handled = false;
+                var handled = false;
 
-                // Loop over the registered sprockets
                 foreach (var handler in _sprockets)
                 {
-                    // Stop at the first one that handled the message
-                    if (handler.Handle(chatMessage, this))
+                    if (handler.Handle(message, this))
                     {
                         handled = true;
                         break;
@@ -309,7 +326,7 @@ namespace Jabbot
                     foreach (var handler in _unhandledMessageSprockets)
                     {
                         // Stop at the first one that handled the message
-                        if (handler.Handle(chatMessage, this))
+                        if (handler.Handle(message, this))
                         {
                             break;
                         }
@@ -397,16 +414,9 @@ namespace Jabbot
 
         private static string GetExtensionsPath()
         {
-            string rootPath = null;
-            if (HostingEnvironment.IsHosted)
-            {
-
-                rootPath = HostingEnvironment.ApplicationPhysicalPath;
-            }
-            else
-            {
-                rootPath = Directory.GetCurrentDirectory();
-            }
+            var rootPath = HostingEnvironment.IsHosted
+                ? HostingEnvironment.ApplicationPhysicalPath
+                : Directory.GetCurrentDirectory();
 
             return Path.Combine(rootPath, ExtensionsFolder);
         }
