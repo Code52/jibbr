@@ -157,11 +157,26 @@ namespace Jabbot
 		/// </summary>
 		public void Join(string room)
 		{
+            if (_rooms.Contains(room)) return;
+
 			Send("/join " + room);
 
 			// Add the room to the list
 			_rooms.Add(room);
 		}
+
+        /// <summary>
+        /// Leaves a chat room. 
+        /// </summary>
+        public void Leave(string room)
+        {
+            if (!_rooms.Contains(room)) return;
+
+            Send("/leave " + room);
+
+            // Add the room to the list
+            _rooms.Remove(room);
+        }
 
 		/// <summary>
 		/// Sets the Bot's gravatar email
