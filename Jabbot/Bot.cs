@@ -5,11 +5,10 @@ using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Jabbot.Models;
-using Jabbot.Sprockets;
+using Jabbot.Sprockets.Core;
 using SignalR.Client.Hubs;
 
 namespace Jabbot
@@ -20,6 +19,7 @@ namespace Jabbot
         private readonly IHubProxy _chat;
         private readonly string _password;
         private readonly List<ISprocket> _sprockets = new List<ISprocket>();
+        private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
         private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private const string ExtensionsFolder = "Sprockets";
@@ -80,6 +80,23 @@ namespace Jabbot
             _sprockets.Remove(sprocket);
         }
 
+
+        /// <summary>
+        /// Add a sprocket to the bot instance
+        /// </summary>
+        public void AddUnhandledMessageSprocket(IUnhandledMessageSprocket sprocket)
+        {
+            _unhandledMessageSprockets.Add(sprocket);
+        }
+
+        /// <summary>
+        /// Remove a sprocket from the bot instance
+        /// </summary>
+        public void RemoveUnhandledMessageSprocket(IUnhandledMessageSprocket sprocket)
+        {
+            _unhandledMessageSprockets.Remove(sprocket);
+        }
+
         /// <summary>
         /// Remove all sprockets
         /// </summary>
@@ -104,9 +121,9 @@ namespace Jabbot
                 _chat.On("addUser", OnJoin);
 
                 _chat.On<IEnumerable<string>>("logOn", OnLogOn);
-
+                
                 // Start the connection and wait
-                _connection.Start().Wait();
+                _connection.Start(SignalR.Client.Transports.Transport.LongPolling).Wait();
 
                 // Join the chat
                 var success = _chat.Invoke<bool>("Join").Result;
@@ -143,6 +160,16 @@ namespace Jabbot
             // Add the room to the list
             _rooms.Add(room);
         }
+
+        /// <summary>
+        /// Sets the Bot's gravatar email
+        /// </summary>
+        /// <param name="gravatarEmail"></param>
+        public void Gravatar(string gravatarEmail)
+        {
+            Send("/gravatar " + gravatarEmail);
+        }
+       
 
         /// <summary>
         /// Say something to the active room.
@@ -264,15 +291,32 @@ namespace Jabbot
                     MessageReceived(chatMessage);
                 }
 
+                bool handled = false;
+
                 // Loop over the registered sprockets
                 foreach (var handler in _sprockets)
                 {
                     // Stop at the first one that handled the message
                     if (handler.Handle(chatMessage, this))
                     {
+                        handled = true;
                         break;
                     }
-                 }
+                }
+
+                if (!handled)
+                {
+                    // Loop over the unhandled message sprockets
+                    foreach (var handler in _unhandledMessageSprockets)
+                    {
+                        // Stop at the first one that handled the message
+                        if (handler.Handle(chatMessage, this))
+                        {
+                            break;
+                        }
+                    }
+
+                }
             })
             .ContinueWith(task =>
             {
@@ -308,8 +352,13 @@ namespace Jabbot
             // Add all the sprockets to the sprocket list
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
-                Trace.WriteLine(String.Format("Adding {0}...", sprocket.GetType().Name));
                 AddSprocket(sprocket);
+            }
+
+            // Add all the sprockets to the sprocket list
+            foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
+            {
+                AddUnhandledMessageSprocket(sprocket);
             }
         }
 
