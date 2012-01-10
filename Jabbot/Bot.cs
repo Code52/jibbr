@@ -97,6 +97,11 @@ namespace Jabbot
             _unhandledMessageSprockets.Remove(sprocket);
         }
 
+        public void DoSomething()
+        {
+            
+        }
+
         /// <summary>
         /// Remove all sprockets
         /// </summary>
