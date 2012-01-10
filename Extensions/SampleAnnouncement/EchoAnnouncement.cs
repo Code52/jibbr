@@ -10,7 +10,7 @@ namespace SampleAnnouncement
     {
         public TimeSpan Interval
         {
-            get { return TimeSpan.FromHours(1); }
+            get { return TimeSpan.FromMinutes(1); }
         }
 
         public void Execute(Bot bot)
