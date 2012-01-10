@@ -2,8 +2,6 @@
 
 ### A Jabbr bot designed for collaborative projects
 
-#### another code52 project
-
 Forking from Jabbot - a bot API for [JabbR](https://github.com/davidfowl/JabbR).
 
 It's as easy as:
@@ -78,5 +76,8 @@ public class EchoAnnouncement : IAnnounce
 }
 ```
 
-code52.org
+### another code52 project
+
+#### code52.org
+
 =======
