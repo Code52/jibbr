@@ -15,11 +15,13 @@ namespace GithubAnnouncements
     {
         const string UrlFormat = "https://api.github.com/repos/{0}/{1}";
         const string ProjectCommitsFeed = "/commits";
-        const string ProjectPullRequestsFeed = "/pulls";
+        const string OpenPullRequestsFeed = "/pulls?state=open";
+        const string ClosedPullRequestsFeed = "/pulls?state=closed";
         const string ProjectWatchersFeed = "/watchers";
         const string ProjectForksFeed = "/forks";
         const string ProjectIssuesFeed = "/issues";
-        private const string LatestCommitKey = "LastCommitSHA";
+        const string LatestCommitKey = "LastCommitSHA";
+        private const string MergeRequestsKey = "MergeRequests";
 
         private readonly ISettingsService _storage;
         private readonly string _account;
@@ -90,13 +92,69 @@ namespace GithubAnnouncements
 
         private void NotifyPullRequests(Bot bot)
         {
-            var pullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectPullRequestsFeed));
+            var openPullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(OpenPullRequestsFeed));
+            var closedPullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ClosedPullRequestsFeed));
 
-            // TODO: message if new pull requests raised
-            // TODO: message if pull requests merged
+            IDictionary<int, string> existingPullRequests = new Dictionary<int, string>();
+
+            if (_storage.ContainsKey(MergeRequestsKey))
+            {
+                existingPullRequests = _storage.Get<IDictionary<int, string>>(MergeRequestsKey);
+            }
+
+            foreach (var request in closedPullRequests)
+            {
+                int id;
+                if (!int.TryParse(request.number.ToString(), out id))
+                    continue;
+
+                if (existingPullRequests.ContainsKey(id))
+                {
+                    // send message
+                    string firstLine = string.Format("{0}'s pull request '{1}' has been closed",
+                                                     request.user.login,
+                                                     request.title);
+
+                    var result = request.merged_at.ToString();
+                    var secondLine = !string.IsNullOrWhiteSpace(result)
+                        ? "The merge request was accepted. Awesome!"
+                        : "The merge request was not accepted. Sadface!";
+
+                    bot.SayToAllRooms(firstLine);
+                    bot.SayToAllRooms(secondLine);
+
+                    // cleanup request
+                    existingPullRequests.Remove(id);
+                }
+            }
+
+            foreach (var request in openPullRequests)
+            {
+                int id;
+                if (!int.TryParse(request.number.ToString(), out id))
+                    continue;
+
+                if (!existingPullRequests.ContainsKey(id))
+                {
+                    // send message
+                    string firstLine = string.Format("{0} has opened a pull request named '{1}' for {2}/{3}",
+                                                     request.user.login,
+                                                     request.title,
+                                                     _account,
+                                                     _repo);
+                    string secondLine = string.Format("Please review the request at {0}", request.html_url);
+                    bot.SayToAllRooms(firstLine);
+                    bot.SayToAllRooms(secondLine);
+
+                    // track request
+                    existingPullRequests.Add(id, "open");
+                }
+            }
+
+            _storage.Set(MergeRequestsKey, existingPullRequests);
+            _storage.Save();
         }
 
-       
         private void NotifyForks(Bot bot)
         {
             var forks = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectForksFeed));
