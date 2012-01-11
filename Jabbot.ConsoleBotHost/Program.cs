@@ -5,7 +5,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web.Hosting;
-using Jabbot.CommandSprockets;
+using Jabbot.Sprockets.Core;
 
 namespace Jabbot.ConsoleBotHost
 {
