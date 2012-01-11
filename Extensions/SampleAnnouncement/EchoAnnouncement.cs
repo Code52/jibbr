@@ -1,16 +1,14 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using Jabbot;
-using Jabbot.CommandSprockets;
+using Jabbot.Sprockets.Core;
 
 namespace SampleAnnouncement
 {
-    [Export(typeof(IAnnounce))]
     public class EchoAnnouncement : IAnnounce
     {
         public TimeSpan Interval
         {
-            get { return TimeSpan.FromMinutes(1); }
+            get { return TimeSpan.FromMinutes(10); }
         }
 
         public void Execute(Bot bot)
