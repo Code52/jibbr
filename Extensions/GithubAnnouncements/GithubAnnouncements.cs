@@ -23,6 +23,7 @@ namespace GithubAnnouncements
         const string LatestCommitKey = "LastCommitSHA";
         const string MergeRequestsKey = "MergeRequests";
         const string WatchersKey = "Watchers";
+        const string ForkStatusKey = "ForkStatus";
 
         readonly ISettingsService _storage;
         readonly string _account;
@@ -48,16 +49,16 @@ namespace GithubAnnouncements
         {
             //NotifyLatestCommit(bot);
             //NotifyPullRequests(bot);
-            //NotifyForks(bot);
+            NotifyForks(bot);
             //NotifyIssues(bot);
-            NotifyWatchers(bot);
+            //NotifyWatchers(bot);
         }
 
         private void NotifyLatestCommit(Bot bot)
         {
             var commits = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectCommitsFeed)).ToList();
             var latestCommit = commits.FirstOrDefault();
-            if (latestCommit != null) return;
+            if (latestCommit == null) return;
 
             var lastCommit = "";
             if (_storage.ContainsKey(LatestCommitKey))
@@ -79,7 +80,7 @@ namespace GithubAnnouncements
 
             // create string to send as message
             var sb = new StringBuilder();
-            sb.AppendFormat("There are new commits on the {0}/{1} repository\r\n", _account, _repo);
+            sb.AppendFormat("github: there are new commits in the {0}/{1} repository\r\n", _account, _repo);
             foreach (var committer in groupedCommits)
             {
                 sb.AppendFormat("{0} had {1} commits\r\n", committer.Key, committer.Count());
@@ -109,24 +110,24 @@ namespace GithubAnnouncements
                 if (!int.TryParse(request.number.ToString(), out id))
                     continue;
 
-                if (existingPullRequests.ContainsKey(id))
-                {
-                    // send message
-                    string firstLine = string.Format("{0}'s pull request '{1}' has been closed",
-                                                     request.user.login,
-                                                     request.title);
+                if (!existingPullRequests.ContainsKey(id))
+                    continue;
 
-                    var result = request.merged_at.ToString();
-                    var secondLine = !string.IsNullOrWhiteSpace(result)
-                        ? "The merge request was accepted. Awesome!"
-                        : "The merge request was not accepted. Sadface!";
+                // send message
+                string firstLine = string.Format("github: {0}'s pull request '{1}' has been closed",
+                                                 request.user.login,
+                                                 request.title);
 
-                    bot.SayToAllRooms(firstLine);
-                    bot.SayToAllRooms(secondLine);
+                var result = request.merged_at.ToString();
+                var secondLine = !string.IsNullOrWhiteSpace(result)
+                                     ? "The merge request was accepted. Awesome!"
+                                     : "The merge request was not accepted. Sadface!";
 
-                    // cleanup request
-                    existingPullRequests.Remove(id);
-                }
+                bot.SayToAllRooms(firstLine);
+                bot.SayToAllRooms(secondLine);
+
+                // cleanup request
+                existingPullRequests.Remove(id);
             }
 
             foreach (var request in openPullRequests)
@@ -135,21 +136,21 @@ namespace GithubAnnouncements
                 if (!int.TryParse(request.number.ToString(), out id))
                     continue;
 
-                if (!existingPullRequests.ContainsKey(id))
-                {
-                    // send message
-                    string firstLine = string.Format("{0} has opened a pull request named '{1}' for {2}/{3}",
-                                                     request.user.login,
-                                                     request.title,
-                                                     _account,
-                                                     _repo);
-                    string secondLine = string.Format("Please review the request at {0}", request.html_url);
-                    bot.SayToAllRooms(firstLine);
-                    bot.SayToAllRooms(secondLine);
+                if (existingPullRequests.ContainsKey(id))
+                    continue;
 
-                    // track request
-                    existingPullRequests.Add(id, "open");
-                }
+                // send message
+                string firstLine = string.Format("github: {0} has opened a pull request named '{1}' for {2}/{3}",
+                                                 request.user.login,
+                                                 request.title,
+                                                 _account,
+                                                 _repo);
+                string secondLine = string.Format("Please review the request at {0}", request.html_url);
+                bot.SayToAllRooms(firstLine);
+                bot.SayToAllRooms(secondLine);
+
+                // track request
+                existingPullRequests.Add(id, "open");
             }
 
             _storage.Set(MergeRequestsKey, existingPullRequests);
@@ -160,9 +161,51 @@ namespace GithubAnnouncements
         {
             var forks = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectForksFeed));
 
-            // TODO: inspect forks for new commits
+            var feeds = forks.ToDictionary(f => f.owner.login, f => f.url);
+
+            IDictionary<string, string> existingForkStatus = new Dictionary<string, string>();
+            if (_storage.ContainsKey(ForkStatusKey))
+            {
+                existingForkStatus = _storage.Get<IDictionary<string, string>>(ForkStatusKey);
+            }
+
+            foreach (var fork in feeds)
+            {
+                NotifyForkStatus(fork, existingForkStatus, bot);
+            }
+
+            _storage.Set(ForkStatusKey, existingForkStatus);
+            _storage.Save();
         }
 
+        private void NotifyForkStatus(KeyValuePair<dynamic, dynamic> fork, IDictionary<string, string> existingForkStatus, Bot bot)
+        {
+            string url = fork.Value.ToString() + "/commits";
+            var commits = GetResponse<IEnumerable<dynamic>>(url).ToList();
+            var latestCommit = commits.FirstOrDefault();
+            if (latestCommit == null) return;
+
+            string id = fork.Key.ToString();
+
+            var latestSHA = latestCommit.commit.tree.sha.ToString();
+            if (!existingForkStatus.ContainsKey(id))
+            {
+                existingForkStatus.Add(id, latestSHA);
+                return;
+            }
+
+            var lastCommit = existingForkStatus[id];
+            if (lastCommit == latestSHA)
+                return;
+
+            existingForkStatus[id] = latestSHA;
+
+            // find new commits since 
+            var newCommits = commits.TakeWhile(c => c.commit.tree.sha != lastCommit);
+
+            // create string to send as message
+            bot.SayToAllRooms(string.Format("{0} added {1} new commits to his fork", id, newCommits.Count()));
+        }
 
         private void NotifyIssues(Bot bot)
         {
@@ -170,7 +213,6 @@ namespace GithubAnnouncements
 
             // TODO: message if new issues raised
         }
-
 
         private void NotifyWatchers(Bot bot)
         {
