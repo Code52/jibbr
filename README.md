@@ -2,7 +2,9 @@
 
 ### A Jabbr bot designed for collaborative projects
 
-Forking from Jabbot - a bot API for [JabbR](https://github.com/davidfowl/JabbR).
+Extending the Jabbot library - a bot API for [JabbR](https://github.com/davidfowl/JabbR).
+
+## Connecting to a Jabbr Room
 
 It's as easy as:
 
@@ -16,10 +18,10 @@ bot.ShutDown();
 ```
 
 
-## Writing Sprokets
+## Writing Sprockets
 
-Sprokets are things you can plug-in to enhance the behavior of your bot. Simply drop a dll with classes that implement
-ISproket into a Sprokets folder and you're done. Here's an port of the [math.coffee](https://github.com/github/hubot/blob/master/src/scripts/math.coffee) from hubot:
+Sprockets are things you can plug-in to enhance the behavior of your bot. Simply drop a dll with classes that implement
+ISproket into a Sprockets folder and you're done. Here's an port of the [math.coffee](https://github.com/github/hubot/blob/master/src/scripts/math.coffee) from hubot:
 
 ```csharp
 public class MathSproket : RegexSproket
@@ -54,20 +56,18 @@ public class MathSproket : RegexSproket
 }
 ```
 
-A new extension being added to JibbR is for announcement-style extensions. You can specify how often an announcement may occur, and include code to execute for the active bot.
+A new extension being added to JibbR is for announcement-style sprockets. You can specify how often an announcement may occur, and include code to execute for the active bot.
 
 ```csharp
-[Export(typeof(IAnnounce))]
 public class EchoAnnouncement : IAnnounce
 {
     public TimeSpan Interval
     {
-        get { return TimeSpan.FromMinutes(5); }
+        get { return TimeSpan.FromMinutes(10); }
     }
 
     public void Execute(Bot bot)
     {
-        // TODO: something smarter
         foreach (var room in bot.Rooms)
         {
             bot.Say("Hello world!", room);
