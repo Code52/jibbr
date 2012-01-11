@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Configuration;
+using Jabbot.Sprockets.Core;
 using Nancy;
 using System.Diagnostics;
 using MomentApp;
+using TinyIoC;
 
 namespace Jabbot.AspNetBotHost.Modules
 {
@@ -18,8 +21,6 @@ namespace Jabbot.AspNetBotHost.Modules
         {
             _bot = bot;
 
-            if (string.IsNullOrEmpty(_bot.Name))
-                StartBot();
             Get["/start"] = _ =>
             {
                 try
@@ -56,7 +57,7 @@ namespace Jabbot.AspNetBotHost.Modules
 
             Post["/launch"] = _ =>
             {
-                //verify there is an auth token
+                //TODO: verify there is an auth token
 
                 return "";
             };
@@ -68,10 +69,10 @@ namespace Jabbot.AspNetBotHost.Modules
                                 };
 
             Get["/leave"] = _ =>
-            {
-                _bot.Leave(Request.Query.Room);
-                return Response.AsRedirect("/Rooms");
-            };
+                                {
+                                    _bot.Leave(Request.Query.Room);
+                                    return Response.AsRedirect("/Rooms");
+                                };
         }
 
 
@@ -92,12 +93,8 @@ namespace Jabbot.AspNetBotHost.Modules
             {
                 ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
             }
-            //if (_bot != null)
-            //{
-            //    _bot.ShutDown();
-            //}
-
-            _bot.PowerUp();
+            var initializers = TinyIoCContainer.Current.ResolveAll<ISprocketInitializer>();
+            _bot.PowerUp(initializers);
             JoinRooms(_bot);
 
         }

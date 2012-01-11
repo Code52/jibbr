@@ -13,20 +13,15 @@ namespace Jabbot.AspNetBotHost
         private static readonly string _serverUrl = ConfigurationManager.AppSettings["Bot.Server"];
         private static readonly string _botName = ConfigurationManager.AppSettings["Bot.Name"];
         private static readonly string _botPassword = ConfigurationManager.AppSettings["Bot.Password"];
-        private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
-        private static bool _appShouldExit = false;
 
         private const string ExtensionsFolder = "Sprockets";
-
-        private readonly Bot _bot = new Bot();
         protected override void ConfigureApplicationContainer(TinyIoC.TinyIoCContainer container)
         {
             var mefcontainer = CreateCompositionContainer();
 
             container.Register(mefcontainer.GetExportedValues<IAnnounce>());
+            container.Register(mefcontainer.GetExportedValues<ISprocketInitializer>());
             container.Register(new Bot(_serverUrl, _botName, _botPassword));
-
-            //base.ConfigureApplicationContainer(container);
         }
 
         private static CompositionContainer CreateCompositionContainer()

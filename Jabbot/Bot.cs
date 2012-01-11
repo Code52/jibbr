@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web.Hosting;
 using Jabbot.Models;
 using Jabbot.Sprockets.Core;
 using SignalR.Client.Hubs;
@@ -22,26 +20,7 @@ namespace Jabbot
         private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
         private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        private const string ExtensionsFolder = "Sprockets";
-
-        private ComposablePartCatalog _catalog;
-        private CompositionContainer _container;
-
-        public Bot()
-        {
-            
-        }
-
         public Bot(string url, string name, string password)
-        {
-            Name = name;
-            _password = password;
-            _connection = new HubConnection(url);
-            _chat = _connection.CreateProxy("JabbR.Chat");
-        }
-
-
-        public void Connect(string url, string name, string password)
         {
             Name = name;
             _password = password;
@@ -108,18 +87,16 @@ namespace Jabbot
         /// <summary>
         /// Connects to the chat session
         /// </summary>
-        public void PowerUp()
+        public void PowerUp(IEnumerable<ISprocketInitializer> sprocketInitializers = null)
         {
             if (!_connection.IsActive)
             {
-                InitializeContainer();
-
                 _chat.On<dynamic, string>("addMessage", ProcessMessage);
                 _chat.On<string, string, string>("sendPrivateMessage", ProcessPrivateMessage);
                 _chat.On("leave", OnLeave);
                 _chat.On("addUser", OnJoin);
                 _chat.On<IEnumerable<string>>("logOn", OnLogOn);
-                
+
                 _chat.On<dynamic, string>("addUser", ProcessRoomArrival);
 
                 // Start the connection and wait
@@ -133,7 +110,8 @@ namespace Jabbot
                     // Setup the name of the bot
                     Send(String.Format("/nick {0} {1}", Name, _password));
 
-                    IntializeSprockets();
+                    if (sprocketInitializers != null)
+                        IntializeSprockets(sprocketInitializers);
                 }
             }
         }
@@ -267,7 +245,7 @@ namespace Jabbot
                 return users;
             }
 
-            foreach(var u in dynamicusers)
+            foreach (var u in dynamicusers)
             {
                 users.Add(u);
             }
@@ -299,7 +277,7 @@ namespace Jabbot
 
             if (result == null) throw new Exception("Invalid Room");
 
-            foreach(var owner in result.Owners)
+            foreach (var owner in result.Owners)
             {
                 owners.Add(owner.ToString());
             }
@@ -486,27 +464,10 @@ namespace Jabbot
             }
         }
 
-        private void InitializeContainer()
+        private void IntializeSprockets(IEnumerable<ISprocketInitializer> sprockets)
         {
-            var container = CreateCompositionContainer();
-            // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<ISprocket>())
-            {
-                AddSprocket(sprocket);
-            }
-
-            // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
-            {
-                AddUnhandledMessageSprocket(sprocket);
-            }
-        }
-
-        private void IntializeSprockets()
-        {
-            var container = CreateCompositionContainer();
             // Run all sprocket initializers
-            foreach (var sprocketInitializer in container.GetExportedValues<ISprocketInitializer>())
+            foreach (var sprocketInitializer in sprockets)
             {
                 try
                 {
@@ -517,38 +478,6 @@ namespace Jabbot
                     Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
                 }
             }
-        }
-
-        private CompositionContainer CreateCompositionContainer()
-        {
-            if (_container == null)
-            {
-                string extensionsPath = GetExtensionsPath();
-
-                // If the extensions folder exists then use them
-                if (Directory.Exists(extensionsPath))
-                {
-                    _catalog = new AggregateCatalog(
-                                new AssemblyCatalog(typeof(Bot).Assembly),
-                                new DirectoryCatalog(extensionsPath, "*.dll"));
-                }
-                else
-                {
-                    _catalog = new AssemblyCatalog(typeof(Bot).Assembly);
-                }
-
-                _container = new CompositionContainer(_catalog);
-            }
-            return _container;
-        }
-
-        private static string GetExtensionsPath()
-        {
-            var rootPath = HostingEnvironment.IsHosted
-                ? HostingEnvironment.ApplicationPhysicalPath
-                : Directory.GetCurrentDirectory();
-
-            return Path.Combine(rootPath, ExtensionsFolder);
         }
 
         private void Send(string command)
