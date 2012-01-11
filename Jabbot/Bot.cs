@@ -110,9 +110,11 @@ namespace Jabbot
 				_chat.On("addUser", OnJoin);
 
 				_chat.On<IEnumerable<string>>("logOn", OnLogOn);
+                
+                _chat.On<dynamic, string>("addUser", ProcessRoomArrival);
 
 				// Start the connection and wait
-				_connection.Start().Wait();
+                _connection.Start(SignalR.Client.Transports.Transport.LongPolling).Wait();
 
 				// Join the chat
 				var success = _chat.Invoke<bool>("Join").Result;
@@ -173,7 +175,6 @@ namespace Jabbot
 		{
 			Send("/gravatar " + gravatarEmail);
 		}
-
 		/// <summary>
 		/// Say something to the active room.
 		/// </summary>
@@ -241,6 +242,71 @@ namespace Jabbot
 				return _rooms;
 			}
 		}
+
+        public IEnumerable<dynamic> GetUsers(string room)
+        {
+            var users = new List<dynamic>();
+
+            var result = _chat.Invoke<dynamic>("getRoomInfo", room).Result;
+
+            if (result == null) throw new Exception("Invalid Room");
+
+            var dynamicusers = result.Users;
+
+            if (dynamicusers == null)
+            {
+                return users;
+            }
+
+            foreach(var u in dynamicusers)
+            {
+                users.Add(u);
+            }
+
+            return users;
+        }
+
+        public dynamic GetUserInfo(string room, string user)
+        {
+            var users = new Dictionary<string, dynamic>();
+
+            var dynamicusers = GetUsers(room);
+
+            foreach (var u in dynamicusers)
+            {
+                users.Add(u.Name.ToString(), u);
+            }
+
+            if (!users.ContainsKey(user)) return null;
+
+            return users[user];
+        }
+
+        public IEnumerable<string> GetRoomOwners(string room)
+        {
+            var owners = new List<string>();
+
+            var result = _chat.Invoke<dynamic>("getRoomInfo", room).Result;
+
+            if (result == null) throw new Exception("Invalid Room");
+
+            foreach(var owner in result.Owners)
+            {
+                owners.Add(owner.ToString());
+            }
+
+            return owners;
+        }
+
+        public void ChangeNote(string note)
+        {
+            Send(String.Format("/note {0}", note));
+        }
+
+        public void Nudge(string user)
+        {
+            Send(String.Format("/nudge {0}", user));
+        }
 
 		/// <summary>
 		/// Disconnect the bot from the chat session. Leaves all rooms the bot entered
@@ -348,6 +414,51 @@ namespace Jabbot
 			});
 		}
 
+        private void ProcessRoomArrival(dynamic message, string room)
+        {
+            string name = message.Name;
+
+            Task.Factory.StartNew(() =>
+            {
+                Debug.WriteLine(string.Format("PCM: {0} - {1}", name, room));
+
+                var handled = false;
+
+                foreach (var handler in _sprockets)
+                {
+                    if (handler.Handle(new ChatMessage("[JABBR] - " + name + " just entered " + room, name, room), this))
+                    {
+                        handled = true;
+                        break;
+                    }
+                }
+
+                if (!handled)
+                {
+                    // Loop over the unhandled message sprockets
+                    foreach (var handler in _unhandledMessageSprockets)
+                    {
+                        // Stop at the first one that handled the message
+                        if (handler.Handle(message, this))
+                        {
+                            break;
+                        }
+                    }
+
+                }
+            })
+            .ContinueWith(task =>
+            {
+                // Just write to debug output if it failed
+                if (task.IsFaulted)
+                {
+                    Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
+                }
+            });
+
+        }
+
+
 		private void OnLeave(dynamic user)
 		{
 
@@ -373,6 +484,12 @@ namespace Jabbot
 			foreach (var sprocket in container.GetExportedValues<ISprocket>())
 			{
 				AddSprocket(sprocket);
+            }
+
+            // Add all the sprockets to the sprocket list
+            foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
+            {
+                AddUnhandledMessageSprocket(sprocket);
 			}
 		}
 

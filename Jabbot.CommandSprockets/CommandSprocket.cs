@@ -5,7 +5,7 @@ using Jabbot.Models;
 
 namespace Jabbot.CommandSprockets
 {
-    public abstract class CommandSprocket : Jabbot.CommandSprockets.ICommandSprocket
+    public abstract class CommandSprocket : ICommandSprocket
     {
         public abstract IEnumerable<string> SupportedInitiators { get; }
         public abstract IEnumerable<string> SupportedCommands { get; }
@@ -16,7 +16,6 @@ namespace Jabbot.CommandSprockets
         public ChatMessage Message { get; protected set; }
         public Bot Bot { get; protected set; }
         public bool HasArguments { get { return Arguments.Length > 0; } }
-
 
         public virtual bool MayHandle(string initiator, string command)
         {

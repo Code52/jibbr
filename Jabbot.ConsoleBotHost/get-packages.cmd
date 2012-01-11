@@ -1,12 +1,8 @@
-@echo off
-set solution=%1
-set solution=%solution:"=%
+set solution_dir=%1
+set output_dir=%solution_dir%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\
 
-copy "%solution%\Extensions\SampleAnnouncement\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\SampleAnnouncement\bin\Debug\*.pdb" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\SampleSprocket\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\SampleSprocket\bin\Debug\*.pdb" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\TwitterAnnouncer\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\TwitterAnnouncer\bin\Debug\*.pdb" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\IPityTheFoolSprocket\bin\Debug\*.dll" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
-copy "%solution%\Extensions\IPityTheFoolSprocket\bin\Debug\*.pdb" "%solution%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\"
+del %solution_dir%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\*.dll
+
+for /D %%I in ("%solution_dir%\Extensions\*") do (
+xcopy %%I\bin\Debug\*.dll %output_dir% /C /Y
+)
