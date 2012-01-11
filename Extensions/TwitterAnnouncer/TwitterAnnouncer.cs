@@ -4,7 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using Jabbot;
-using Jabbot.CommandSprockets;
+using Jabbot.Sprockets.Core;
 using TweetSharp;
 
 namespace TwitterAnnouncer
@@ -23,17 +23,12 @@ namespace TwitterAnnouncer
 
 		public TimeSpan Interval
 		{
-			get { return TimeSpan.FromSeconds(10); }
+			get { return TimeSpan.FromMinutes(10); }
 		}
 
 		public void Execute(Bot bot)
 		{
 			var now = DateTime.Now;
-
-			if (now.Subtract(lastRun) < TimeSpan.FromSeconds(20))
-			{
-				return;
-			}
 
 			Debug.WriteLine(string.Format("Fetching from tha twatters! - {0:HH.mm.ss} < {1:HH.mm.ss}", lastRun, now));
 
