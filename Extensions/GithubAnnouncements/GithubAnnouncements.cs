@@ -26,7 +26,7 @@ namespace GithubAnnouncements
         private readonly string _repo;
         private readonly string _apiUrl;
         readonly WebClient _client = new WebClient();
-        
+
         [ImportingConstructor]
         public GithubAnnouncements(ISettingsService storage)
         {
@@ -43,27 +43,19 @@ namespace GithubAnnouncements
 
         public void Execute(Bot bot)
         {
-            var commits = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectCommitsFeed)).ToList();
-            var latestCommit = commits.FirstOrDefault();
-            if (latestCommit != null)
-            {
-                NotifyLatestCommit(latestCommit, commits, bot);
-            }
-
-            return;
-            var pullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectPullRequestsFeed));
-            // TODO: message if new pull requests raised
-            // TODO: message if pull requests merged
-            var forks = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectForksFeed));
-            // TODO: inspect forks for new commits
-            var issues = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectIssuesFeed));
-            // TODO: message if new issues raised
-            var watchers = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectWatchersFeed));
-            // TODO: check for new watchers (or people no longer watching) and notify
+            NotifyLatestCommit(bot);
+            NotifyPullRequests(bot);
+            NotifyForks(bot);
+            NotifyIssues(bot);
+            NotifyWatchers(bot);
         }
 
-        private void NotifyLatestCommit(dynamic latestCommit, IEnumerable<dynamic> commits, Bot bot)
+        private void NotifyLatestCommit(Bot bot)
         {
+            var commits = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectCommitsFeed)).ToList();
+            var latestCommit = commits.FirstOrDefault();
+            if (latestCommit != null) return;
+
             var lastCommit = "";
             if (_storage.ContainsKey(LatestCommitKey))
             {
@@ -72,7 +64,7 @@ namespace GithubAnnouncements
 
             var latestSHA = latestCommit.commit.tree.sha.ToString();
 
-            if (lastCommit == latestSHA) 
+            if (lastCommit == latestSHA)
                 return;
 
             // set new value;
@@ -91,10 +83,43 @@ namespace GithubAnnouncements
             }
 
             // split into rows and send to rooms
-            var rows = sb.ToString().Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            var rows = sb.ToString().Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var row in rows)
                 bot.SayToAllRooms(row);
         }
+
+        private void NotifyPullRequests(Bot bot)
+        {
+            var pullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectPullRequestsFeed));
+
+            // TODO: message if new pull requests raised
+            // TODO: message if pull requests merged
+        }
+
+       
+        private void NotifyForks(Bot bot)
+        {
+            var forks = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectForksFeed));
+
+            // TODO: inspect forks for new commits
+        }
+
+
+        private void NotifyIssues(Bot bot)
+        {
+            var issues = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectIssuesFeed));
+
+            // TODO: message if new issues raised
+        }
+
+
+        private void NotifyWatchers(Bot bot)
+        {
+            var watchers = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectWatchersFeed));
+
+            // TODO: check for new watchers (or people no longer watching) and notify
+        }
+
 
         private string GetFullUrl(string feedLink)
         {
