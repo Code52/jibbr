@@ -43,7 +43,8 @@ namespace Jabbot.ConsoleBotHost
                 Bot bot = new Bot(_serverUrl, _botName, _botPassword);
                 bot.PowerUp();
                 JoinRooms(bot);
-
+                var users = bot.GetUsers(bot.Rooms.First());
+                var user = bot.GetUserInfo(bot.Rooms.First(), users.First().Name.ToString());
 
                 scheduler.Start(announcements, bot);
 
