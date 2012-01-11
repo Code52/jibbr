@@ -238,6 +238,50 @@ namespace Jabbot
             }
         }
 
+        public IEnumerable<dynamic> GetUsers(string room)
+        {
+            var users = new List<dynamic>();
+
+            var result = _chat.Invoke<dynamic>("getRoomInfo", room).Result;
+
+            if (result == null) throw new Exception("Invalid Room");
+
+            var dynamicusers = result.Users;
+
+            if (dynamicusers == null)
+            {
+                return users;
+            }
+
+            foreach(var u in dynamicusers)
+            {
+                users.Add(u);
+            }
+
+            return users;
+        }
+
+        public dynamic GetUserInfo(string room, string user)
+        {
+            var users = new Dictionary<string, dynamic>();
+
+            var result = _chat.Invoke<dynamic>("getRoomInfo", room).Result;
+
+            if (result == null) throw new Exception("Invalid Room");
+
+            var dynamicusers = result.Users;
+
+            foreach (var u in dynamicusers)
+            {
+                users.Add(u.Name.ToString(), u);
+            }
+
+            if (!users.ContainsKey(user)) return null;
+
+            return users[user];
+        }
+
+
         /// <summary>
         /// Disconnect the bot from the chat session. Leaves all rooms the bot entered
         /// </summary>
