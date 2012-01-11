@@ -21,12 +21,13 @@ namespace GithubAnnouncements
         const string ProjectForksFeed = "/forks";
         const string ProjectIssuesFeed = "/issues";
         const string LatestCommitKey = "LastCommitSHA";
-        private const string MergeRequestsKey = "MergeRequests";
+        const string MergeRequestsKey = "MergeRequests";
+        const string WatchersKey = "Watchers";
 
-        private readonly ISettingsService _storage;
-        private readonly string _account;
-        private readonly string _repo;
-        private readonly string _apiUrl;
+        readonly ISettingsService _storage;
+        readonly string _account;
+        readonly string _repo;
+        readonly string _apiUrl;
         readonly WebClient _client = new WebClient();
 
         [ImportingConstructor]
@@ -45,10 +46,10 @@ namespace GithubAnnouncements
 
         public void Execute(Bot bot)
         {
-            NotifyLatestCommit(bot);
-            NotifyPullRequests(bot);
-            NotifyForks(bot);
-            NotifyIssues(bot);
+            //NotifyLatestCommit(bot);
+            //NotifyPullRequests(bot);
+            //NotifyForks(bot);
+            //NotifyIssues(bot);
             NotifyWatchers(bot);
         }
 
@@ -175,9 +176,33 @@ namespace GithubAnnouncements
         {
             var watchers = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectWatchersFeed));
 
-            // TODO: check for new watchers (or people no longer watching) and notify
-        }
+            var currentWatchers = watchers.Select(c => c.login.ToString()).Cast<string>().ToList();
 
+            IList<string> existingWatchers = new List<string>();
+            if (_storage.ContainsKey(WatchersKey))
+            {
+                existingWatchers = _storage.Get<IList<string>>(WatchersKey);
+            }
+
+            var newWatchers = currentWatchers.Except(existingWatchers).ToList();
+            foreach (var w in newWatchers)
+            {
+                var repoName = string.Format("{0}/{1}", _account, _repo);
+                bot.SayToAllRooms(string.Format("{0} is now watching {1}", w, repoName));
+            }
+
+            var noLongerWatching = existingWatchers.Except(currentWatchers).ToList();
+            foreach (var w in noLongerWatching)
+            {
+                var repoName = string.Format("{0}/{1}", _account, _repo);
+                bot.SayToAllRooms(string.Format("{0} is no longer watching {1}", w, repoName));
+            }
+
+            existingWatchers = existingWatchers.Concat(newWatchers).Except(noLongerWatching).ToList();
+
+            _storage.Set(WatchersKey, existingWatchers);
+            _storage.Save();
+        }
 
         private string GetFullUrl(string feedLink)
         {
