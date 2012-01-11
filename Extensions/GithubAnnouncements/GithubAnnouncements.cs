@@ -27,6 +27,7 @@ namespace GithubAnnouncements
         private readonly string _apiUrl;
         readonly WebClient _client = new WebClient();
         
+        [ImportingConstructor]
         public GithubAnnouncements(ISettingsService storage)
         {
             _storage = storage;
