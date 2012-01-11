@@ -70,30 +70,30 @@ namespace GithubAnnouncements
                 lastCommit = _storage.Get<string>(LatestCommitKey);
             }
 
-            var latestSHA = latestCommit.commit.tree.sha;
+            var latestSHA = latestCommit.commit.tree.sha.ToString();
 
-            if (lastCommit != latestSHA)
+            if (lastCommit == latestSHA) 
+                return;
+
+            // set new value;
+            _storage.Set(LatestCommitKey, latestSHA);
+            _storage.Save();
+
+            // find new commits since 
+            var groupedCommits = commits.TakeWhile(c => c.commit.tree.sha != lastCommit).GroupBy(c => c.committer.login);
+
+            // create string to send as message
+            var sb = new StringBuilder();
+            sb.AppendFormat("There are new commits on the {0}/{1} repository\r\n", _account, _repo);
+            foreach (var committer in groupedCommits)
             {
-                // set new value;
-                _storage.Set(LatestCommitKey, latestSHA.ToString());
-                _storage.Save();
-
-                // find new commits since 
-                var groupedCommits = commits.TakeWhile(c => c.commit.tree.sha != lastCommit).GroupBy(c => c.committer.login);
-
-                // create string to send as message
-                var sb = new StringBuilder();
-                sb.AppendFormat("There are new commits on the {0}/{1} repository", _account, _repo);
-                foreach (var committer in groupedCommits)
-                {
-                    sb.AppendFormat("{0} had {1} commits", committer.Key, committer.Count());
-                }
-
-                // split into rows and send to rooms
-                var rows = sb.ToString().Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var row in rows)
-                    bot.SayToAllRooms(row);
+                sb.AppendFormat("{0} had {1} commits\r\n", committer.Key, committer.Count());
             }
+
+            // split into rows and send to rooms
+            var rows = sb.ToString().Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var row in rows)
+                bot.SayToAllRooms(row);
         }
 
         private string GetFullUrl(string feedLink)
