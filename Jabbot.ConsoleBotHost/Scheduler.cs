@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using Jabbot.Sprockets.Core;
@@ -36,7 +37,18 @@ namespace Jabbot.ConsoleBotHost
             {
                 var announcement = scheduleItem.Key;
 
-                announcement.Execute(_bot);
+                try
+                {
+                    announcement.Execute(_bot);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Exception occurred");
+                    Debug.WriteLine("Type: " + announcement.GetType());
+                    Debug.WriteLine("Message: " + ex.Message);
+                    Debug.WriteLine("Stacktrace: " + ex.StackTrace);
+                }
+                
                 _scheduledAnnouncements[announcement] = now.Add(announcement.Interval);
             }
         }
