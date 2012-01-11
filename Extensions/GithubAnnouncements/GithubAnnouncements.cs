@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -26,12 +27,12 @@ namespace GithubAnnouncements
         private readonly string _apiUrl;
         readonly WebClient _client = new WebClient();
         
-        public GithubAnnouncements(ISettingsService storage, string account, string repo)
+        public GithubAnnouncements(ISettingsService storage)
         {
             _storage = storage;
-            _account = account;
-            _repo = repo;
-            _apiUrl = string.Format(UrlFormat, account, repo);
+            _account = "Code52";
+            _repo = "jibbr";
+            _apiUrl = string.Format(UrlFormat, _account, _repo);
         }
 
         public TimeSpan Interval
