@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C05299
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.ConsoleBotHost", "Jabbot.ConsoleBotHost\Jabbot.ConsoleBotHost.csproj", "{30F1CA67-DFD8-4FF3-A3AF-97ADD2F7792E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{00F173A5-6E02-412A-A885-774DFAEB9612} = {00F173A5-6E02-412A-A885-774DFAEB9612}
+		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14} = {C6B7B6F7-D895-4559-84C6-E5B5F0664B14}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.CommandSprockets", "Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj", "{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}"
 EndProject
@@ -18,6 +22,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleAnnouncement", "Extensions\SampleAnnouncement\SampleAnnouncement.csproj", "{00F173A5-6E02-412A-A885-774DFAEB9612}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSprocket", "Extensions\SampleSprocket\SampleSprocket.csproj", "{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B} = {FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}
+		{478BFCF7-9397-49A7-AFD4-060B6B749E77} = {478BFCF7-9397-49A7-AFD4-060B6B749E77}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpSprocket", "Extensions\HelpSprocket\HelpSprocket.csproj", "{AC323937-D8F2-4285-99F3-1A6D8533E1CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +90,16 @@ Global
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}.Release|x86.ActiveCfg = Release|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,5 +107,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{00F173A5-6E02-412A-A885-774DFAEB9612} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{C6B7B6F7-D895-4559-84C6-E5B5F0664B14} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
+		{AC323937-D8F2-4285-99F3-1A6D8533E1CC} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 	EndGlobalSection
 EndGlobal
