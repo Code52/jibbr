@@ -1,0 +1,13 @@
+﻿﻿body {
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+    background: #cacaca;
+}
+#container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+}
+#logo { text-align: center;clear: both; }
+#login { float: right; }

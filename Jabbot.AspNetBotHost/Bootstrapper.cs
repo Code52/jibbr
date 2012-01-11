@@ -24,8 +24,8 @@ namespace Jabbot.AspNetBotHost
             var mefcontainer = CreateCompositionContainer();
 
             container.Register(mefcontainer.GetExportedValues<IAnnounce>());
-            container.Register<Bot>().AsSingleton();
-            
+            container.Register(new Bot(_serverUrl, _botName, _botPassword));
+
             //base.ConfigureApplicationContainer(container);
         }
 

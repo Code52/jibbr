@@ -10,18 +10,17 @@ namespace Jabbot.AspNetBotHost.Modules
     public class BotHostModule : NancyModule
     {
         private static readonly string _hostBaseUrl = ConfigurationManager.AppSettings["Application.HostBaseUrl"];
-        private static readonly string _serverUrl = ConfigurationManager.AppSettings["Bot.Server"];
-        private static readonly string _botName = ConfigurationManager.AppSettings["Bot.Name"];
-        private static readonly string _botPassword = ConfigurationManager.AppSettings["Bot.Password"];
         private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
         private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
         private static Bot _bot;
 
-        public BotHostModule(Bot bot)// : base("bot")
+        public BotHostModule(Bot bot) : base("bot")
         {
             _bot = bot;
-            StartBot();
-            Get["/bot/start"] = _ =>
+
+            if (string.IsNullOrEmpty(_bot.Name))
+                StartBot();
+            Get["/start"] = _ =>
             {
                 try
                 {
@@ -34,7 +33,7 @@ namespace Jabbot.AspNetBotHost.Modules
                 }
             };
 
-            Get["/bot/stop"] = _ =>
+            Get["/stop"] = _ =>
             {
                 try
                 {
@@ -53,6 +52,25 @@ namespace Jabbot.AspNetBotHost.Modules
             {
                 ScheduleKeepAlive(Request.Url.ToString());
                 return "OK";
+            };
+
+            Post["/launch"] = _ =>
+            {
+                //verify there is an auth token
+
+                return "";
+            };
+
+            Post["/join"] = _ =>
+                                {
+                                    _bot.Join(Request.Form.Room);
+                                    return Response.AsRedirect("/Rooms");
+                                };
+
+            Get["/leave"] = _ =>
+            {
+                _bot.Leave(Request.Query.Room);
+                return Response.AsRedirect("/Rooms");
             };
         }
 
@@ -78,8 +96,7 @@ namespace Jabbot.AspNetBotHost.Modules
             //{
             //    _bot.ShutDown();
             //}
-            
-            _bot.Connect(_serverUrl, _botName, _botPassword);
+
             _bot.PowerUp();
             JoinRooms(_bot);
 

@@ -8,14 +8,8 @@ namespace Jabbot.AspNetBotHost.Modules
     {
         public HomeModule(IEnumerable<IAnnounce> sprockets, Bot bot)
         {
-            Get["/"] = _ => View["Home", sprockets];
-            Get["/Rooms"] = _ => View["Rooms", bot.Rooms];
-            Post["/bot/launch"] = _ =>
-                                      {
-                                          //verify there is an auth token
-
-                                          return "";
-                                      };
+            Get["/"] = _ => View["Home/Index", sprockets];
+            Get["/Rooms"] = _ => View["Home/Rooms", bot.Rooms];
         }
     }
 }

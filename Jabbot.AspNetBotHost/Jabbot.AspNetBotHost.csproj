@@ -74,6 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Readme\MomentApp.Readme.txt" />
+    <None Include="Resources\Site.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="Resources\Web.config" />
     <None Include="Sprockets\HelpSprocket.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -93,8 +97,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Home.cshtml" />
-    <Content Include="Views\Rooms.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Rooms.cshtml" />
+    <Content Include="Views\Shared\Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
