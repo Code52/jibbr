@@ -1,0 +1,5 @@
+﻿== MomentApp C# Library ==
+== Twitter: sethwebster ==
+Simply library for scheduling jobs on http://momentapp.com
+Note: You will need to sign up and get your own ApiKey.
+

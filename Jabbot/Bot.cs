@@ -106,11 +106,11 @@ namespace Jabbot
                 _chat.On("leave", OnLeave);
                 _chat.On("addUser", OnJoin);
                 _chat.On<IEnumerable<string>>("logOn", OnLogOn);
-
+                
                 _chat.On<dynamic, string>("addUser", ProcessRoomArrival);
 
                 // Start the connection and wait
-                _connection.Start().Wait();
+                _connection.Start(SignalR.Client.Transports.Transport.LongPolling).Wait();
 
                 // Join the chat
                 var success = _chat.Invoke<bool>("Join").Result;
@@ -171,7 +171,6 @@ namespace Jabbot
         {
             Send("/gravatar " + gravatarEmail);
         }
-
         /// <summary>
         /// Say something to the active room.
         /// </summary>
@@ -481,6 +480,12 @@ namespace Jabbot
             foreach (var sprocket in container.GetExportedValues<ISprocket>())
             {
                 AddSprocket(sprocket);
+            }
+
+            // Add all the sprockets to the sprocket list
+            foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
+            {
+                AddUnhandledMessageSprocket(sprocket);
             }
         }
 
