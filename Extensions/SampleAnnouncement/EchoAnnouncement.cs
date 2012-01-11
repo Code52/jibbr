@@ -1,11 +1,9 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using Jabbot;
 using Jabbot.Sprockets.Core;
 
 namespace SampleAnnouncement
 {
-    [Export(typeof(IAnnounce))]
     public class EchoAnnouncement : IAnnounce
     {
         public TimeSpan Interval
