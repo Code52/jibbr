@@ -15,9 +15,9 @@ namespace Jabbot
 {
     public class Bot
     {
-        private readonly HubConnection _connection;
-        private readonly IHubProxy _chat;
-        private readonly string _password;
+        private HubConnection _connection;
+        private IHubProxy _chat;
+        private string _password;
         private readonly List<ISprocket> _sprockets = new List<ISprocket>();
         private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
         private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -27,8 +27,21 @@ namespace Jabbot
         private ComposablePartCatalog _catalog;
         private CompositionContainer _container;
 
+        public Bot()
+        {
+            
+        }
 
         public Bot(string url, string name, string password)
+        {
+            Name = name;
+            _password = password;
+            _connection = new HubConnection(url);
+            _chat = _connection.CreateProxy("JabbR.Chat");
+        }
+
+
+        public void Connect(string url, string name, string password)
         {
             Name = name;
             _password = password;
@@ -542,5 +555,6 @@ namespace Jabbot
         {
             _chat.Invoke("send", command).Wait();
         }
+
     }
 }
