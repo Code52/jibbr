@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Jabbot;
 using Jabbot.Models;
 using Jabbot.Sprockets.Core;
 
-namespace HelpSprocket
+namespace Help
 {
-	public class Help : ISprocket
+	public class HelpSprocket : ISprocket
 	{
 		public bool Handle(ChatMessage message, Bot bot)
 		{

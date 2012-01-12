@@ -412,7 +412,9 @@ namespace Jabbot
                 // Just write to debug output if it failed
                 if (task.IsFaulted)
                 {
-                    Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
+                    var aggregateException = task.Exception;
+                    if (aggregateException != null)
+                        Debug.WriteLine("JABBOT: Failed to process messages. {0}", aggregateException.GetBaseException());
                 }
             });
         }
@@ -455,7 +457,9 @@ namespace Jabbot
                 // Just write to debug output if it failed
                 if (task.IsFaulted)
                 {
-                    Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
+                    var aggregateException = task.Exception;
+                    if (aggregateException != null)
+                        Debug.WriteLine("JABBOT: Failed to process messages. {0}", aggregateException.GetBaseException());
                 }
             });
         }
@@ -498,5 +502,5 @@ namespace Jabbot
         {
             _chat.Invoke("send", command).Wait();
         }
-	}
+    }
 }
