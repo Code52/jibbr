@@ -92,6 +92,10 @@
     <Compile Include="Scheduler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
+      <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
+      <Name>Jabbot.CommandSprockets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jabbot\Jabbot.csproj">
       <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
       <Name>Jabbot</Name>
@@ -128,6 +132,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>$(ProjectDir)get-packages.cmd $(SolutionDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,0 +1,18 @@
+﻿﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase
+
+@{
+    Layout = "Views/Shared/Layout.cshtml";
+}
+<h3>I am in the following rooms...</h3>
+<ul>
+    @foreach (var m in Model)
+    {
+        <li>@m <a href="/bot/leave?Room=@m">x</a></li>
+    }
+</ul>
+        
+<form action="/Bot/Join" method="POST">
+    Join a room: 
+    <input name="room" type="text" /> <br />
+    <input type="submit"/>
+</form>

@@ -45,9 +45,13 @@
     <Reference Include="Nancy.Hosting.Aspnet">
       <HintPath>..\packages\Nancy.Hosting.Aspnet.0.9.0\lib\net40\Nancy.Hosting.Aspnet.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.ViewEngines.Razor">
+      <HintPath>..\packages\Nancy.Viewengines.Razor.0.9.0\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.0.5.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -56,6 +60,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Nancy.Viewengines.Razor.0.9.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -66,6 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Readme\MomentApp.Readme.txt" />
+    <None Include="Resources\Site.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="Resources\Web.config" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -73,12 +85,33 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Rooms.cshtml" />
+    <Content Include="Views\Shared\Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotHostModule.cs" />
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Modules\BotHostModule.cs" />
+    <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Extensions\HelpSprocket\HelpSprocket.csproj">
+      <Project>{AC323937-D8F2-4285-99F3-1A6D8533E1CC}</Project>
+      <Name>HelpSprocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extensions\SampleAnnouncement\SampleAnnouncement.csproj">
+      <Project>{00F173A5-6E02-412A-A885-774DFAEB9612}</Project>
+      <Name>SampleAnnouncement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extensions\SampleSprocket\SampleSprocket.csproj">
+      <Project>{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}</Project>
+      <Name>SampleSprocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
+      <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
+      <Name>Jabbot.CommandSprockets</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jabbot\Jabbot.csproj">
       <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
       <Name>Jabbot</Name>
@@ -86,6 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sprockets\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
