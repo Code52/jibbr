@@ -17,7 +17,8 @@ namespace Jabbot.AspNetBotHost.Modules
         private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
         private static Bot _bot;
 
-        public BotHostModule(Bot bot) : base("bot")
+        public BotHostModule(Bot bot)
+            : base("bot")
         {
             _bot = bot;
 
@@ -26,6 +27,7 @@ namespace Jabbot.AspNetBotHost.Modules
                 try
                 {
                     StartBot();
+
                     return "Bot Started";
                 }
                 catch (Exception e)
@@ -73,6 +75,12 @@ namespace Jabbot.AspNetBotHost.Modules
                                     _bot.Leave(Request.Query.Room);
                                     return Response.AsRedirect("/Rooms");
                                 };
+            Post["/send/{room}"] = _ =>
+                                       {
+                                           _bot.Say(Request.Form.Message, _.Room);
+                                           return Response.AsRedirect("/");
+                                       };
+
         }
 
 
