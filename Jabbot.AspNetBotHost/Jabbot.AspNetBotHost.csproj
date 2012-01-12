@@ -96,9 +96,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\HelpSprocket\HelpSprocket.csproj">
+    <ProjectReference Include="..\Extensions\HelpSprocket\Help.csproj">
       <Project>{AC323937-D8F2-4285-99F3-1A6D8533E1CC}</Project>
-      <Name>HelpSprocket</Name>
+      <Name>Help</Name>
     </ProjectReference>
     <ProjectReference Include="..\Extensions\SampleAnnouncement\SampleAnnouncement.csproj">
       <Project>{00F173A5-6E02-412A-A885-774DFAEB9612}</Project>
