@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Configuration;
+using System.Text;
+using System.Text.RegularExpressions;
+using IronJS;
+using IronJS.Hosting;
+using IronJS.Native;
 using Jabbot.Sprockets.Core;
 using Nancy;
 using System.Diagnostics;
 using MomentApp;
 using TinyIoC;
+using Environment = IronJS.Environment;
 
 namespace Jabbot.AspNetBotHost.Modules
 {
@@ -21,6 +27,7 @@ namespace Jabbot.AspNetBotHost.Modules
             : base("bot")
         {
             _bot = bot;
+
 
             Get["/start"] = _ =>
             {
@@ -57,10 +64,10 @@ namespace Jabbot.AspNetBotHost.Modules
                 return "OK";
             };
 
-            Post["/launch"] = _ =>
+            Get["/launch"] = _ =>
             {
                 //TODO: verify there is an auth token
-
+                LoadCoffeeScript();
                 return "";
             };
 
@@ -105,6 +112,8 @@ namespace Jabbot.AspNetBotHost.Modules
             _bot.PowerUp(initializers);
             JoinRooms(_bot);
 
+            _bot.MessageReceived += BotMessageReceived;
+            LoadCoffeeScript();
         }
 
         private static void ShutDownBot()
@@ -145,6 +154,92 @@ namespace Jabbot.AspNetBotHost.Modules
             }
 
             return true;
+        }
+        static void BotMessageReceived(Models.ChatMessage obj)
+        {
+            foreach (var k in HubotScripts.Keys)
+            {
+                if (k.IsMatch(obj.Content))
+                {
+                    var msg = context.GetGlobalAs<RobotObject>("msg");
+                    HubotScripts[k].Call(msg);
+                }
+            }
+        }
+
+        private static void LoadCoffeeScript()
+        {
+            CompileCoffeeScriptUsingIronJs(System.IO.File.ReadAllText(@"C:\Code\Code52\jibbr\Jabbot.AspNetBotHost\Resources\coffee-script.js"), System.IO.File.ReadAllText(@"C:\Code\Code52\jibbr\Jabbot.AspNetBotHost\Resources\ping.coffee"));
+        }
+
+        public static CSharp.Context context; 
+        public static Environment env;
+        private static void CompileCoffeeScriptUsingIronJs(string coffeeCompiler, string input)
+        {
+            context = new CSharp.Context();
+            context.Execute(coffeeCompiler);
+            context.Execute("var compile = function (src) { return CoffeeScript.compile(src, { bare: true }); };");
+            var compile = context.GetGlobalAs<FunctionObject>("compile");
+            var result = compile.Call(context.Globals, input);
+
+            env = context.Environment;
+            var output = IronJS.TypeConverter.ToString(result);
+
+            //Create the JS object
+            var robotConstructor = Utils.CreateConstructor<Func<FunctionObject, CommonObject, double, CommonObject>>(context.Environment, 1, Construct);
+            
+            //setup the prototype (methods) on teh JS object
+            var robotPrototype = context.Environment.NewObject();
+            robotPrototype.Prototype = context.Environment.Prototypes.Object;
+            var respond = Utils.CreateFunction<Action<CommonObject, FunctionObject>>(context.Environment, 0, RobotObject.Respond);
+            var send = Utils.CreateFunction<Action<CommonObject>>(context.Environment, 0, RobotObject.Send);
+
+            //attach the methods
+            robotPrototype.Put("respond", respond);
+            robotPrototype.Put("send", send);
+
+            //attach the prototype
+            robotConstructor.Put("prototype", robotPrototype, DescriptorAttrs.Immutable);
+
+            context.SetGlobal("robot", robotConstructor);
+            context.Execute(@"
+                var bot = new robot(); 
+                bot.respond(/PING$/i, function(msg) { return msg.send('PONG'); });
+            ");
+            context.Execute(" bot.send('hi');");
+        }
+
+        public static Dictionary<Regex, FunctionObject> HubotScripts = new Dictionary<Regex, FunctionObject>();
+
+        static CommonObject Construct(FunctionObject ctor, CommonObject _, double x)
+        {
+            var prototype = ctor.GetT<CommonObject>("prototype");
+            return new RobotObject(ctor.Env, prototype);
+        }
+    }
+
+    public class RobotObject : CommonObject
+    {
+        public RobotObject(Environment env, Schema map, CommonObject prototype) 
+            : base(env, map, prototype)
+        {
+        }
+
+        public RobotObject(Environment env, CommonObject prototype) 
+            : base(env, prototype)
+        {
+        }
+
+        public static void Respond(CommonObject c, FunctionObject f)
+        {
+            var r = (RegExpObject) c;
+            f.Construct();
+            BotHostModule.HubotScripts.Add(r.RegExp, f);
+        }
+
+        public static void Send(CommonObject c)
+        {
+            
         }
     }
 }
