@@ -162,6 +162,7 @@ namespace Jabbot
         {
             Send("/gravatar " + gravatarEmail);
         }
+
         /// <summary>
         /// Say something to the active room.
         /// </summary>
@@ -302,16 +303,6 @@ namespace Jabbot
             Send(String.Format("/nudge {0}", user));
         }
 
-        public void SendAdministrativeCommand(string command)
-        {
-            if (!command.StartsWith("/"))
-            {
-                throw new InvalidOperationException("Only commands are allowed");
-            }
-
-            Send(command);
-        }
-
         /// <summary>
         /// Disconnect the bot from the chat session. Leaves all rooms the bot entered
         /// </summary>
@@ -324,6 +315,16 @@ namespace Jabbot
             }
 
             _connection.Stop();
+        }
+
+        public void SendAdministrativeCommand(string command)
+        {
+            if (!command.StartsWith("/"))
+            {
+                throw new InvalidOperationException("Only commands are allowed");
+            }
+
+            Send(command);
         }
 
         private void Say(string what)
@@ -376,7 +377,7 @@ namespace Jabbot
         {
             Task.Factory.StartNew(() =>
             {
-                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.FromUser, message.Room, message.Content));
+                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.Sender, message.Receiver, message.Content));
 
                 if (MessageReceived != null)
                 {
@@ -459,9 +460,7 @@ namespace Jabbot
                     Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
                 }
             });
-
         }
-
 
         private void OnLeave(dynamic user)
         {
@@ -501,6 +500,5 @@ namespace Jabbot
         {
             _chat.Invoke("send", command).Wait();
         }
-
-    }
+	}
 }
