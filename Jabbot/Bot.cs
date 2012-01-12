@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using Jabbot.Models;
@@ -13,12 +11,12 @@ namespace Jabbot
 {
     public class Bot
     {
-        private HubConnection _connection;
-        private IHubProxy _chat;
-        private string _password;
-        private readonly List<ISprocket> _sprockets = new List<ISprocket>();
-        private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
-        private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        readonly HubConnection _connection;
+        readonly IHubProxy _chat;
+        readonly string _password;
+        readonly List<ISprocket> _sprockets = new List<ISprocket>();
+        readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
+        readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public Bot(string url, string name, string password)
         {
@@ -303,6 +301,16 @@ namespace Jabbot
             Send(String.Format("/nudge {0}", user));
         }
 
+        public void SendAdministrativeCommand(string command)
+        {
+            if (!command.StartsWith("/"))
+            {
+                throw new InvalidOperationException("Only commands are allowed");
+            }
+
+            Send(command);
+        }
+
         /// <summary>
         /// Disconnect the bot from the chat session. Leaves all rooms the bot entered
         /// </summary>
@@ -315,16 +323,6 @@ namespace Jabbot
             }
 
             _connection.Stop();
-        }
-
-        public void SendAdministrativeCommand(string command)
-        {
-            if (!command.StartsWith("/"))
-            {
-                throw new InvalidOperationException("Only commands are allowed");
-            }
-
-            Send(command);
         }
 
         private void Say(string what)
