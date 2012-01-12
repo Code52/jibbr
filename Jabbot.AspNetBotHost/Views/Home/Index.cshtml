@@ -5,7 +5,7 @@
 }
 <h3>Sprockets</h3>
 <ul>
-    @foreach (var m in Model)
+    @foreach (var m in Model.Sprockets)
     {
         <li>@m</li>
     }
@@ -17,3 +17,23 @@
 <a href="/bot/start">Start Bot</a><br />
 <a href="/bot/stop">Stop Bot</a><br />
 <a href="/bot/keepalive">Keep Alive</a><br />
+
+<script type="text/javascript">
+    function check() {
+        var f = document.getElementById('sendmessage');
+        var s = document.getElementById('room');
+        f.setAttribute("action", "/Bot/send/" + s.value);
+        f.submit();
+        }
+</script>
+
+<strong>Send a message</strong><br/>
+<form id="sendmessage" method="POST" >
+    <select id="room">
+        @foreach (var r in Model.Bot.Rooms)
+        {
+            <option>@r</option>
+        }
+    </select>
+    <input name="Message" type="text" /> <input type="button" onclick="check()" value="Send"/>
+</form>
