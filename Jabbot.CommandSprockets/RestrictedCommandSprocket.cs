@@ -15,7 +15,7 @@ namespace Jabbot.CommandSprockets
         {
             get
             {
-                return AllowedUserList.Any(u => u.Equals(Message.FromUser, StringComparison.OrdinalIgnoreCase));
+                return AllowedUserList.Any(u => u.Equals(Message.Sender, StringComparison.OrdinalIgnoreCase));
             }
         }
 
@@ -23,7 +23,7 @@ namespace Jabbot.CommandSprockets
         {
             get
             {
-                return BannedUserList.Any(u => u.Equals(Message.FromUser, StringComparison.OrdinalIgnoreCase));
+                return BannedUserList.Any(u => u.Equals(Message.Sender, StringComparison.OrdinalIgnoreCase));
             }
         }
         public override bool MayHandle(string initiator, string command)
