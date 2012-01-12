@@ -21,7 +21,7 @@ namespace Jabbot.AspNetBotHost.Modules
         private static readonly string _hostBaseUrl = ConfigurationManager.AppSettings["Application.HostBaseUrl"];
         private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
         private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
-        private static Bot _bot;
+        public static Bot _bot;
 
         public BotHostModule(Bot bot)
             : base("bot")
@@ -161,33 +161,30 @@ namespace Jabbot.AspNetBotHost.Modules
             {
                 if (k.IsMatch(obj.Content))
                 {
-                    var msg = context.GetGlobalAs<RobotObject>("msg");
-                    HubotScripts[k].Call(msg);
+                    var f = HubotScripts[k];
+                    f.Call(f.Env.Globals, f.Env.Globals.Get("bot"));
+
                 }
             }
         }
+
+
 
         private static void LoadCoffeeScript()
         {
             CompileCoffeeScriptUsingIronJs(System.IO.File.ReadAllText(@"C:\Code\Code52\jibbr\Jabbot.AspNetBotHost\Resources\coffee-script.js"), System.IO.File.ReadAllText(@"C:\Code\Code52\jibbr\Jabbot.AspNetBotHost\Resources\ping.coffee"));
         }
 
-        public static CSharp.Context context; 
+        public static CSharp.Context context;
         public static Environment env;
         private static void CompileCoffeeScriptUsingIronJs(string coffeeCompiler, string input)
         {
             context = new CSharp.Context();
-            context.Execute(coffeeCompiler);
-            context.Execute("var compile = function (src) { return CoffeeScript.compile(src, { bare: true }); };");
-            var compile = context.GetGlobalAs<FunctionObject>("compile");
-            var result = compile.Call(context.Globals, input);
-
             env = context.Environment;
-            var output = IronJS.TypeConverter.ToString(result);
 
             //Create the JS object
             var robotConstructor = Utils.CreateConstructor<Func<FunctionObject, CommonObject, double, CommonObject>>(context.Environment, 1, Construct);
-            
+
             //setup the prototype (methods) on teh JS object
             var robotPrototype = context.Environment.NewObject();
             robotPrototype.Prototype = context.Environment.Prototypes.Object;
@@ -200,13 +197,24 @@ namespace Jabbot.AspNetBotHost.Modules
 
             //attach the prototype
             robotConstructor.Put("prototype", robotPrototype, DescriptorAttrs.Immutable);
-
             context.SetGlobal("robot", robotConstructor);
+            context.Execute(@"var bot = new robot();");
+
+            context.Execute(coffeeCompiler);
+            context.Execute("var compile = function (src) { return CoffeeScript.compile(src, { bare: true }); };");
+            var compile = context.GetGlobalAs<FunctionObject>("compile");
+            var result = compile.Call(context.Globals, input);
+            var output = IronJS.TypeConverter.ToString(result);
+
+            context.Execute(@"
+                    var bot = new robot();
+                    function module() { }"+output+@"
+                    module.exports(bot);");
+            /*
             context.Execute(@"
                 var bot = new robot(); 
                 bot.respond(/PING$/i, function(msg) { return msg.send('PONG'); });
-            ");
-            context.Execute(" bot.send('hi');");
+            ");*/
         }
 
         public static Dictionary<Regex, FunctionObject> HubotScripts = new Dictionary<Regex, FunctionObject>();
@@ -220,26 +228,25 @@ namespace Jabbot.AspNetBotHost.Modules
 
     public class RobotObject : CommonObject
     {
-        public RobotObject(Environment env, Schema map, CommonObject prototype) 
+        public RobotObject(Environment env, Schema map, CommonObject prototype)
             : base(env, map, prototype)
         {
         }
 
-        public RobotObject(Environment env, CommonObject prototype) 
+        public RobotObject(Environment env, CommonObject prototype)
             : base(env, prototype)
         {
         }
 
         public static void Respond(CommonObject c, FunctionObject f)
         {
-            var r = (RegExpObject) c;
-            f.Construct();
+            var r = (RegExpObject)c;
             BotHostModule.HubotScripts.Add(r.RegExp, f);
         }
 
         public static void Send(CommonObject c)
         {
-            
+            BotHostModule._bot.Say(TypeConverter.ToString(c), BotHostModule._bot.Rooms.First());
         }
     }
 }
