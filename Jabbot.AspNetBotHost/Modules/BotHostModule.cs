@@ -88,6 +88,12 @@ namespace Jabbot.AspNetBotHost.Modules
                                            return Response.AsRedirect("/");
                                        };
 
+            Post["/attach"] = _ =>
+                                  {
+                                      AttachScript(Request.Form.script);
+                                      return Response.AsRedirect("/");
+                                  };
+
         }
 
 
@@ -215,6 +221,17 @@ namespace Jabbot.AspNetBotHost.Modules
                 var bot = new robot(); 
                 bot.respond(/PING$/i, function(msg) { return msg.send('PONG'); });
             ");*/
+        }
+
+        public static void AttachScript(string input)
+        {
+            var compile = context.GetGlobalAs<FunctionObject>("compile");
+            var result = compile.Call(context.Globals, input);
+            var output = IronJS.TypeConverter.ToString(result);
+            context.Execute(@"
+                    var bot = new robot();
+                    function module() { }" + output + @"
+                    module.exports(bot);");
         }
 
         public static Dictionary<Regex, FunctionObject> HubotScripts = new Dictionary<Regex, FunctionObject>();
