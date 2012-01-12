@@ -285,6 +285,13 @@ namespace Jabbot
             return owners;
         }
 
+        public dynamic GetRooms()
+        {
+            var result = _chat.Invoke<dynamic>("getRooms").Result;
+
+            return result;
+        }
+
         public void ChangeNote(string note)
         {
             Send(String.Format("/note {0}", note));
@@ -293,6 +300,16 @@ namespace Jabbot
         public void Nudge(string user)
         {
             Send(String.Format("/nudge {0}", user));
+        }
+
+        public void SendAdministrativeCommand(string command)
+        {
+            if (!command.StartsWith("/"))
+            {
+                throw new InvalidOperationException("Only commands are allowed");
+            }
+
+            Send(command);
         }
 
         /// <summary>
