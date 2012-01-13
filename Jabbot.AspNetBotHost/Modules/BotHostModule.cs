@@ -177,7 +177,18 @@ namespace Jabbot.AspNetBotHost.Modules
                 var m = k.Matches(obj.Content);
                 var f = HubotScripts[k];
 
-                f.Call(f.Env.Globals, f.Env.Globals.Get("bot"));
+                var bot = f.Env.Globals.GetT<RobotObject>("bot");
+                
+                //"match" isn't accessible from JS, it seems. 
+                //Most scripts need access to .match[1] at a minimum. ie, for 'echo hello', match[0] = 'echo hello', match[1] = 'hello' for '/ECHO (.*)$/i'
+                //bot.match = new List<string>();
+                //foreach (var g in m[0].Groups)
+                //{
+                //    bot.match.Add(g.ToString());
+                //}
+
+                //If it requires that .match, but can't get it, "TypeError: Can't convert Undefined, Null or CLR to Object" will be thrown.
+                f.Call(f.Env.Globals, bot);
             }
         }
 
@@ -199,7 +210,7 @@ namespace Jabbot.AspNetBotHost.Modules
             robotPrototype.Prototype = context.Environment.Prototypes.Object;
             var respond = Utils.CreateFunction<Action<CommonObject, FunctionObject>>(context.Environment, 0, RobotObject.Respond);
             var send = Utils.CreateFunction<Action<CommonObject>>(context.Environment, 0, RobotObject.Send);
-
+            
             //attach the methods
             robotPrototype.Put("respond", respond);
             robotPrototype.Put("send", send);
@@ -209,6 +220,8 @@ namespace Jabbot.AspNetBotHost.Modules
             context.SetGlobal("robot", robotConstructor);
             context.Execute(@"var bot = new robot();");
 
+            var result = context.Execute("2 + 2");
+            var result2 = context.Execute("bot.match");
             //Setup and compile CoffeeScript
             context.Execute(coffeeCompiler);
             context.Execute("var compile = function (src) { return CoffeeScript.compile(src, { bare: true }); };");

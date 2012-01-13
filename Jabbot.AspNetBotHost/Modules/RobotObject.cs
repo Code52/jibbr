@@ -8,14 +8,24 @@ namespace Jabbot.AspNetBotHost.Modules
 {
     public class RobotObject : CommonObject
     {
+        public override string ClassName
+        {
+            get
+            {
+                return "Robot";
+            }
+        }
+
         public RobotObject(Environment env, Schema map, CommonObject prototype)
             : base(env, map, prototype)
         {
+            Put("match", new[] { "test", "echo" });
         }
 
         public RobotObject(Environment env, CommonObject prototype)
             : base(env, prototype)
         {
+            Put("match", new[] { "test", "echo" });
         }
 
         public static void Respond(CommonObject c, FunctionObject f)
@@ -28,10 +38,6 @@ namespace Jabbot.AspNetBotHost.Modules
         {
             TinyMessengerHub.Instance.Publish(new TalkMessage() { Text = TypeConverter.ToString(c) });
         }
-
-        public static List<string> Match { get; set; }
-
-
     }
 }
 
