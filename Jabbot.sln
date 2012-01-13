@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleSprocket", "Extension
 		{478BFCF7-9397-49A7-AFD4-060B6B749E77} = {478BFCF7-9397-49A7-AFD4-060B6B749E77}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelpSprocket", "Extensions\HelpSprocket\HelpSprocket.csproj", "{AC323937-D8F2-4285-99F3-1A6D8533E1CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Help", "Extensions\HelpSprocket\Help.csproj", "{AC323937-D8F2-4285-99F3-1A6D8533E1CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jabbot.AspNetBotHost", "Jabbot.AspNetBotHost\Jabbot.AspNetBotHost.csproj", "{40BDA852-8C23-4641-BF4F-5733429A6304}"
 EndProject

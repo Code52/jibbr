@@ -8,8 +8,8 @@
     <ProjectGuid>{AC323937-D8F2-4285-99F3-1A6D8533E1CC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HelpSprocket</RootNamespace>
-    <AssemblyName>HelpSprocket</AssemblyName>
+    <RootNamespace>Help</RootNamespace>
+    <AssemblyName>Help</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\jibbr\</SolutionDir>
@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Help.cs" />
+    <Compile Include="HelpSprocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
