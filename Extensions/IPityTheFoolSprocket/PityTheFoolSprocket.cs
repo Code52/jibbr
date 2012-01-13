@@ -12,7 +12,7 @@ namespace IPityTheFoolSprocket
 			get { return new Regex(@".*(?:fool|pity)+.*", RegexOptions.IgnoreCase); }
 		}
 
-		protected override void ProcessMatch(Match match, ChatMessage message, Bot bot)
+		protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
 		{
 			bot.Say("http://xamldev.dk/IPityTheFool.gif", message.Receiver);
 		}

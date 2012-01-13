@@ -7,7 +7,7 @@ namespace Jabbot.CommandSprockets
     public interface ICommandSprocket : ISprocket
     {
         string[] Arguments { get; }
-        Jabbot.Bot Bot { get; }
+        IBot Bot { get; }
         string Command { get; }
         bool ExecuteCommand();
         bool HasArguments { get; }
