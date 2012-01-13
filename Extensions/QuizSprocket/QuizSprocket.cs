@@ -18,6 +18,7 @@ namespace Jabbot.Extensions
         private readonly Dictionary<string, int> _scoreTable;
         private Tuple<string, string, int> _lastAskedQuestion;
         private DateTime _lastQuestionAskedAt;
+        public decimal CorrectnessFraction { get; private set; }
 
         public QuizSprocket()
         {
@@ -40,6 +41,7 @@ namespace Jabbot.Extensions
                              };
 
             _scoreTable = new Dictionary<string, int>();
+            CorrectnessFraction = 0.6m;
         }
 
         public IEnumerable<Tuple<string, string, int>> CelebrityQuestions { get; set; }
@@ -56,8 +58,7 @@ namespace Jabbot.Extensions
             yield return new Tuple<string, string, int>("Complete the movie name: Eternal Sunshine of the Spotless _______?", "Mind", 10);
             yield return new Tuple<string, string, int>("Which actor/actress has won the most Oscars?", "Katherine Hepburn", 10);
             yield return new Tuple<string, string, int>("In what year did Elvis Presley die?", "1977", 10);
-            yield return new Tuple<string, string, int>("Academy Award-Winning Actor Jon Voight is the father of which famous Actress?", "Katherine Hepburn", 10);
-            yield return new Tuple<string, string, int>("Which actor/actress has won the most Oscars?", "Angelina Jolie", 10);
+            yield return new Tuple<string, string, int>("Academy Award-Winning Actor Jon Voight is the father of which famous Actress?", "Angelina Jolie", 10);
             yield return new Tuple<string, string, int>("What is Nicholas Cage's real name?", "Nicolas Kim Coppola", 10);
             yield return new Tuple<string, string, int>("Who Am I?? Musician/Actor born in 1968 in Philadelphia. Starred in popular teen comedy and has been known to be a bit of a 'Bad Boy' and self-proclaimed 'Legend'.....", "Will Smith", 10);
             yield return new Tuple<string, string, int>("In which Southern US city was Pop Superstar Britney Spears born and raised?", "Kentwood, Louisiana", 10);
@@ -150,11 +151,15 @@ namespace Jabbot.Extensions
 
         private bool VerifyAnswer(string answer)
         {
-            var correct = _lastAskedQuestion != null && answer.Equals(_lastAskedQuestion.Item2, StringComparison.InvariantCultureIgnoreCase);
+            var longestCommonSubstringLength = LongestCommonSubstring(answer, _lastAskedQuestion.Item2);
+            var levenshteinDistance = LevenshteinDistance(answer, _lastAskedQuestion.Item2); //Leaving out Levenshtein Distance for now since i'm not sure what's a fair distance to accept
+            var correct = _lastAskedQuestion != null 
+                            && (answer.Equals(_lastAskedQuestion.Item2, StringComparison.InvariantCultureIgnoreCase) 
+                            || (longestCommonSubstringLength / (decimal)_lastAskedQuestion.Item2.Length) > CorrectnessFraction);
 
             if (correct)
             {
-                Bot.Say(string.Format("Correct {0}, that was brilliant!", Message.Sender), Message.Receiver);
+                Bot.Say(string.Format("Correct {0}, the answer is {1}. That was brilliant!", Message.Sender, _lastAskedQuestion.Item2), Message.Receiver);
                 int currentScore = 0;
 
                 if (_scoreTable.TryGetValue(Message.Sender, out currentScore))
@@ -209,5 +214,83 @@ namespace Jabbot.Extensions
             _lastQuestionAskedAt = DateTime.Now;
             return _lastAskedQuestion.Item1;
         }
+
+        #region String Algorithms
+        private int LongestCommonSubstring(string str1, string str2)
+        {
+            if (String.IsNullOrEmpty(str1) || String.IsNullOrEmpty(str2))
+                return 0;
+
+            int[,] num = new int[str1.Length, str2.Length];
+            int maxlen = 0;
+
+            for (int i = 0; i < str1.Length; i++)
+            {
+                for (int j = 0; j < str2.Length; j++)
+                {
+                    if (str1[i] != str2[j])
+                        num[i, j] = 0;
+                    else
+                    {
+                        if ((i == 0) || (j == 0))
+                            num[i, j] = 1;
+                        else
+                            num[i, j] = 1 + num[i - 1, j - 1];
+
+                        if (num[i, j] > maxlen)
+                        {
+                            maxlen = num[i, j];
+                        }
+                    }
+                }
+            }
+            return maxlen;
+        }
+
+        private static int LevenshteinDistance(string s, string t)
+        {
+            int n = s.Length;
+            int m = t.Length;
+            int[,] d = new int[n + 1, m + 1];
+
+            // Step 1
+            if (n == 0)
+            {
+                return m;
+            }
+
+            if (m == 0)
+            {
+                return n;
+            }
+
+            // Step 2
+            for (int i = 0; i <= n; d[i, 0] = i++)
+            {
+            }
+
+            for (int j = 0; j <= m; d[0, j] = j++)
+            {
+            }
+
+            // Step 3
+            for (int i = 1; i <= n; i++)
+            {
+                //Step 4
+                for (int j = 1; j <= m; j++)
+                {
+                    // Step 5
+                    int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+
+                    // Step 6
+                    d[i, j] = Math.Min(
+                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                        d[i - 1, j - 1] + cost);
+                }
+            }
+            // Step 7
+            return d[n, m];
+        }
+        #endregion
     }
 }
