@@ -98,6 +98,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Resources\Web.config" />
+    <Content Include="Sprockets\Hammock.ClientProfile.dll" />
+    <Content Include="Sprockets\Hammock.dll" />
+    <Content Include="Sprockets\HelpSprocket.dll" />
+    <Content Include="Sprockets\IPityTheFoolSprocket.dll" />
+    <Content Include="Sprockets\Jabbot.CommandSprockets.dll" />
+    <Content Include="Sprockets\Jabbot.dll" />
+    <Content Include="Sprockets\Newtonsoft.Json.dll" />
+    <Content Include="Sprockets\SampleAnnouncement.dll" />
+    <Content Include="Sprockets\SampleSprocket.dll" />
+    <Content Include="Sprockets\SignalR.Client.dll" />
+    <Content Include="Sprockets\TweetSharp.dll" />
+    <Content Include="Sprockets\TwitterAnnouncer.dll" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -113,14 +125,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Modules\TalkMessage.cs" />
+    <Compile Include="TinyMessenger.cs" />
     <Compile Include="Modules\BotHostModule.cs" />
     <Compile Include="Modules\HomeModule.cs" />
+    <Compile Include="Modules\RobotObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extensions\HelpSprocket\HelpSprocket.csproj">
       <Project>{AC323937-D8F2-4285-99F3-1A6D8533E1CC}</Project>
       <Name>HelpSprocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extensions\IPityTheFoolSprocket\IPityTheFoolSprocket.csproj">
+      <Project>{B1E7F2FE-7BC0-409A-9BE5-0A0E03553872}</Project>
+      <Name>IPityTheFoolSprocket</Name>
     </ProjectReference>
     <ProjectReference Include="..\Extensions\SampleAnnouncement\SampleAnnouncement.csproj">
       <Project>{00F173A5-6E02-412A-A885-774DFAEB9612}</Project>
@@ -129,6 +148,10 @@
     <ProjectReference Include="..\Extensions\SampleSprocket\SampleSprocket.csproj">
       <Project>{C6B7B6F7-D895-4559-84C6-E5B5F0664B14}</Project>
       <Name>SampleSprocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extensions\TwitterAnnouncer\TwitterAnnouncer.csproj">
+      <Project>{820F5965-A377-4A01-8BBE-D11E3415FC04}</Project>
+      <Name>TwitterAnnouncer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
       <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
@@ -142,9 +165,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sprockets\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ProjectExtensions>
