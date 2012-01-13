@@ -376,7 +376,7 @@ namespace Jabbot
         {
             Task.Factory.StartNew(() =>
             {
-                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.FromUser, message.Room, message.Content));
+                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.Sender, message.Receiver, message.Content));
 
                 if (MessageReceived != null)
                 {
