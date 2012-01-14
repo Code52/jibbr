@@ -20,7 +20,7 @@ namespace GithubAnnouncements
 
         public TimeSpan Interval
         {
-            get { return TimeSpan.FromMinutes(1); }
+            get { return TimeSpan.FromMinutes(10); }
         }
 
         public string Name

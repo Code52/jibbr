@@ -93,6 +93,10 @@ namespace Jabbot.AspNetBotHost.Modules
             {
                 ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
             }
+
+            // TODO: intialize announcers
+            // TODO: 
+
             var initializers = TinyIoCContainer.Current.ResolveAll<ISprocketInitializer>();
             _bot.PowerUp(initializers);
             JoinRooms(_bot);
