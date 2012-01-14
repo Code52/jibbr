@@ -7,6 +7,6 @@ namespace GithubAnnouncements.Tasks
     public interface IGitHubTask
     {
         string Name { get; }
-        void ExecuteTask(Bot bot, string baseUrl, string repositoryName);
+        void ExecuteTask(IBot bot, string baseUrl, string repositoryName);
     }
 }

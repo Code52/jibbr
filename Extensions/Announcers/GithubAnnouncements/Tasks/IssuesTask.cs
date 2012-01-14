@@ -24,7 +24,7 @@ namespace GithubAnnouncements.Tasks
             get { return "Check Issues"; }
         }
 
-        public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
+        public void ExecuteTask(IBot bot, string baseUrl, string repositoryName)
         {
             var url = baseUrl.Append(OpenProjectIssuesFeed);
             var openIssues = url.GetResponse<IEnumerable<dynamic>>();

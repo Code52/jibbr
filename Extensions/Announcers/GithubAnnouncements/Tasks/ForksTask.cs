@@ -24,7 +24,7 @@ namespace GithubAnnouncements.Tasks
             get { return "Check Forks"; }
         }
 
-        public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
+        public void ExecuteTask(IBot bot, string baseUrl, string repositoryName)
         {
             var fullUrl = baseUrl.Append(ProjectForksFeed);
             var forks = fullUrl.GetResponse<IEnumerable<dynamic>>();
@@ -41,7 +41,7 @@ namespace GithubAnnouncements.Tasks
             _settings.Save();
         }
 
-        private static void CheckForkStatus(KeyValuePair<dynamic, dynamic> fork, IDictionary<string, string> existingForkStatus, Bot bot)
+        private static void CheckForkStatus(KeyValuePair<dynamic, dynamic> fork, IDictionary<string, string> existingForkStatus, IBot bot)
         {
             string id = fork.Key.ToString();
             string url = fork.Value.ToString() + "/commits";

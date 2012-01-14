@@ -11,6 +11,6 @@ namespace Jabbot.Sprockets.Core
     {
         TimeSpan Interval { get; }
         string Name { get; }
-        void Execute(Bot bot);
+        void Execute(IBot bot);
     }
 }

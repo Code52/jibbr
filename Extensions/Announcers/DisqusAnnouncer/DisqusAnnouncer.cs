@@ -29,7 +29,7 @@ namespace DisqusAnnouncer
 
         public static bool Lock { get; set; }
 
-        public void Execute(Bot bot)
+        public void Execute(IBot bot)
         {
             if (Lock == true) return;
             Lock = true;

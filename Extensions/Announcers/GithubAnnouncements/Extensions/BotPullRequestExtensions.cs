@@ -5,7 +5,7 @@ namespace GithubAnnouncements.Extensions
 {
     public static class BotPullRequestExtensions
     {
-        public static void ProcessClosedPullRequests(this Bot bot, IEnumerable<dynamic> closedPullRequests, IDictionary<int, string> existingPullRequests)
+        public static void ProcessClosedPullRequests(this IBot bot, IEnumerable<dynamic> closedPullRequests, IDictionary<int, string> existingPullRequests)
         {
             foreach (var request in closedPullRequests)
             {
@@ -34,7 +34,7 @@ namespace GithubAnnouncements.Extensions
             }
         }
 
-        public static void ProcessOpenPullRequests(this Bot bot, string repositoryName, IDictionary<int, string> existingPullRequests, IEnumerable<dynamic> openPullRequests)
+        public static void ProcessOpenPullRequests(this IBot bot, string repositoryName, IDictionary<int, string> existingPullRequests, IEnumerable<dynamic> openPullRequests)
         {
             foreach (var request in openPullRequests)
             {

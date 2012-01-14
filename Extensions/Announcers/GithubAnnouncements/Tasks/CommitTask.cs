@@ -24,7 +24,7 @@ namespace GithubAnnouncements.Tasks
             get { return "Check commits"; }
         }
 
-        public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
+        public void ExecuteTask(IBot bot, string baseUrl, string repositoryName)
         {
             var fullUrl = baseUrl.Append(ProjectCommitsFeed);
             var commits = fullUrl.GetResponse<IEnumerable<dynamic>>().ToList();

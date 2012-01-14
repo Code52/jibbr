@@ -24,7 +24,7 @@ namespace GithubAnnouncements.Tasks
             get { return "Check Pull Requests"; }
         }
 
-        public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
+        public void ExecuteTask(IBot bot, string baseUrl, string repositoryName)
         {
             var fullUrl = baseUrl.Append(OpenPullRequestsFeed);
             var openPullRequests = fullUrl.GetResponse<IEnumerable<dynamic>>();

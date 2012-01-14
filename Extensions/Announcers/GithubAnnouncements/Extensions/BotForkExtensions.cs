@@ -7,7 +7,7 @@ namespace GithubAnnouncements.Extensions
 {
     public static class BotForkExtensions
     {
-        public static void ProcessForkStatus(this Bot bot, string id, IDictionary<string, string> existingForkStatus, List<dynamic> commits)
+        public static void ProcessForkStatus(this IBot bot, string id, IDictionary<string, string> existingForkStatus, List<dynamic> commits)
         {
             var latestCommit = commits.FirstOrDefault();
             if (latestCommit == null) return;

@@ -31,7 +31,7 @@ namespace TwitterAnnouncer
             get { return "Twitter Bot"; }
 	    }
 
-	    public void Execute(Bot bot)
+	    public void Execute(IBot bot)
 		{
 			var now = DateTime.Now;
 

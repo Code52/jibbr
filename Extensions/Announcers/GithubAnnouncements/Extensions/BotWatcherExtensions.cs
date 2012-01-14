@@ -6,7 +6,7 @@ namespace GithubAnnouncements.Extensions
 {
     public static class BotWatcherExtensions
     {
-        public static IList<string> ProcessWatchers(this Bot bot, string repositoryName, IList<string> existingWatchers, IEnumerable<dynamic> watchers)
+        public static IList<string> ProcessWatchers(this IBot bot, string repositoryName, IList<string> existingWatchers, IEnumerable<dynamic> watchers)
         {
             var currentWatchers = watchers.Select(c => c.login.ToString()).Cast<string>().ToList();
             var newWatchers = currentWatchers.Except(existingWatchers).ToList();

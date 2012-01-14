@@ -24,7 +24,7 @@ namespace GithubAnnouncements.Tasks
             get { return "Check Watchers"; }
         }
 
-        public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
+        public void ExecuteTask(IBot bot, string baseUrl, string repositoryName)
         {
             var url = baseUrl.Append(ProjectWatchersFeed);
             var currentWatchers = url.GetResponse<IEnumerable<dynamic>>();

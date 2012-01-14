@@ -5,7 +5,7 @@ namespace GithubAnnouncements.Extensions
 {
     public static class BotIssuesExtensions
     {
-        public static void ProcessOpenIssues(this Bot bot, string repo, IEnumerable<dynamic> openIssues, IDictionary<int, string> existingIssues)
+        public static void ProcessOpenIssues(this IBot bot, string repo, IEnumerable<dynamic> openIssues, IDictionary<int, string> existingIssues)
         {
             foreach (var issue in openIssues)
             {
@@ -33,7 +33,7 @@ namespace GithubAnnouncements.Extensions
             }
         }
 
-        public static void ProcessClosedIssues(this Bot bot, IEnumerable<dynamic> closedIssues, IDictionary<int, string> existingIssues)
+        public static void ProcessClosedIssues(this IBot bot, IEnumerable<dynamic> closedIssues, IDictionary<int, string> existingIssues)
         {
             foreach (var issue in closedIssues)
             {

@@ -8,7 +8,7 @@ namespace GithubAnnouncements.Extensions
 {
     public static class BotCommitExtensions
     {
-        public static void ProcessCommits(this Bot bot, string repositoryName ,string lastCommit, IEnumerable<dynamic> commits)
+        public static void ProcessCommits(this IBot bot, string repositoryName ,string lastCommit, IEnumerable<dynamic> commits)
         {
             // find new commits since 
             var groupedCommits = commits.TakeWhile(c => c.commit.tree.sha != lastCommit).GroupBy(c => c.committer.login);
