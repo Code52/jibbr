@@ -19,6 +19,11 @@ namespace GithubAnnouncements.Tasks
             _settings = settings;
         }
 
+        public string Name
+        {
+            get { return "Check Forks"; }
+        }
+
         public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
         {
             var fullUrl = baseUrl.Append(ProjectForksFeed);

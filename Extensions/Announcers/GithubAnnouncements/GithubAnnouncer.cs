@@ -15,6 +15,9 @@ namespace GithubAnnouncements
         [ImportMany(AllowRecomposition = true)]
         public IEnumerable<IGitHubTask> Tasks { get; set; }
 
+        [Import]
+        public ILogger Log { get; set; }
+
         public TimeSpan Interval
         {
             get { return TimeSpan.Zero; }
@@ -25,7 +28,9 @@ namespace GithubAnnouncements
             var baseUrl = string.Format(GitHub.UrlFormat, Account, Repo);
             foreach (var task in Tasks)
             {
+                Log.DisplayFormat("Task '{0}' started at '{1}'", task.Name, DateTime.UtcNow);
                 task.ExecuteTask(bot, baseUrl, RepositoryName);
+                Log.DisplayFormat("Task '{0}' finished at '{1}'", task.Name, DateTime.UtcNow);
             }
         }
 

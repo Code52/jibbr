@@ -6,6 +6,7 @@ namespace GithubAnnouncements.Tasks
     [InheritedExport]
     public interface IGitHubTask
     {
+        string Name { get; }
         void ExecuteTask(Bot bot, string baseUrl, string repositoryName);
     }
 }

@@ -1,5 +1,8 @@
-﻿namespace Jabbot
+﻿using System.ComponentModel.Composition;
+
+namespace Jabbot
 {
+    [InheritedExport]
     public interface ILogger
     {
         void Display(string message);

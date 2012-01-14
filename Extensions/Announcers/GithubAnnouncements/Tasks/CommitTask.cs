@@ -19,6 +19,11 @@ namespace GithubAnnouncements.Tasks
 
         const string LatestCommitKey = "LastCommitSHA";
 
+        public string Name
+        {
+            get { return "Check commits"; }
+        }
+
         public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
         {
             var fullUrl = baseUrl.Append(ProjectCommitsFeed);

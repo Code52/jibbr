@@ -10,13 +10,18 @@ namespace GithubAnnouncements.Tasks
         const string ProjectWatchersFeed = "/watchers";
 
         const string WatchersKey = "Watchers";
-        
+
         readonly ISettingsService _settings;
 
         [ImportingConstructor]
         public WatchersTask(ISettingsService settings)
         {
             _settings = settings;
+        }
+
+        public string Name
+        {
+            get { return "Check Watchers"; }
         }
 
         public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)

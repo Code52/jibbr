@@ -19,6 +19,11 @@ namespace GithubAnnouncements.Tasks
             _settings = settings;
         }
 
+        public string Name
+        {
+            get { return "Check Issues"; }
+        }
+
         public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
         {
             var url = baseUrl.Append(OpenProjectIssuesFeed);

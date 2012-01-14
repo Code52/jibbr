@@ -19,6 +19,11 @@ namespace GithubAnnouncements.Tasks
         const string ClosedPullRequestsFeed = "/pulls?state=closed";
         const string MergeRequestsKey = "MergeRequests";
 
+        public string Name
+        {
+            get { return "Check Pull Requests"; }
+        }
+
         public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
         {
             var fullUrl = baseUrl.Append(OpenPullRequestsFeed);
