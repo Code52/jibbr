@@ -18,9 +18,12 @@ namespace GithubAnnouncements
         const string ClosedPullRequestsFeed = "/pulls?state=closed";
         const string ProjectWatchersFeed = "/watchers";
         const string ProjectForksFeed = "/forks";
-        const string ProjectIssuesFeed = "/issues";
+        const string OpenProjectIssuesFeed = "/issues?state=open";
+        const string ClosedProjectIssuesFeed = "/issues?state=closed";
         const string LatestCommitKey = "LastCommitSHA";
         const string MergeRequestsKey = "MergeRequests";
+        const string IssuesKey = "Issues";
+        const string LatestCommentsKey = "Comments";
         const string WatchersKey = "Watchers";
         const string ForkStatusKey = "ForkStatus";
 
@@ -46,11 +49,11 @@ namespace GithubAnnouncements
 
         public void Execute(Bot bot)
         {
-            //NotifyLatestCommit(bot);
-            //NotifyPullRequests(bot);
+            NotifyLatestCommit(bot);
+            NotifyPullRequests(bot);
             NotifyForks(bot);
-            //NotifyIssues(bot);
-            //NotifyWatchers(bot);
+            NotifyIssues(bot);
+            NotifyWatchers(bot);
         }
 
         private void NotifyLatestCommit(Bot bot)
@@ -103,6 +106,16 @@ namespace GithubAnnouncements
                 existingPullRequests = _storage.Get<IDictionary<int, string>>(MergeRequestsKey);
             }
 
+            ProcessClosedPullRequests(bot, closedPullRequests, existingPullRequests);
+
+            ProcessOpenPullRequests(bot, existingPullRequests, openPullRequests);
+
+            _storage.Set(MergeRequestsKey, existingPullRequests);
+            _storage.Save();
+        }
+
+        private static void ProcessClosedPullRequests(Bot bot, IEnumerable<dynamic> closedPullRequests, IDictionary<int, string> existingPullRequests)
+        {
             foreach (var request in closedPullRequests)
             {
                 int id;
@@ -128,7 +141,10 @@ namespace GithubAnnouncements
                 // cleanup request
                 existingPullRequests.Remove(id);
             }
+        }
 
+        private void ProcessOpenPullRequests(Bot bot, IDictionary<int, string> existingPullRequests, IEnumerable<dynamic> openPullRequests)
+        {
             foreach (var request in openPullRequests)
             {
                 int id;
@@ -151,9 +167,6 @@ namespace GithubAnnouncements
                 // track request
                 existingPullRequests.Add(id, "open");
             }
-
-            _storage.Set(MergeRequestsKey, existingPullRequests);
-            _storage.Save();
         }
 
         private void NotifyForks(Bot bot)
@@ -208,9 +221,73 @@ namespace GithubAnnouncements
 
         private void NotifyIssues(Bot bot)
         {
-            var issues = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectIssuesFeed));
+            var openIssues = GetResponse<IEnumerable<dynamic>>(GetFullUrl(OpenProjectIssuesFeed));
+            var closedIssues = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ClosedProjectIssuesFeed));
 
-            // TODO: message if new issues raised
+            IDictionary<int, string> existingIssues = new Dictionary<int, string>();
+
+            if (_storage.ContainsKey(IssuesKey))
+            {
+                existingIssues = _storage.Get<IDictionary<int, string>>(IssuesKey);
+            }
+
+            ProcessClosedIssues(bot, closedIssues, existingIssues);
+            ProcessOpenIssues(bot, openIssues, existingIssues);
+
+            _storage.Set(IssuesKey, existingIssues);
+            _storage.Save();
+        }
+
+        private void ProcessOpenIssues(Bot bot, IEnumerable<dynamic> openIssues, IDictionary<int, string> existingIssues)
+        {
+            foreach (var request in openIssues)
+            {
+                int id;
+                if (!int.TryParse(request.number.ToString(), out id))
+                    continue;
+
+                if (!existingIssues.ContainsKey(id))
+                {
+                    // send message
+                    string firstLine = string.Format("github: {0} has opened a new issue named '{1}' for {2}/{3}",
+                                                     request.user.login,
+                                                     request.title,
+                                                     _account,
+                                                     _repo);
+                    string secondLine = string.Format("View the discussion at {0}", request.html_url);
+                    bot.SayToAllRooms(firstLine);
+                    bot.SayToAllRooms(secondLine);
+
+                    // track request
+                    existingIssues.Add(id, "open");
+                }
+
+                // TODO: check for new comments
+                // TODO: track history of comments
+            }
+        }
+
+        private static void ProcessClosedIssues(Bot bot, IEnumerable<dynamic> closedIssues, IDictionary<int, string> existingIssues)
+        {
+            foreach (var request in closedIssues)
+            {
+                int id;
+                if (!int.TryParse(request.number.ToString(), out id))
+                    continue;
+
+                if (!existingIssues.ContainsKey(id))
+                    continue;
+
+                // send message
+                string firstLine = string.Format("github: {0}'s issue '{1}' has been closed",
+                                                 request.user.login,
+                                                 request.title);
+
+                bot.SayToAllRooms(firstLine);
+
+                // cleanup request
+                existingIssues.Remove(id);
+            }
         }
 
         private void NotifyWatchers(Bot bot)
