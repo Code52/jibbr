@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using GithubAnnouncements.Extensions;
 using Jabbot;
 
 namespace GithubAnnouncements.Tasks

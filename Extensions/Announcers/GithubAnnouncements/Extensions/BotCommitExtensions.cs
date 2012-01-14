@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jabbot;
 
-namespace GithubAnnouncements
+namespace GithubAnnouncements.Extensions
 {
     public static class BotCommitExtensions
     {

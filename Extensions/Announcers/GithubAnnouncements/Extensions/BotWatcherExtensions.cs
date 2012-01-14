@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Jabbot;
 
-namespace GithubAnnouncements
+namespace GithubAnnouncements.Extensions
 {
     public static class BotWatcherExtensions
     {

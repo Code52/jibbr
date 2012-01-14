@@ -1,7 +1,7 @@
 using System;
 using Jabbot;
 
-namespace GithubAnnouncements
+namespace GithubAnnouncements.Extensions
 {
     public static class SettingsExtensions
     {

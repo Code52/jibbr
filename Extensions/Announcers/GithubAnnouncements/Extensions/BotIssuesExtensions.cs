@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Jabbot;
 
-namespace GithubAnnouncements
+namespace GithubAnnouncements.Extensions
 {
     public static class BotIssuesExtensions
     {

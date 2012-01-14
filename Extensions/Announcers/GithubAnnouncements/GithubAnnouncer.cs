@@ -15,11 +15,6 @@ namespace GithubAnnouncements
         [ImportMany(AllowRecomposition = true)]
         public IEnumerable<IGitHubTask> Tasks { get; set; }
 
-        [ImportingConstructor]
-        public GithubAnnouncer(ISettingsService storage)
-        {
-        }
-
         public TimeSpan Interval
         {
             get { return TimeSpan.Zero; }
