@@ -51,8 +51,14 @@
     <Compile Include="BotIssuesExtensions.cs" />
     <Compile Include="BotPullRequestExtensions.cs" />
     <Compile Include="BotWatcherExtensions.cs" />
-    <Compile Include="GithubAnnouncements.cs" />
+    <Compile Include="CommitTask.cs" />
+    <Compile Include="GithubAnnouncer.cs" />
+    <Compile Include="IGithubTask.cs" />
+    <Compile Include="GitHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PullRequestsTask.cs" />
+    <Compile Include="SettingsExtensions.cs" />
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Jabbot\Jabbot.csproj">

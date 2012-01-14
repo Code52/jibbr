@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace GithubAnnouncements
 {
-    public class GithubAnnouncements : IAnnounce
+    public class GithubAnnouncer : IAnnounce
     {
         const string UrlFormat = "https://api.github.com/repos/{0}/{1}";
         const string ProjectCommitsFeed = "/commits";
@@ -30,13 +30,16 @@ namespace GithubAnnouncements
         const string Repo = "jibbr";
 
         readonly ISettingsService _storage;
+        readonly IEnumerable<IGitHubTask> _tasks;
+
         readonly string _apiUrl;
         readonly WebClient _client = new WebClient();
 
         [ImportingConstructor]
-        public GithubAnnouncements(ISettingsService storage)
+        public GithubAnnouncer(ISettingsService storage, IEnumerable<IGitHubTask> tasks)
         {
             _storage = storage;
+            _tasks = tasks;
             _apiUrl = string.Format(UrlFormat, Account, Repo);
         }
 
@@ -47,29 +50,16 @@ namespace GithubAnnouncements
 
         public void Execute(Bot bot)
         {
-            NotifyLatestCommit(bot);
+            foreach (var task in _tasks)
+            {
+                task.ExecuteTask(bot, Account, Repo);
+            }
+            
+            //NotifyLatestCommit(bot);
             NotifyPullRequests(bot);
             NotifyForks(bot);
             NotifyIssues(bot);
             NotifyWatchers(bot);
-        }
-
-        private void NotifyLatestCommit(Bot bot)
-        {
-            var commits = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectCommitsFeed)).ToList();
-            var latestCommit = commits.FirstOrDefault();
-            if (latestCommit == null) return;
-
-            var lastCommit = GetValue(LatestCommitKey, () => "");
-            var latestSHA = latestCommit.commit.tree.sha.ToString();
-
-            if (lastCommit == latestSHA)
-                return;
-
-            _storage.Set(LatestCommitKey, latestSHA);
-            _storage.Save();
-
-            bot.ProcessCommits(RepositoryName, lastCommit, commits);
         }
 
         private void NotifyPullRequests(Bot bot)
@@ -77,7 +67,7 @@ namespace GithubAnnouncements
             var openPullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(OpenPullRequestsFeed));
             var closedPullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ClosedPullRequestsFeed));
 
-            var existingPullRequests = GetValue<IDictionary<int, string>>(MergeRequestsKey, () => new Dictionary<int, string>());
+            var existingPullRequests = _storage.GetValue<IDictionary<int, string>>(MergeRequestsKey, () => new Dictionary<int, string>());
 
             bot.ProcessClosedPullRequests(closedPullRequests, existingPullRequests);
             bot.ProcessOpenPullRequests(RepositoryName, existingPullRequests, openPullRequests);
@@ -91,7 +81,7 @@ namespace GithubAnnouncements
             var forks = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectForksFeed));
 
             var feeds = forks.ToDictionary(f => f.owner.login, f => f.url);
-            var existingForkStatus = GetValue<IDictionary<string, string>>(ForkStatusKey, () => new Dictionary<string, string>());
+            var existingForkStatus = _storage.GetValue<IDictionary<string, string>>(ForkStatusKey, () => new Dictionary<string, string>());
             
             foreach (var fork in feeds)
             {
@@ -132,7 +122,7 @@ namespace GithubAnnouncements
         private void NotifyWatchers(Bot bot)
         {
             var currentWatchers = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectWatchersFeed));
-            var existingWatchers = GetValue<IList<string>>(WatchersKey, () => new List<string>());
+            var existingWatchers = _storage.GetValue<IList<string>>(WatchersKey, () => new List<string>());
 
             existingWatchers = bot.ProcessWatchers(RepositoryName, existingWatchers, currentWatchers);
 
@@ -151,14 +141,9 @@ namespace GithubAnnouncements
             return JsonConvert.DeserializeObject<T>(response);
         }
         
-        private string RepositoryName
+        private static string RepositoryName
         {
             get { return string.Format("{0}/{1}", Account, Repo); }
-        }
-
-        private T GetValue<T>(string key, Func<T> defaultValue)
-        {
-            return _storage.ContainsKey(key) ? _storage.Get<T>(key) : defaultValue();
         }
     }
 }
