@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web.Hosting;
 using Jabbot.Models;
 using Jabbot.Sprockets.Core;
 using SignalR.Client.Hubs;
@@ -15,18 +10,12 @@ namespace Jabbot
 {
     public class Bot
     {
-        private readonly HubConnection _connection;
-        private readonly IHubProxy _chat;
-        private readonly string _password;
-        private readonly List<ISprocket> _sprockets = new List<ISprocket>();
-        private readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
-        private readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        private const string ExtensionsFolder = "Sprockets";
-
-        private ComposablePartCatalog _catalog;
-        private CompositionContainer _container;
-
+        readonly HubConnection _connection;
+        readonly IHubProxy _chat;
+        readonly string _password;
+        readonly List<ISprocket> _sprockets = new List<ISprocket>();
+        readonly List<IUnhandledMessageSprocket> _unhandledMessageSprockets = new List<IUnhandledMessageSprocket>();
+        readonly HashSet<string> _rooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public Bot(string url, string name, string password)
         {
@@ -95,18 +84,18 @@ namespace Jabbot
         /// <summary>
         /// Connects to the chat session
         /// </summary>
-        public void PowerUp()
+        public void PowerUp(IEnumerable<ISprocketInitializer> sprocketInitializers = null)
         {
             if (!_connection.IsActive)
             {
-                InitializeContainer();
-
                 _chat.On<dynamic, string>("addMessage", ProcessMessage);
                 _chat.On<string, string, string>("sendPrivateMessage", ProcessPrivateMessage);
                 _chat.On("leave", OnLeave);
                 _chat.On("addUser", OnJoin);
                 _chat.On<IEnumerable<string>>("logOn", OnLogOn);
-                
+
+                _chat.On<dynamic, string>("addUser", ProcessRoomArrival);
+
                 // Start the connection and wait
                 _connection.Start(SignalR.Client.Transports.Transport.LongPolling).Wait();
 
@@ -118,7 +107,8 @@ namespace Jabbot
                     // Setup the name of the bot
                     Send(String.Format("/nick {0} {1}", Name, _password));
 
-                    IntializeSprockets();
+                    if (sprocketInitializers != null)
+                        IntializeSprockets(sprocketInitializers);
                 }
             }
         }
@@ -169,6 +159,7 @@ namespace Jabbot
         {
             Send("/gravatar " + gravatarEmail);
         }
+
         /// <summary>
         /// Say something to the active room.
         /// </summary>
@@ -252,7 +243,7 @@ namespace Jabbot
                 return users;
             }
 
-            foreach(var u in dynamicusers)
+            foreach (var u in dynamicusers)
             {
                 users.Add(u);
             }
@@ -264,11 +255,7 @@ namespace Jabbot
         {
             var users = new Dictionary<string, dynamic>();
 
-            var result = _chat.Invoke<dynamic>("getRoomInfo", room).Result;
-
-            if (result == null) throw new Exception("Invalid Room");
-
-            var dynamicusers = result.Users;
+            var dynamicusers = GetUsers(room);
 
             foreach (var u in dynamicusers)
             {
@@ -280,6 +267,48 @@ namespace Jabbot
             return users[user];
         }
 
+        public IEnumerable<string> GetRoomOwners(string room)
+        {
+            var owners = new List<string>();
+
+            var result = _chat.Invoke<dynamic>("getRoomInfo", room).Result;
+
+            if (result == null) throw new Exception("Invalid Room");
+
+            foreach (var owner in result.Owners)
+            {
+                owners.Add(owner.ToString());
+            }
+
+            return owners;
+        }
+
+        public dynamic GetRooms()
+        {
+            var result = _chat.Invoke<dynamic>("getRooms").Result;
+
+            return result;
+        }
+
+        public void ChangeNote(string note)
+        {
+            Send(String.Format("/note {0}", note));
+        }
+
+        public void Nudge(string user)
+        {
+            Send(String.Format("/nudge {0}", user));
+        }
+
+        public void SendAdministrativeCommand(string command)
+        {
+            if (!command.StartsWith("/"))
+            {
+                throw new InvalidOperationException("Only commands are allowed");
+            }
+
+            Send(command);
+        }
 
         /// <summary>
         /// Disconnect the bot from the chat session. Leaves all rooms the bot entered
@@ -345,7 +374,7 @@ namespace Jabbot
         {
             Task.Factory.StartNew(() =>
             {
-                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.FromUser, message.Room, message.Content));
+                Debug.WriteLine(string.Format("PCM: {0} - {1} - {2}", message.Sender, message.Receiver, message.Content));
 
                 if (MessageReceived != null)
                 {
@@ -382,7 +411,54 @@ namespace Jabbot
                 // Just write to debug output if it failed
                 if (task.IsFaulted)
                 {
-                    Debug.WriteLine("JABBOT: Failed to process messages. {0}", task.Exception.GetBaseException());
+                    var aggregateException = task.Exception;
+                    if (aggregateException != null)
+                        Debug.WriteLine("JABBOT: Failed to process messages. {0}", aggregateException.GetBaseException());
+                }
+            });
+        }
+
+        private void ProcessRoomArrival(dynamic message, string room)
+        {
+            string name = message.Name;
+
+            Task.Factory.StartNew(() =>
+            {
+                Debug.WriteLine(string.Format("PCM: {0} - {1}", name, room));
+
+                var handled = false;
+
+                foreach (var handler in _sprockets)
+                {
+                    if (handler.Handle(new ChatMessage("[JABBR] - " + name + " just entered " + room, name, room), this))
+                    {
+                        handled = true;
+                        break;
+                    }
+                }
+
+                if (!handled)
+                {
+                    // Loop over the unhandled message sprockets
+                    foreach (var handler in _unhandledMessageSprockets)
+                    {
+                        // Stop at the first one that handled the message
+                        if (handler.Handle(message, this))
+                        {
+                            break;
+                        }
+                    }
+
+                }
+            })
+            .ContinueWith(task =>
+            {
+                // Just write to debug output if it failed
+                if (task.IsFaulted)
+                {
+                    var aggregateException = task.Exception;
+                    if (aggregateException != null)
+                        Debug.WriteLine("JABBOT: Failed to process messages. {0}", aggregateException.GetBaseException());
                 }
             });
         }
@@ -405,27 +481,10 @@ namespace Jabbot
             }
         }
 
-        private void InitializeContainer()
+        private void IntializeSprockets(IEnumerable<ISprocketInitializer> sprockets)
         {
-            var container = CreateCompositionContainer();
-            // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<ISprocket>())
-            {
-                AddSprocket(sprocket);
-            }
-
-            // Add all the sprockets to the sprocket list
-            foreach (var sprocket in container.GetExportedValues<IUnhandledMessageSprocket>())
-            {
-                AddUnhandledMessageSprocket(sprocket);
-            }
-        }
-
-        private void IntializeSprockets()
-        {
-            var container = CreateCompositionContainer();
             // Run all sprocket initializers
-            foreach (var sprocketInitializer in container.GetExportedValues<ISprocketInitializer>())
+            foreach (var sprocketInitializer in sprockets)
             {
                 try
                 {
@@ -436,38 +495,6 @@ namespace Jabbot
                     Trace.WriteLine(String.Format("Unable to Initialize {0}:{1}", sprocketInitializer.GetType().Name, ex.GetBaseException().Message));
                 }
             }
-        }
-
-        private CompositionContainer CreateCompositionContainer()
-        {
-            if (_container == null)
-            {
-                string extensionsPath = GetExtensionsPath();
-
-                // If the extensions folder exists then use them
-                if (Directory.Exists(extensionsPath))
-                {
-                    _catalog = new AggregateCatalog(
-                                new AssemblyCatalog(typeof(Bot).Assembly),
-                                new DirectoryCatalog(extensionsPath, "*.dll"));
-                }
-                else
-                {
-                    _catalog = new AssemblyCatalog(typeof(Bot).Assembly);
-                }
-
-                _container = new CompositionContainer(_catalog);
-            }
-            return _container;
-        }
-
-        private static string GetExtensionsPath()
-        {
-            var rootPath = HostingEnvironment.IsHosted
-                ? HostingEnvironment.ApplicationPhysicalPath
-                : Directory.GetCurrentDirectory();
-
-            return Path.Combine(rootPath, ExtensionsFolder);
         }
 
         private void Send(string command)
