@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using IronJS;
 using TinyMessenger;
 
 namespace Jabbot.AspNetBotHost.Modules
 {
+    //https://github.com/github/hubot/blob/master/src/robot.coffee
     public class RobotObject : CommonObject
     {
         public override string ClassName
@@ -19,24 +17,36 @@ namespace Jabbot.AspNetBotHost.Modules
         public RobotObject(Environment env, Schema map, CommonObject prototype)
             : base(env, map, prototype)
         {
-            Put("match", new[] { "test", "echo" });
+
         }
 
         public RobotObject(Environment env, CommonObject prototype)
             : base(env, prototype)
         {
-            Put("match", new[] { "test", "echo" });
+
         }
 
         public static void Respond(CommonObject c, FunctionObject f)
         {
             var r = (RegExpObject)c;
-            BotHostModule.HubotScripts.Add(r.RegExp, f);
+            BotHostModule.HubotRespond.Add(r.RegExp, f);
+        }
+
+        public static void Hear(CommonObject c, FunctionObject f)
+        {
+            var r = (RegExpObject)c;
+            BotHostModule.HubotListen.Add(r.RegExp, f);
         }
 
         public static void Send(CommonObject c)
         {
             TinyMessengerHub.Instance.Publish(new TalkMessage() { Text = TypeConverter.ToString(c) });
+        }
+
+        public static CommonObject Random(CommonObject c)
+        {
+            // Math.floor(Math.random() * items.length)
+            return c;
         }
     }
 }

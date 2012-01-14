@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Configuration;
 using System.Text.RegularExpressions;
+using System.Web.Hosting;
 using IronJS;
 using IronJS.Hosting;
 using IronJS.Native;
@@ -23,8 +25,8 @@ namespace Jabbot.AspNetBotHost.Modules
         public static Bot _bot;
         private readonly IEnumerable<ISprocket> _sprockets;
         private readonly IEnumerable<ISprocketInitializer> _sprocketInitializers;
-        public static Dictionary<Regex, FunctionObject> HubotScripts = new Dictionary<Regex, FunctionObject>();
-
+        public static Dictionary<Regex, FunctionObject> HubotRespond = new Dictionary<Regex, FunctionObject>();
+        public static Dictionary<Regex, FunctionObject> HubotListen = new Dictionary<Regex, FunctionObject>();
         public BotHostModule(Bot bot, IEnumerable<ISprocket> sprockets, IEnumerable<ISprocketInitializer> sprocketInitializers)
             : base("bot")
         {
@@ -167,34 +169,41 @@ namespace Jabbot.AspNetBotHost.Modules
 
             return true;
         }
+
         static void BotMessageReceived(Models.ChatMessage obj)
         {
-            foreach (var k in HubotScripts.Keys)
+            obj.Content = Regex.Replace(obj.Content, @"<(.|\n)*?>", string.Empty);
+
+            Respond(obj.Content.StartsWith(_bot.Name + " ") ? HubotRespond : HubotListen, obj.Content);
+        }
+
+        static void Respond(Dictionary<Regex, FunctionObject> d, string content)
+        {
+            foreach (var k in d.Keys)
             {
-                if (!k.IsMatch(obj.Content))
+                if (!k.IsMatch(content))
                     continue;
 
-                var m = k.Matches(obj.Content);
-                var f = HubotScripts[k];
+                var m = k.Matches(content);
+                var f = HubotRespond[k];
 
                 var bot = f.Env.Globals.GetT<RobotObject>("bot");
-                
-                //"match" isn't accessible from JS, it seems. 
-                //Most scripts need access to .match[1] at a minimum. ie, for 'echo hello', match[0] = 'echo hello', match[1] = 'hello' for '/ECHO (.*)$/i'
-                //bot.match = new List<string>();
-                //foreach (var g in m[0].Groups)
-                //{
-                //    bot.match.Add(g.ToString());
-                //}
-
-                //If it requires that .match, but can't get it, "TypeError: Can't convert Undefined, Null or CLR to Object" will be thrown.
+                var array = f.Env.NewArray();
+                for (int i = 0; i < m[0].Groups.Count; i++)
+                {
+                    array.Put(i.ToString(CultureInfo.InvariantCulture), m[0].Groups[i].ToString());
+                }
+                bot.Prototype.Put("match", array);
                 f.Call(f.Env.Globals, bot);
             }
         }
 
+
         private static void LoadCoffeeScript()
         {
-            CompileCoffeeScriptUsingIronJs(System.IO.File.ReadAllText(@"C:\Code\Code52\jibbr\Jabbot.AspNetBotHost\Resources\coffee-script.js"), System.IO.File.ReadAllText(@"C:\Code\Code52\jibbr\Jabbot.AspNetBotHost\Resources\ping.coffee"));
+            CompileCoffeeScriptUsingIronJs(
+                System.IO.File.ReadAllText(HostingEnvironment.MapPath(@"~/Resources/coffee-script.js")),
+                System.IO.File.ReadAllText(HostingEnvironment.MapPath(@"~/Resources/ping.coffee")));
         }
 
         static CSharp.Context context;
@@ -204,16 +213,28 @@ namespace Jabbot.AspNetBotHost.Modules
 
             //Create the JS object
             var robotConstructor = Utils.CreateConstructor<Func<FunctionObject, CommonObject, double, CommonObject>>(context.Environment, 1, Construct);
+            var httpConstructor = Utils.CreateConstructor<Func<FunctionObject, CommonObject, string, CommonObject>>(context.Environment, 1, ConstructHttp);
 
             //setup the prototype (methods) on teh JS object
             var robotPrototype = context.Environment.NewObject();
             robotPrototype.Prototype = context.Environment.Prototypes.Object;
             var respond = Utils.CreateFunction<Action<CommonObject, FunctionObject>>(context.Environment, 0, RobotObject.Respond);
+            var hear = Utils.CreateFunction<Action<CommonObject, FunctionObject>>(context.Environment, 0, RobotObject.Hear);
             var send = Utils.CreateFunction<Action<CommonObject>>(context.Environment, 0, RobotObject.Send);
-            
+            var get = Utils.CreateFunction<Func<FunctionObject, CommonObject, FunctionObject, string>>(context.Environment, 0, HttpObject.HttpGet);
+            var random = Utils.CreateFunction<Func<CommonObject, CommonObject>>(context.Environment, 1, RobotObject.Random);
+
+            var httpPrototype = context.Environment.NewObject();
+            httpPrototype.Prototype = context.Environment.Prototypes.Object;
+            httpPrototype.Put("get", get);
+            httpConstructor.Put("prototype", httpPrototype, DescriptorAttrs.Immutable);
+
             //attach the methods
             robotPrototype.Put("respond", respond);
             robotPrototype.Put("send", send);
+            robotPrototype.Put("hear", hear);
+            robotPrototype.Put("http", httpConstructor);
+            robotPrototype.Put("random", random);
 
             //attach the prototype
             robotConstructor.Put("prototype", robotPrototype, DescriptorAttrs.Immutable);
@@ -243,6 +264,12 @@ namespace Jabbot.AspNetBotHost.Modules
         {
             var prototype = ctor.GetT<CommonObject>("prototype");
             return new RobotObject(ctor.Env, prototype);
+        }
+
+        static CommonObject ConstructHttp(FunctionObject ctor, CommonObject _, string x)
+        {
+            var prototype = ctor.GetT<CommonObject>("prototype");
+            return new HttpObject(x, ctor.Env, prototype);
         }
     }
 }
