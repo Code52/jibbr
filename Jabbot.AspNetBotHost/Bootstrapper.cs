@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.Composition.Hosting;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Configuration;
 using System.IO;
@@ -19,8 +21,27 @@ namespace Jabbot.AspNetBotHost
         {
             var mefcontainer = CreateCompositionContainer();
 
+            var settings = mefcontainer.GetExportedValue<ISettingsService>();
+
+            try
+            {
+                var list = new List<string> { "A", "B", "C", "D" };
+                settings.Set("Something", list);
+                if (settings.ContainsKey("Something"))
+                {
+                    var output = settings.Get<IList<string>>("Something");    
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
             
             container.Register(mefcontainer.GetExportedValues<IAnnounce>());
+            container.Register(mefcontainer.GetExportedValues<ISprocket>());
             container.Register(mefcontainer.GetExportedValues<ISprocketInitializer>());
             container.Register(new Bot(_serverUrl, _botName, _botPassword));
         }
@@ -34,7 +55,10 @@ namespace Jabbot.AspNetBotHost
             //If the extensions folder exists then use them
             if (Directory.Exists(extensionsPath))
             {
-                catalog = new AggregateCatalog(new AssemblyCatalog(typeof(Bot).Assembly), new DirectoryCatalog(extensionsPath, "*.dll"));
+                catalog = new AggregateCatalog(
+                    new AssemblyCatalog(typeof(Bot).Assembly),
+                    new AssemblyCatalog(typeof(Bootstrapper).Assembly), 
+                    new DirectoryCatalog(extensionsPath, "*.dll"));
             }
             else
             {

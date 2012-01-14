@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Configuration;
+using Jabbot.AspNetBotHost.Components;
 using Jabbot.Sprockets.Core;
 using Nancy;
 using System.Diagnostics;
@@ -17,7 +18,8 @@ namespace Jabbot.AspNetBotHost.Modules
         private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
         private static Bot _bot;
 
-        public BotHostModule(Bot bot) : base("bot")
+        public BotHostModule(Bot bot)
+            : base("bot")
         {
             _bot = bot;
 
@@ -75,8 +77,6 @@ namespace Jabbot.AspNetBotHost.Modules
                                 };
         }
 
-
-
         private static void ScheduleKeepAlive(string Url)
         {
             new Moment(_momentApiKey).ScheduleJob(new Job()
@@ -94,13 +94,14 @@ namespace Jabbot.AspNetBotHost.Modules
                 ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
             }
 
-            // TODO: intialize announcers
-            // TODO: 
-
             var initializers = TinyIoCContainer.Current.ResolveAll<ISprocketInitializer>();
             _bot.PowerUp(initializers);
-            JoinRooms(_bot);
 
+            var sprockets = TinyIoCContainer.Current.ResolveAll<ISprocket>();
+            foreach (var sprocket in sprockets)
+                _bot.AddSprocket(sprocket);
+
+            JoinRooms(_bot);
         }
 
         private static void ShutDownBot()
