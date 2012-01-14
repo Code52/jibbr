@@ -46,10 +46,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionTests", "Tests\Ext
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizSprocket", "Extensions\QuizSprocket\QuizSprocket.csproj", "{93DB29BE-BC75-4D59-9313-891A1245940D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A3A6EC44-1F10-4427-98DC-CF13D11F8C79}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionTests", "Tests\ExtensionTests\ExtensionTests.csproj", "{3E8A88F3-737F-4F93-92EA-151B1FE3A44B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +167,12 @@ Global
 		{3E8A88F3-737F-4F93-92EA-151B1FE3A44B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3E8A88F3-737F-4F93-92EA-151B1FE3A44B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3E8A88F3-737F-4F93-92EA-151B1FE3A44B}.Release|x86.ActiveCfg = Release|Any CPU
+		{93DB29BE-BC75-4D59-9313-891A1245940D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93DB29BE-BC75-4D59-9313-891A1245940D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{93DB29BE-BC75-4D59-9313-891A1245940D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{93DB29BE-BC75-4D59-9313-891A1245940D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93DB29BE-BC75-4D59-9313-891A1245940D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{93DB29BE-BC75-4D59-9313-891A1245940D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
