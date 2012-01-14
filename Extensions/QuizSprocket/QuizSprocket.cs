@@ -300,10 +300,11 @@ namespace Jabbot.Extensions
         private bool VerifyAnswer(string answer)
         {
             var longestCommonSubstringLength = LongestCommonSubstring(answer, _lastAskedQuestion.Item2);
-            var levenshteinDistance = LevenshteinDistance(answer, _lastAskedQuestion.Item2); //Leaving out Levenshtein Distance for now since i'm not sure what's a fair distance to accept
+            var levenshteinDistance = LevenshteinDistance(answer, _lastAskedQuestion.Item2);
             var correct = _lastAskedQuestion != null
                             && (answer.Equals(_lastAskedQuestion.Item2, StringComparison.InvariantCultureIgnoreCase)
-                            || (longestCommonSubstringLength / (decimal)_lastAskedQuestion.Item2.Length) > CorrectnessFraction);
+                            || (longestCommonSubstringLength / (decimal)_lastAskedQuestion.Item2.Length) > CorrectnessFraction
+                            || (levenshteinDistance / (decimal)_lastAskedQuestion.Item2.Length) < (1 - CorrectnessFraction)); 
 
             if (correct)
             {
