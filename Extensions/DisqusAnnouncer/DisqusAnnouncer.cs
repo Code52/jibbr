@@ -37,7 +37,7 @@ namespace DisqusAnnouncer
 
             var posts = GetPosts(client).ToList();
 
-            foreach (var post in posts.Where(p => !(p.isDeleted == true || p.isSpam == true) && DateTime.Parse(p.createdAt.ToString()) > LastUpdate).OrderBy(p => DateTime.Parse(p.createdAt.ToString())))
+            foreach (var post in posts.Where(p => !(p.isDeleted == true || p.isSpam == true) && DateTime.Parse(p.createdAt.ToString()) > LastUpdate && DateTime.Parse(p.createdAt.ToString()) > DateTime.Now.AddDays(-1)).OrderBy(p => DateTime.Parse(p.createdAt.ToString())))
             {
                 var thread = threads.SingleOrDefault(t => t.id == post.thread);
 
