@@ -10,3 +10,6 @@ xcopy %%I\bin\Debug\*.dll %output_dir% /C /Y
 for /D %%I in ("%solution_dir%\Extensions\Sprockets\*") do (
 xcopy %%I\bin\Debug\*.dll %output_dir% /C /Y
 )
+
+del %output_dir%\Jabbot.dll
+del %output_dir%\Jabbot.CommandSprockets.dll
