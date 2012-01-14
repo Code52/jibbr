@@ -7,7 +7,7 @@ using Jabbot.CommandSprockets;
 using Jabbot.Models;
 using Jabbot.Sprockets.Core;
 
-namespace Jabbot.Extensions
+namespace QuizSprocket
 {
     public class QuizSprocket : CommandSprocket
     {
