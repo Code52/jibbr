@@ -39,7 +39,7 @@ namespace Jabbot.ConsoleBotHost
                 var announcements = container.GetExportedValues<IAnnounce>();
 
                 Console.WriteLine(String.Format("Connecting to {0}...", _serverUrl));
-                Bot bot = new Bot(_serverUrl, _botName, _botPassword); 
+                var bot = new Bot(_serverUrl, _botName, _botPassword); 
                 
                 foreach (var s in container.GetExportedValues<ISprocket>())
                     bot.AddSprocket(s);

@@ -5,7 +5,7 @@ using Jabbot;
 
 namespace GithubAnnouncements
 {
-    public class IssuesTask : IGitHubTask
+    public class ForksTask : IGitHubTask
     {
         const string ProjectForksFeed = "/forks";
         const string ForkStatusKey = "ForkStatus";
@@ -13,7 +13,7 @@ namespace GithubAnnouncements
         readonly ISettingsService _settings;
 
         [ImportingConstructor]
-        public IssuesTask(ISettingsService settings)
+        public ForksTask(ISettingsService settings)
         {
             _settings = settings;
         }
@@ -28,14 +28,14 @@ namespace GithubAnnouncements
 
             foreach (var fork in feeds)
             {
-                NotifyForkStatus(fork, existingForkStatus, bot);
+                CheckForkStatus(fork, existingForkStatus, bot);
             }
 
             _settings.Set(ForkStatusKey, existingForkStatus);
             _settings.Save();
         }
 
-        private static void NotifyForkStatus(KeyValuePair<dynamic, dynamic> fork, IDictionary<string, string> existingForkStatus, Bot bot)
+        private static void CheckForkStatus(KeyValuePair<dynamic, dynamic> fork, IDictionary<string, string> existingForkStatus, Bot bot)
         {
             string id = fork.Key.ToString();
             string url = fork.Value.ToString() + "/commits";
