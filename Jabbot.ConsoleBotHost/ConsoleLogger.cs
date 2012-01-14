@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Jabbot
+namespace Jabbot.ConsoleBotHost
 {
     public class ConsoleLogger : ILogger
     {

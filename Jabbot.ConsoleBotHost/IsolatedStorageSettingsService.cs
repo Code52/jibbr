@@ -4,7 +4,7 @@ using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Jabbot
+namespace Jabbot.ConsoleBotHost
 {
     public class IsolatedStorageSettingsService : ISettingsService
     {
