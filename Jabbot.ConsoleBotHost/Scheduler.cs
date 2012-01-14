@@ -13,6 +13,8 @@ namespace Jabbot.ConsoleBotHost
         private readonly IDictionary<IAnnounce, DateTime> _scheduledAnnouncements = new Dictionary<IAnnounce, DateTime>();
         private Bot _bot;
 
+        public ILogger Logger { get; set; }
+
         public void Start(IEnumerable<IAnnounce> tasks, Bot bot)
         {
             _bot = bot;
@@ -48,7 +50,7 @@ namespace Jabbot.ConsoleBotHost
                     Debug.WriteLine("Message: " + ex.Message);
                     Debug.WriteLine("Stacktrace: " + ex.StackTrace);
                 }
-                
+
                 _scheduledAnnouncements[announcement] = now.Add(announcement.Interval);
             }
         }

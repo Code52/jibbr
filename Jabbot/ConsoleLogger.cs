@@ -4,12 +4,12 @@ namespace Jabbot
 {
     public class ConsoleLogger : ILogger
     {
-        public void Display(string message)
+        public void WriteMessage(string message)
         {
             Console.WriteLine(message);
         }
 
-        public void DisplayFormat(string format, params object[] parameters)
+        public void Write(string format, params object[] parameters)
         {
             Console.WriteLine(format, parameters);
         }

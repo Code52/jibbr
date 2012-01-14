@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
@@ -27,6 +28,9 @@ namespace Jabbot
         }
 
         public string Name { get; private set; }
+
+        [Import]
+        public ILogger Logger { get; set; }
 
         public ICredentials Credentials
         {

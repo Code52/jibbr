@@ -5,7 +5,7 @@ namespace Jabbot
     [InheritedExport]
     public interface ILogger
     {
-        void Display(string message);
-        void DisplayFormat(string format, params object[] parameters);
+        void WriteMessage(string message);
+        void Write(string format, params object[] parameters);
     }
 }
