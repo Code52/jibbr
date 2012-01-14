@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using Newtonsoft.Json;
 
@@ -6,13 +5,13 @@ namespace GithubAnnouncements.Extensions
 {
     public static class StringExtensions
     {
-        private static WebClient localClient = new WebClient();
+        private static readonly WebClient LocalClient = new WebClient();
 
         public static T GetResponse<T>(this string url)
         {
-            lock(localClient)
+            lock(LocalClient)
             {
-                var response = localClient.DownloadString(url);
+                var response = LocalClient.DownloadString(url);
                 return JsonConvert.DeserializeObject<T>(response);    
             }
         }
