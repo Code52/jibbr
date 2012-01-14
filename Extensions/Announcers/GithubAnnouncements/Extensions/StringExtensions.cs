@@ -18,7 +18,7 @@ namespace GithubAnnouncements.Extensions
 
         public static string Append(this string baseUrl, string action)
         {
-            return string.Format("{0}{1}", GitHub.UrlFormat, action);
+            return string.Format("{0}{1}", baseUrl, action);
         }
     }
 }

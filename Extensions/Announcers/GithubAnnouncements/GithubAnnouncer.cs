@@ -20,7 +20,7 @@ namespace GithubAnnouncements
 
         public TimeSpan Interval
         {
-            get { return TimeSpan.Zero; }
+            get { return TimeSpan.FromMinutes(1); }
         }
 
         public string Name
@@ -34,7 +34,17 @@ namespace GithubAnnouncements
             foreach (var task in Tasks)
             {
                 Log.Write("Task '{0}' started at '{1}'", task.Name, DateTime.UtcNow);
-                task.ExecuteTask(bot, baseUrl, RepositoryName);
+                try
+                {
+                    task.ExecuteTask(bot, baseUrl, RepositoryName);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Exception occurred: '{0}'", ex.Message);
+                    Log.WriteMessage("Stack Trace: " + ex.StackTrace);
+                    Log.WriteMessage("Announcer Type: " + task.GetType());
+                }
+                
                 Log.Write("Task '{0}' finished at '{1}'", task.Name, DateTime.UtcNow);
             }
         }

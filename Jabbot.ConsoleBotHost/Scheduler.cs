@@ -17,12 +17,15 @@ namespace Jabbot.ConsoleBotHost
 
         public void Start(IEnumerable<IAnnounce> tasks, Bot bot)
         {
+            Logger.Write("Scheduler started at {0}", CurrentTime);
             _bot = bot;
 
             var startTime = DateTime.Now;
             foreach (var task in tasks)
             {
-                _scheduledAnnouncements.Add(task, startTime.Add(task.Interval));
+                var nextExecution = startTime.Add(task.Interval);
+                Logger.Write("Task {0} should be executing at {1}", task.Name, nextExecution);
+                _scheduledAnnouncements.Add(task, nextExecution);
             }
 
             _timer.Elapsed += HandleResult;
@@ -31,9 +34,11 @@ namespace Jabbot.ConsoleBotHost
 
         private void HandleResult(object state, ElapsedEventArgs elapsedEventArgs)
         {
+            Logger.Write("Tick occurred at {0}", CurrentTime);
             var now = DateTime.Now;
 
-            var currentItems = _scheduledAnnouncements.Where(c => c.Value < now).ToList();
+            var currentItems = _scheduledAnnouncements.Where(c => c.Value <= now).ToList();
+            Logger.Write("{0} announcers to process", currentItems.Count);
 
             foreach (var scheduleItem in currentItems)
             {
@@ -41,9 +46,9 @@ namespace Jabbot.ConsoleBotHost
 
                 try
                 {
-                    Logger.Write("Announcer '{0}' started at '{1}'", announcement.Name, DateTime.UtcNow);
+                    Logger.Write("Announcer '{0}' started at '{1}'", announcement.Name, CurrentTime);
                     announcement.Execute(_bot);
-                    Logger.Write("Announcer '{0}' finished at '{1}'", announcement.Name, DateTime.UtcNow);
+                    Logger.Write("Announcer '{0}' finished at '{1}'", announcement.Name, CurrentTime);
                 }
                 catch (Exception ex)
                 {
@@ -52,13 +57,20 @@ namespace Jabbot.ConsoleBotHost
                     Logger.WriteMessage("Announcer Type: " + announcement.GetType());
                 }
 
-                _scheduledAnnouncements[announcement] = now.Add(announcement.Interval);
+                var nextExecution = now.Add(announcement.Interval);
+                Logger.Write("Task {0} should be executing at {1}", announcement.Name, nextExecution);
+                _scheduledAnnouncements[announcement] = nextExecution;
             }
+
+            Logger.WriteMessage("Going to sleep");
         }
 
         public void Stop()
         {
+            Logger.Write("Tick occurred at {0}", CurrentTime);
             _timer.Stop();
         }
+
+        public DateTime CurrentTime { get { return DateTime.Now; } }
     }
 }
