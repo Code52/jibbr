@@ -5,15 +5,50 @@
 }
 <h3>Sprockets</h3>
 <ul>
-    @foreach (var m in Model)
+    @foreach (var m in Model.Sprockets)
+    {
+        <li>@m</li>
+    }
+</ul>
+
+<h3>Announcers</h3>
+<ul>
+    @foreach (var m in Model.Announcers)
     {
         <li>@m</li>
     }
 </ul>
 <br />
-<a href="/Rooms">Rooms</a>
+
 
 <h3>Bot Controls</h3>
-<a href="/bot/start">Start Bot</a><br />
-<a href="/bot/stop">Stop Bot</a><br />
-<a href="/bot/keepalive">Keep Alive</a><br />
+<a href="/bot/start">Start</a><br />
+<a href="/bot/stop">Stop</a><br />
+<a href="/Rooms">Join Room</a>
+
+<h3>Send Message</h3>
+<script type="text/javascript">
+    function check() {
+        var f = document.getElementById('sendmessage');
+        var s = document.getElementById('room');
+        f.setAttribute("action", "/Bot/send/" + s.value);
+        f.submit();
+        }
+</script>
+
+<form id="sendmessage" method="POST" >
+    <select id="room">
+        @foreach (var r in Model.Bot.Rooms)
+        {
+            <option>@r</option>
+        }
+    </select>
+    <input name="Message" type="text" /> <input type="button" onclick="check()" value="Send"/>
+</form>
+
+<h3>Attach a Hubot script</h3>
+<a href="https://github.com/github/hubot/tree/master/src/scripts">core</a> or <a href="https://github.com/github/hubot-scripts/tree/master/src/scripts">community</a><br />
+<form method="POST" action="/bot/attach" >
+    <textarea style="width:450px; height:250px;" name="script" ></textarea> <br/>
+    <input type="submit" value="Attach"/>
+</form>
