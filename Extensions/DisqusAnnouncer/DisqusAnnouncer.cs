@@ -37,22 +37,22 @@ namespace DisqusAnnouncer
 
             var posts = GetPosts(client).ToList();
 
-            foreach(var post in posts.Where(p => !(p.isDeleted == true || p.isSpam == true) && DateTime.Parse(p.createdAt) > LastUpdate).OrderBy(p => DateTime.Parse(p.createdAt)))
+            foreach (var post in posts.Where(p => !(p.isDeleted == true || p.isSpam == true) && DateTime.Parse(p.createdAt.ToString()) > LastUpdate && DateTime.Parse(p.createdAt.ToString()) > DateTime.Now.AddDays(-1)).OrderBy(p => DateTime.Parse(p.createdAt.ToString())))
             {
-                    var thread = threads.SingleOrDefault(t => t.id == post.thread);
+                var thread = threads.SingleOrDefault(t => t.id == post.thread);
 
-                    foreach (var room in bot.Rooms)
-                    {
-                        var msg = Regex.Replace(post.message, @"<br>", "\n");
-                        msg = Regex.Replace(msg, @"\"" rel=\""nofollow\"">[-./""\w\s]*://[-./""\w\s]*", string.Empty);
-                        msg = Regex.Replace(msg, @"<a href=\""", string.Empty);
-                        msg = Regex.Replace(msg, @"<(.|\n)*?>", string.Empty);
-                        bot.Say(
-                            string.Format("{0} - {1} ({2}) - {3}", thread == null ? "Unknown" : thread.title,
-                                          post.author.name, DateTime.Parse(post.createdAt), msg), room);
-                    }
+                foreach (var room in bot.Rooms)
+                {
+                    var msg = Regex.Replace(post.message.ToString(), @"<br>", "\n");
+                    msg = Regex.Replace(msg, @"\"" rel=\""nofollow\"">[-./""\w\s]*://[-./""\w\s]*", string.Empty);
+                    msg = Regex.Replace(msg, @"<a href=\""", string.Empty);
+                    msg = Regex.Replace(msg, @"<(.|\n)*?>", string.Empty);
+                    bot.Say(
+                        string.Format("{0} - {1} ({2}) - {3}", thread == null ? "Unknown" : thread.title,
+                                      post.author.name, DateTime.Parse(post.createdAt.ToString()), msg), room);
+                }
 
-                LastUpdate = DateTime.Parse(post.createdAt);
+                LastUpdate = DateTime.Parse(post.createdAt.ToString());
             }
 
             Lock = false;
@@ -61,7 +61,7 @@ namespace DisqusAnnouncer
         private static IEnumerable<dynamic> GetThreads(WebClient client)
         {
             var threadResponse = client.DownloadString(new Uri(string.Format("https://disqus.com/api/3.0/forums/listThreads.json?forum={0}&api_key={1}", CommentChannel, APIKey)));
-            var threads = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(threadResponse);
+            var threads = JsonConvert.DeserializeObject<dynamic>(threadResponse).response;
 
             return threads;
         }
@@ -70,7 +70,7 @@ namespace DisqusAnnouncer
         {
             var postResponse =
                 client.DownloadString(new Uri(string.Format("https://disqus.com/api/3.0/forums/listPosts.json?forum={0}&api_key={1}", CommentChannel, APIKey)));
-            var posts = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(postResponse);
+            var posts = JsonConvert.DeserializeObject<dynamic>(postResponse).response;
 
             return posts;
         }
