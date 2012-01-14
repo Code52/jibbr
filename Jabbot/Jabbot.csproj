@@ -55,6 +55,7 @@
     <Compile Include="Bot.cs" />
     <Compile Include="BotExtensions.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="IBot.cs" />
     <Compile Include="ISettingsService.cs" />
     <Compile Include="Models\ChatMessage.cs" />
     <Compile Include="Models\ChatUser.cs" />
