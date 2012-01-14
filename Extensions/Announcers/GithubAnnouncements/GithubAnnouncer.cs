@@ -13,19 +13,11 @@ namespace GithubAnnouncements
     public class GithubAnnouncer : IAnnounce
     {
         const string UrlFormat = "https://api.github.com/repos/{0}/{1}";
-        const string ProjectCommitsFeed = "/commits";
-        const string OpenPullRequestsFeed = "/pulls?state=open";
-        const string ClosedPullRequestsFeed = "/pulls?state=closed";
         const string ProjectWatchersFeed = "/watchers";
-        const string ProjectForksFeed = "/forks";
         const string OpenProjectIssuesFeed = "/issues?state=open";
         const string ClosedProjectIssuesFeed = "/issues?state=closed";
-        const string LatestCommitKey = "LastCommitSHA";
-        const string MergeRequestsKey = "MergeRequests";
         const string IssuesKey = "Issues";
-        const string LatestCommentsKey = "Comments";
         const string WatchersKey = "Watchers";
-        const string ForkStatusKey = "ForkStatus";
         const string Account = "Code52";
         const string Repo = "jibbr";
 
@@ -50,54 +42,14 @@ namespace GithubAnnouncements
 
         public void Execute(Bot bot)
         {
+            var baseUrl = string.Format(GitHub.UrlFormat, Account, Repo);
             foreach (var task in _tasks)
             {
-                task.ExecuteTask(bot, Account, Repo);
+                task.ExecuteTask(bot, baseUrl, RepositoryName, "");
             }
             
-            //NotifyLatestCommit(bot);
-            NotifyPullRequests(bot);
-            NotifyForks(bot);
             NotifyIssues(bot);
             NotifyWatchers(bot);
-        }
-
-        private void NotifyPullRequests(Bot bot)
-        {
-            var openPullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(OpenPullRequestsFeed));
-            var closedPullRequests = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ClosedPullRequestsFeed));
-
-            var existingPullRequests = _storage.GetValue<IDictionary<int, string>>(MergeRequestsKey, () => new Dictionary<int, string>());
-
-            bot.ProcessClosedPullRequests(closedPullRequests, existingPullRequests);
-            bot.ProcessOpenPullRequests(RepositoryName, existingPullRequests, openPullRequests);
-
-            _storage.Set(MergeRequestsKey, existingPullRequests);
-            _storage.Save();
-        }
-
-        private void NotifyForks(Bot bot)
-        {
-            var forks = GetResponse<IEnumerable<dynamic>>(GetFullUrl(ProjectForksFeed));
-
-            var feeds = forks.ToDictionary(f => f.owner.login, f => f.url);
-            var existingForkStatus = _storage.GetValue<IDictionary<string, string>>(ForkStatusKey, () => new Dictionary<string, string>());
-            
-            foreach (var fork in feeds)
-            {
-                NotifyForkStatus(fork, existingForkStatus, bot);
-            }
-
-            _storage.Set(ForkStatusKey, existingForkStatus);
-            _storage.Save();
-        }
-
-        private void NotifyForkStatus(KeyValuePair<dynamic, dynamic> fork, IDictionary<string, string> existingForkStatus, Bot bot)
-        {
-            string id = fork.Key.ToString();
-            string url = fork.Value.ToString() + "/commits";
-            var commits = GetResponse<IEnumerable<dynamic>>(url).ToList();
-            bot.ProcessForkStatus(id, existingForkStatus, commits);
         }
 
         private void NotifyIssues(Bot bot)

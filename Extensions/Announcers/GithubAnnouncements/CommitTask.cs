@@ -16,9 +16,9 @@ namespace GithubAnnouncements
 
         const string LatestCommitKey = "LastCommitSHA";
 
-        public void ExecuteTask(Bot bot, string account, string repository)
+        public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
         {
-            var fullUrl = GetFullUrl(ProjectCommitsFeed);
+            var fullUrl = baseUrl.Append(ProjectCommitsFeed);
             var commits = fullUrl.GetResponse<IEnumerable<dynamic>>().ToList();
             var latestCommit = commits.FirstOrDefault();
             if (latestCommit == null) return;
@@ -32,13 +32,7 @@ namespace GithubAnnouncements
             _settings.Set(LatestCommitKey, latestSHA);
             _settings.Save();
 
-            var name = string.Format("{0}/{1}", account, repository);
-            bot.ProcessCommits(name, lastCommit, commits);
-        }
-
-        private static string GetFullUrl(string feedLink)
-        {
-            return string.Format("{0}{1}", GitHub.UrlFormat, feedLink);
+            bot.ProcessCommits(repositoryName, lastCommit, commits);
         }
     }
 }

@@ -16,26 +16,20 @@ namespace GithubAnnouncements
         const string ClosedPullRequestsFeed = "/pulls?state=closed";
         const string MergeRequestsKey = "MergeRequests";
 
-        public void ExecuteTask(Bot bot, string account, string repository)
+        public void ExecuteTask(Bot bot, string baseUrl, string repositoryName)
         {
-            var fullUrl = GetFullUrl(OpenPullRequestsFeed);
+            var fullUrl = baseUrl.Append(OpenPullRequestsFeed);
             var openPullRequests = fullUrl.GetResponse<IEnumerable<dynamic>>();
-            var url = GetFullUrl(ClosedPullRequestsFeed);
+            var url = baseUrl.Append(ClosedPullRequestsFeed);
             var closedPullRequests = url.GetResponse<IEnumerable<dynamic>>();
 
             var existingPullRequests = _settings.GetValue<IDictionary<int, string>>(MergeRequestsKey, () => new Dictionary<int, string>());
-            var name = string.Format("{0}/{1}", account, repository);
-
+            
             bot.ProcessClosedPullRequests(closedPullRequests, existingPullRequests);
-            bot.ProcessOpenPullRequests(name, existingPullRequests, openPullRequests);
+            bot.ProcessOpenPullRequests(repositoryName, existingPullRequests, openPullRequests);
 
             _settings.Set(MergeRequestsKey, existingPullRequests);
             _settings.Save();
-        }
-
-        private static string GetFullUrl(string feedLink)
-        {
-            return string.Format("{0}{1}", GitHub.UrlFormat, feedLink);
         }
     }
 }
