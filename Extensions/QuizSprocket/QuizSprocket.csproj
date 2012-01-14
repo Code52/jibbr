@@ -8,8 +8,8 @@
     <ProjectGuid>{93DB29BE-BC75-4D59-9313-891A1245940D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jabbot.Extensions</RootNamespace>
-    <AssemblyName>Jabbot.Extensions.QuizSprocket</AssemblyName>
+    <RootNamespace>QuizSprocket</RootNamespace>
+    <AssemblyName>QuizSprocket</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\jibbr\</SolutionDir>
