@@ -12,6 +12,8 @@ namespace VotingSprocket
     {
         public bool Handle(ChatMessage message, Bot bot)
         {
+            if (message.Content.StartsWith("poll") && message.Receiver != bot.Name) return false;
+
             return true;
         }
     }

@@ -14,7 +14,7 @@ namespace VotingSprocketTests
     public class VoteSprocketTests
     {
         [TestMethod]
-        public void HandleShouldNotHandleNonPrivatePollMessage()
+        public void HandleShouldNotHandlePublicPollMessage()
         {
             var bot = new Bot("", "myself", "");
             var message = new ChatMessage("poll", "someoneelse", "theroom");
