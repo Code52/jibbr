@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.Composition;
+using System.ComponentModel.Composition;
 using Jabbot;
 
-namespace GithubAnnouncements
+namespace GithubAnnouncements.Tasks
 {
     [InheritedExport]
     public interface IGitHubTask

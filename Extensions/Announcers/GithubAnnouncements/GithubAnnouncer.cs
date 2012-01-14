@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using GithubAnnouncements.Tasks;
 using Jabbot;
 using Jabbot.Sprockets.Core;
 

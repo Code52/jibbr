@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Jabbot;
 
-namespace GithubAnnouncements
+namespace GithubAnnouncements.Tasks
 {
     public class ForksTask : IGitHubTask
     {

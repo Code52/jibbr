@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Jabbot;
 
-namespace GithubAnnouncements
+namespace GithubAnnouncements.Tasks
 {
     public class PullRequestsTask : IGitHubTask
     {
