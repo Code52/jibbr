@@ -23,7 +23,7 @@ namespace Jabbot.Extensions
         public QuizSprocket()
         {
             _helpInfo = "Hi {0}," + Environment.NewLine + Environment.NewLine
-                        + "I accept the following commands:"
+                        + "I accept the following commands:" + Environment.NewLine
                         + "celeb:\t" + "request a new celebrity quiz question" + Environment.NewLine
                         + "gk:\t" + "request a new general knowledge quiz question" + Environment.NewLine
                         + "answer:\t" + "answer the last asked question" + Environment.NewLine
