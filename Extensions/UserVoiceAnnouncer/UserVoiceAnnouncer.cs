@@ -13,7 +13,7 @@ namespace UserVoiceAnnouncer
     {
         public TimeSpan Interval
         {
-            get { return TimeSpan.FromMinutes(1); }
+            get { return TimeSpan.FromMinutes(5); }
         }
 
         public DateTime LastUpdate { get; set; }
