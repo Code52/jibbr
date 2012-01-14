@@ -11,7 +11,14 @@ using SignalR.Client.Hubs;
 
 namespace Jabbot
 {
-    public class Bot
+    public interface IBot
+    {
+        string Name { get; }
+        void Say(string what, string room);
+        void PrivateReply(string who, string what);
+    }
+
+    public class Bot : IBot
     {
         private HubConnection _connection;
         private IHubProxy _chat;
