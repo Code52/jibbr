@@ -231,63 +231,12 @@ namespace GithubAnnouncements
                 existingIssues = _storage.Get<IDictionary<int, string>>(IssuesKey);
             }
 
-            ProcessClosedIssues(bot, closedIssues, existingIssues);
-            ProcessOpenIssues(bot, openIssues, existingIssues);
+            bot.ProcessClosedIssues(closedIssues, existingIssues);
+            var repo = string.Format("{0}/{1}", _account, _repo);
+            bot.ProcessOpenIssues(repo, openIssues, existingIssues);
 
             _storage.Set(IssuesKey, existingIssues);
             _storage.Save();
-        }
-
-        private void ProcessOpenIssues(Bot bot, IEnumerable<dynamic> openIssues, IDictionary<int, string> existingIssues)
-        {
-            foreach (var request in openIssues)
-            {
-                int id;
-                if (!int.TryParse(request.number.ToString(), out id))
-                    continue;
-
-                if (!existingIssues.ContainsKey(id))
-                {
-                    // send message
-                    string firstLine = string.Format("github: {0} has opened a new issue named '{1}' for {2}/{3}",
-                                                     request.user.login,
-                                                     request.title,
-                                                     _account,
-                                                     _repo);
-                    string secondLine = string.Format("View the discussion at {0}", request.html_url);
-                    bot.SayToAllRooms(firstLine);
-                    bot.SayToAllRooms(secondLine);
-
-                    // track request
-                    existingIssues.Add(id, "open");
-                }
-
-                // TODO: check for new comments
-                // TODO: track history of comments
-            }
-        }
-
-        private static void ProcessClosedIssues(Bot bot, IEnumerable<dynamic> closedIssues, IDictionary<int, string> existingIssues)
-        {
-            foreach (var request in closedIssues)
-            {
-                int id;
-                if (!int.TryParse(request.number.ToString(), out id))
-                    continue;
-
-                if (!existingIssues.ContainsKey(id))
-                    continue;
-
-                // send message
-                string firstLine = string.Format("github: {0}'s issue '{1}' has been closed",
-                                                 request.user.login,
-                                                 request.title);
-
-                bot.SayToAllRooms(firstLine);
-
-                // cleanup request
-                existingIssues.Remove(id);
-            }
         }
 
         private void NotifyWatchers(Bot bot)
