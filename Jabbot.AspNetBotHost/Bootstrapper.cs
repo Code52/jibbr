@@ -22,24 +22,7 @@ namespace Jabbot.AspNetBotHost
             var mefcontainer = CreateCompositionContainer();
 
             var settings = mefcontainer.GetExportedValue<ISettingsService>();
-
-            try
-            {
-                var list = new List<string> { "A", "B", "C", "D" };
-                settings.Set("Something", list);
-                if (settings.ContainsKey("Something"))
-                {
-                    var output = settings.Get<IList<string>>("Something");    
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-
-            
+            container.Register(typeof(ISettingsService), settings);
             container.Register(mefcontainer.GetExportedValues<IAnnounce>());
             container.Register(mefcontainer.GetExportedValues<ISprocket>());
             container.Register(mefcontainer.GetExportedValues<ISprocketInitializer>());

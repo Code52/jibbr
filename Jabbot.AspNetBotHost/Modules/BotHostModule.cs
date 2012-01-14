@@ -94,6 +94,24 @@ namespace Jabbot.AspNetBotHost.Modules
                 ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
             }
 
+            var settings = TinyIoCContainer.Current.Resolve<ISettingsService>();
+
+            try
+            {
+                var list = new List<string> { "A", "B", "C", "D" };
+                settings.Set("Something", list);
+                if (settings.ContainsKey("Something"))
+                {
+                    var output = settings.Get<IList<string>>("Something");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
             var initializers = TinyIoCContainer.Current.ResolveAll<ISprocketInitializer>();
             _bot.PowerUp(initializers);
 

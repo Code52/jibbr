@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace Jabbot.AspNetBotHost.Components
 {
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class MongoSettingsService : ISettingsService
     {
         private readonly MongoCollection<BsonDocument> _settings;
