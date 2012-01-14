@@ -22,16 +22,17 @@ namespace GithubAnnouncements
         const string Repo = "jibbr";
 
         readonly ISettingsService _storage;
-        readonly IEnumerable<IGitHubTask> _tasks;
 
         readonly string _apiUrl;
         readonly WebClient _client = new WebClient();
 
+        [ImportMany(AllowRecomposition = true)]
+        public IEnumerable<IGitHubTask> Tasks { get; set; }
+
         [ImportingConstructor]
-        public GithubAnnouncer(ISettingsService storage, IEnumerable<IGitHubTask> tasks)
+        public GithubAnnouncer(ISettingsService storage)
         {
             _storage = storage;
-            _tasks = tasks;
             _apiUrl = string.Format(UrlFormat, Account, Repo);
         }
 
@@ -43,9 +44,9 @@ namespace GithubAnnouncements
         public void Execute(Bot bot)
         {
             var baseUrl = string.Format(GitHub.UrlFormat, Account, Repo);
-            foreach (var task in _tasks)
+            foreach (var task in Tasks)
             {
-                task.ExecuteTask(bot, baseUrl, RepositoryName, "");
+                task.ExecuteTask(bot, baseUrl, RepositoryName);
             }
             
             NotifyIssues(bot);

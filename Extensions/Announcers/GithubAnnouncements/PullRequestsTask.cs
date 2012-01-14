@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using Jabbot;
 
 namespace GithubAnnouncements
@@ -7,6 +8,7 @@ namespace GithubAnnouncements
     {
         private readonly ISettingsService _settings;
 
+        [ImportingConstructor]
         public PullRequestsTask(ISettingsService settings)
         {
             _settings = settings;

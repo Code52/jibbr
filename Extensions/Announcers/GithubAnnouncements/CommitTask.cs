@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using Jabbot;
 
@@ -9,6 +10,7 @@ namespace GithubAnnouncements
         const string ProjectCommitsFeed = "/commits";
         readonly ISettingsService _settings;
 
+        [ImportingConstructor]
         public CommitTask(ISettingsService settings)
         {
             _settings = settings;
