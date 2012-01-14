@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B1E7F2FE-7BC0-409A-9BE5-0A0E03553872}</ProjectGuid>
+    <ProjectGuid>{23F45EDA-A95D-4041-8B78-6F691A98B0CB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IPityTheFoolSprocket</RootNamespace>
-    <AssemblyName>IPityTheFoolSprocket</AssemblyName>
+    <RootNamespace>VotingSprocket</RootNamespace>
+    <AssemblyName>VotingSprocket</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\jibbr\</SolutionDir>
@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PityTheFoolSprocket.cs" />
+    <Compile Include="VoteSprocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

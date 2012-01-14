@@ -1,0 +1,2 @@
+The VotingSprocket code is licensed under the Apache 2.0 license.
+Located at: http://www.apache.org/licenses/LICENSE-2.0.html

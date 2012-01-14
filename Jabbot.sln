@@ -40,7 +40,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPityTheFoolSprocket", "Ext
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisqusAnnouncer", "Extensions\DisqusAnnouncer\DisqusAnnouncer.csproj", "{ED3BAD8A-2972-4D52-BE1E-9B73EE43E53C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VotingSprocketTests", "Extensions\VotingSprocketTests\VotingSprocketTests.csproj", "{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{98823FF3-5AE9-4F8F-B69E-5FE2272E0952}"
+	ProjectSection(SolutionItems) = preProject
+		Jabbot.vsmdi = Jabbot.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VotingSprocket", "Extensions\VotingSprocket\VotingSprocket.csproj", "{23F45EDA-A95D-4041-8B78-6F691A98B0CB}"
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Jabbot.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -151,6 +165,26 @@ Global
 		{ED3BAD8A-2972-4D52-BE1E-9B73EE43E53C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{ED3BAD8A-2972-4D52-BE1E-9B73EE43E53C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{ED3BAD8A-2972-4D52-BE1E-9B73EE43E53C}.Release|x86.ActiveCfg = Release|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4}.Release|x86.ActiveCfg = Release|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,5 +196,8 @@ Global
 		{820F5965-A377-4A01-8BBE-D11E3415FC04} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{B1E7F2FE-7BC0-409A-9BE5-0A0E03553872} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{ED3BAD8A-2972-4D52-BE1E-9B73EE43E53C} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
+		{065FEE9F-C6F5-4EB3-B317-3998D92F19C4} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
+		{98823FF3-5AE9-4F8F-B69E-5FE2272E0952} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
+		{23F45EDA-A95D-4041-8B78-6F691A98B0CB} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 	EndGlobalSection
 EndGlobal
