@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Analects.SettingsService;
 using Jabbot;
 using Jabbot.Sprockets.Core;
 using Newtonsoft.Json;

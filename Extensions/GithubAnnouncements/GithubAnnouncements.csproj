@@ -46,8 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analects\SettingService\ISettingsService.cs" />
-    <Compile Include="Analects\SettingService\SettingsService.cs" />
     <Compile Include="GithubAnnouncements.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -263,9 +263,7 @@ namespace Jabbot
                 users.Add(u.Name.ToString(), u);
             }
 
-            if (!users.ContainsKey(user)) return null;
-
-            return users[user];
+            return users.ContainsKey(user) ? users[user] : null;
         }
 
         public IEnumerable<string> GetRoomOwners(string room)
