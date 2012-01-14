@@ -46,7 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotCommitExtensions.cs" />
+    <Compile Include="BotForkExtensions.cs" />
     <Compile Include="BotIssuesExtensions.cs" />
+    <Compile Include="BotPullRequestExtensions.cs" />
+    <Compile Include="BotWatcherExtensions.cs" />
     <Compile Include="GithubAnnouncements.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
