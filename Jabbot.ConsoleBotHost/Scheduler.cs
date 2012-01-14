@@ -41,14 +41,15 @@ namespace Jabbot.ConsoleBotHost
 
                 try
                 {
+                    Logger.Write("Announcer '{0}' started at '{1}'", announcement.Name, DateTime.UtcNow);
                     announcement.Execute(_bot);
+                    Logger.Write("Announcer '{0}' finished at '{1}'", announcement.Name, DateTime.UtcNow);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Exception occurred");
-                    Debug.WriteLine("Type: " + announcement.GetType());
-                    Debug.WriteLine("Message: " + ex.Message);
-                    Debug.WriteLine("Stacktrace: " + ex.StackTrace);
+                    Logger.Write("Exception occurred: '{0}'", ex.Message);
+                    Logger.WriteMessage("Stacktrace: " + ex.StackTrace);
+                    Logger.WriteMessage("Announcer Type: " + announcement.GetType());
                 }
 
                 _scheduledAnnouncements[announcement] = now.Add(announcement.Interval);

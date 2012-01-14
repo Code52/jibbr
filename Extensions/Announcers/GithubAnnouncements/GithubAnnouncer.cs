@@ -23,6 +23,11 @@ namespace GithubAnnouncements
             get { return TimeSpan.Zero; }
         }
 
+        public string Name
+        {
+            get { return "Github Bot"; }
+        }
+
         public void Execute(Bot bot)
         {
             var baseUrl = string.Format(GitHub.UrlFormat, Account, Repo);

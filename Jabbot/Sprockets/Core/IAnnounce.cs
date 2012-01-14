@@ -10,6 +10,7 @@ namespace Jabbot.Sprockets.Core
     public interface IAnnounce
     {
         TimeSpan Interval { get; }
+        string Name { get; }
         void Execute(Bot bot);
     }
 }

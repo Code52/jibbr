@@ -26,7 +26,12 @@ namespace TwitterAnnouncer
 			get { return TimeSpan.FromMinutes(10); }
 		}
 
-		public void Execute(Bot bot)
+	    public string Name
+	    {
+            get { return "Twitter Bot"; }
+	    }
+
+	    public void Execute(Bot bot)
 		{
 			var now = DateTime.Now;
 

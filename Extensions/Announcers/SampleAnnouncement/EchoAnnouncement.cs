@@ -11,7 +11,12 @@ namespace SampleAnnouncement
             get { return TimeSpan.FromMinutes(10); }
 		}
 
-		public void Execute(Bot bot)
+	    public string Name
+	    {
+            get { return "Timer Bot"; }
+	    }
+
+	    public void Execute(Bot bot)
 		{
 			var offset = TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time");
 			var startingPoint = DateTime.UtcNow;
