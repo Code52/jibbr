@@ -90,7 +90,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Readme\MomentApp.Readme.txt" />
-    <None Include="Resources\ping.coffee" />
+    <None Include="Resources\ping.coffee">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Site.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -125,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Modules\HttpObject.cs" />
     <Compile Include="Modules\TalkMessage.cs" />
     <Compile Include="TinyMessenger.cs" />
     <Compile Include="Modules\BotHostModule.cs" />
