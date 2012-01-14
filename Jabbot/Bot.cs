@@ -14,6 +14,8 @@ namespace Jabbot
     public interface IBot
     {
         string Name { get; }
+        IEnumerable<string> Rooms { get; }
+
         void Say(string what, string room);
         void PrivateReply(string who, string what);
     }
