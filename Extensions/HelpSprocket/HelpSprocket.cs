@@ -7,7 +7,7 @@ namespace Help
 {
 	public class HelpSprocket : ISprocket
 	{
-		public bool Handle(ChatMessage message, Bot bot)
+		public bool Handle(ChatMessage message, IBot bot)
 		{
 			var acceptedCommands = new string[] { bot.Name + " help", "@" + bot.Name + " help" };
 

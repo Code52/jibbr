@@ -8,7 +8,7 @@ using SignalR.Client.Hubs;
 
 namespace Jabbot
 {
-    public class Bot
+    public class Bot : IBot
     {
         readonly HubConnection _connection;
         readonly IHubProxy _chat;
