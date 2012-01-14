@@ -17,11 +17,14 @@ namespace Jabbot.AspNetBotHost.Modules
         private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
         private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
         private static Bot _bot;
+        private readonly ISettingsService _settings;
 
-        public BotHostModule(Bot bot)
+        public BotHostModule(Bot bot, ISettingsService settings)
             : base("bot")
         {
             _bot = bot;
+            _settings = settings;
+
 
             Get["/start"] = _ =>
             {
@@ -87,30 +90,12 @@ namespace Jabbot.AspNetBotHost.Modules
             });
         }
 
-        private static void StartBot()
+        private void StartBot()
         {
             if (!_hostBaseUrl.Contains("localhost"))
             {
                 ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
             }
-
-            var settings = TinyIoCContainer.Current.Resolve<ISettingsService>();
-
-            try
-            {
-                var list = new List<string> { "A", "B", "C", "D" };
-                settings.Set("Something", list);
-                if (settings.ContainsKey("Something"))
-                {
-                    var output = settings.Get<IList<string>>("Something");
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
 
             var initializers = TinyIoCContainer.Current.ResolveAll<ISprocketInitializer>();
             _bot.PowerUp(initializers);
