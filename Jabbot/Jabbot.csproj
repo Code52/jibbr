@@ -58,6 +58,7 @@
     <Compile Include="Models\ChatMessage.cs" />
     <Compile Include="Models\ChatUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IsolatedStorageSettingsService.cs" />
     <Compile Include="Sprockets\Core\IAnnounce.cs" />
     <Compile Include="Sprockets\Core\IMessageHandler.cs" />
     <Compile Include="Sprockets\Core\ISprocket.cs" />

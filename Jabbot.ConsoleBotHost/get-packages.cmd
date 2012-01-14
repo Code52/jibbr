@@ -3,6 +3,10 @@ set output_dir=%solution_dir%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\
 
 del %solution_dir%\Jabbot.ConsoleBotHost\bin\Debug\Sprockets\*.dll
 
-for /D %%I in ("%solution_dir%\Extensions\*") do (
+for /D %%I in ("%solution_dir%\Extensions\Announcers\*") do (
+xcopy %%I\bin\Debug\*.dll %output_dir% /C /Y
+)
+
+for /D %%I in ("%solution_dir%\Extensions\Sprockets\*") do (
 xcopy %%I\bin\Debug\*.dll %output_dir% /C /Y
 )

@@ -36,7 +36,6 @@ namespace Jabbot.ConsoleBotHost
                 var scheduler = new Scheduler();
 
                 var container = CreateCompositionContainer();
-                // Add all the sprockets to the sprocket list
                 var announcements = container.GetExportedValues<IAnnounce>();
 
                 Console.WriteLine(String.Format("Connecting to {0}...", _serverUrl));
