@@ -4,22 +4,23 @@ using System.Linq;
 using System.Text;
 using Jabbot;
 using Jabbot.CommandSprockets;
-using Jabbot.Extensions;
+using Jabbot;
 using Jabbot.Models;
 using Moq;
 using NUnit.Framework;
+using Q = QuizSprocket;
 
 namespace ExtensionTests
 {
     [TestFixture]
     public class QuizSprocketTest
     {
-        private QuizSprocket _quizSprocket;
+        private Q.QuizSprocket _quizSprocket;
         private Mock<IBot> _botMock;
         [SetUp]
         public void SetUp()
         {
-            _quizSprocket = new QuizSprocket();
+            _quizSprocket = new Q.QuizSprocket();
             _botMock = new Mock<IBot>();
         }
 
