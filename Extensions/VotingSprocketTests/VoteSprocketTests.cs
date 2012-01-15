@@ -2,11 +2,10 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rhino.Mocks;
 using Jabbot;
 using VotingSprocket;
 using Jabbot.Models;
+using Moq;
 
 namespace VotingSprocketTests
 {

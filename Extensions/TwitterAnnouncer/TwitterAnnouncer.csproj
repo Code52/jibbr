@@ -39,9 +39,6 @@
     <Reference Include="Hammock.ClientProfile">
       <HintPath>..\..\packages\TweetSharp.2.1.2\lib\4.0\Hammock.ClientProfile.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\TweetSharp.2.1.2\lib\4.0\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
