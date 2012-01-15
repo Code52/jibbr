@@ -27,6 +27,16 @@ namespace VotingSprocketTests
         }
 
         [TestMethod]
+        public void HandleShouldNotifySenderThatTheyMustSupplyAQuestionWhenNoQuestionIsGiven()
+        {
+            var message = new ChatMessage("poll", "someoneelse", _bot.Name);
+            bool wasHandled = _sprocket.Handle(message, _bot);
+
+            Assert.IsTrue(wasHandled, "Should have handled the message.");
+            _bot.AssertWasCalled(b => b.PrivateReply(message.Sender, "To start a poll use: poll <roomname> <question>"));
+        }
+
+        [TestMethod]
         public void HandleShouldNotHandlePublicPollMessage()
         {
             var message = new ChatMessage("poll", "someoneelse", "theroom");

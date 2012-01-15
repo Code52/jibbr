@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Poll.cs" />
     <Compile Include="VoteSprocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

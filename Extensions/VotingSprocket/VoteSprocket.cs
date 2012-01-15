@@ -12,11 +12,12 @@ namespace VotingSprocket
 {
     public class VoteSprocket : ISprocket
     {
-        private Regex _pollCommand = new Regex("^poll (?<room>[a-zA-Z0-9_-]+) (?<question>.+)$", RegexOptions.IgnoreCase);
-        private Regex _voteCommand = new Regex("^vote (?<vote>[0-9]+)$", RegexOptions.IgnoreCase);
-        private Dictionary<string, Dictionary<int, int>> _polls = new Dictionary<string,Dictionary<int,int>>();
-        private Dictionary<string, Timer> _pollTimers = new Dictionary<string, Timer>();
-        private Dictionary<string, List<string>> _pollBallots = new Dictionary<string, List<string>>();
+        private const string Poll_Command_Description = "To start a poll use: poll <roomname> <question>";
+
+        private Regex _pollCommand = new Regex("^poll[ ]*(?<room>[a-zA-Z0-9_-]*)[ ]*(?<question>.*)$", RegexOptions.IgnoreCase);
+        private Regex _voteCommand = new Regex("^vote[ ]*(?<vote>[0-9]*)$", RegexOptions.IgnoreCase);
+
+        private Dictionary<string, Poll> _roomPolls = new Dictionary<string, Poll>();
         private IBot _bot;
         
         public bool Handle(ChatMessage message, IBot bot)
@@ -26,64 +27,69 @@ namespace VotingSprocket
             var pollMatch = _pollCommand.Match(message.Content);
             var voteMatch = _voteCommand.Match(message.Content);
             
-            if (pollMatch.Success && message.Receiver != bot.Name) return false;            
-            if (!pollMatch.Success && !voteMatch.Success) return false;
+            if ((!pollMatch.Success && !voteMatch.Success)
+                || (pollMatch.Success && message.Receiver != bot.Name)
+                ) return false;
 
             if (pollMatch.Success)
             {
                 string room = pollMatch.Groups["room"].Value;
-                
-                if (_polls.ContainsKey(room))
+                string question = pollMatch.Groups["question"].Value;
+
+                if (string.IsNullOrWhiteSpace(room) || string.IsNullOrWhiteSpace(question))
                 {
-                    bot.PrivateReply(message.Sender, "A poll is already in effect for " + room +".");
+                    bot.PrivateReply(message.Sender, Poll_Command_Description);
+                }
+                else if (_roomPolls.ContainsKey(room))
+                {
+                    bot.PrivateReply(message.Sender, "A poll is already in effect for " + room + ".");
                 }
                 else if (!bot.Rooms.Contains(room))
                 {
                     bot.PrivateReply(message.Sender, "You are not in the room you specified for the poll.");
-                    bot.PrivateReply(message.Sender, "To start a poll use: poll <roomname> <question>");
+                    bot.PrivateReply(message.Sender, Poll_Command_Description);
                 }
                 else
                 {
-                    _polls.Add(room, new Dictionary<int, int>());
-                    _pollBallots.Add(room, new List<string>());
-#if DEBUG
-                    _pollTimers.Add(room, new Timer(250));
-#else
-                    _pollTimers.Add(room, new Timer(2 * 60 * 1000));
-#endif
+                    _roomPolls.Add(room, new Poll());
 
-                    string broadcast = "A poll has started: " + pollMatch.Groups["question"].Value;
+                    string broadcast = "A poll has started: " + question;
                     bot.Say(broadcast, room);
                     bot.Say("Poll will close in 2 minutes. Public reply with vote 1 or vote 2 etc...", room);
 
-                    _pollTimers[room].Elapsed += (s, e) => ClosePollAndSendResults(room);
-                    _pollTimers[room].Start();
+                    // I don't like breaking the Law of Demeter here. But adhering to it for the
+                    // timer would mean giving the poll the room (okay with) and the bot/ClosePoll.. (not so okay with).
+                    // Yes that means something is probably wrong here and I should fix it but it's late and
+                    // my mind needs a break.
+                    _roomPolls[room].Timer.Elapsed += (s, e) => ClosePollAndSendResults(room);
+                    _roomPolls[room].Timer.Start();
                 }
             }
-            else if (voteMatch.Success && _polls.ContainsKey(message.Receiver))
+            else if (voteMatch.Success)
             {
-                int vote = Convert.ToInt16(voteMatch.Groups["vote"].Value);
-                if (_pollBallots[message.Receiver].Contains(message.Sender))
+                string room = message.Receiver;
+                string vote = voteMatch.Groups["vote"].Value;
+
+                if (room == bot.Name)
                 {
-                    bot.PrivateReply(message.Sender, "You can only cast one vote for the current poll in this room.");
-                }
+                    bot.PrivateReply(message.Sender, "You must cast your vote publicy in the room the poll is in.");
+                } 
+                else if (!_roomPolls.ContainsKey(room))
+                {
+                    bot.PrivateReply(message.Sender, "There is no active poll for you to vote on.");
+                    bot.PrivateReply(message.Sender, Poll_Command_Description);
+                }                
                 else
-                {
-                    _pollBallots[message.Receiver].Add(message.Sender);
-
-                    if (!_polls[message.Receiver].ContainsKey(vote)) _polls[message.Receiver].Add(vote, 0);
-
-                    _polls[message.Receiver][vote]++;
+                {                    
+                    if (_roomPolls[room].HasAlreadyVoted(message.Sender))
+                    {
+                        bot.PrivateReply(message.Sender, "You can only cast one vote for the current poll in this room.");
+                    }
+                    else
+                    {
+                        _roomPolls[room].CastBallot(message.Sender, vote);
+                    }
                 }
-            }
-            else if (voteMatch.Success && message.Receiver == bot.Name)
-            {
-                bot.PrivateReply(message.Sender, "You must cast your vote publicy in the room the poll is in.");
-            }
-            else if (voteMatch.Success && !_pollBallots.ContainsKey(message.Receiver))
-            {
-                bot.PrivateReply(message.Sender, "There is no active poll for you to vote on.");
-                bot.PrivateReply(message.Sender, "To start a poll use: poll <roomname> <question>");
             }
 
             return true;
@@ -91,21 +97,22 @@ namespace VotingSprocket
 
         private void ClosePollAndSendResults(string room)
         {
-            _pollTimers[room].Stop();
+            if (!_roomPolls.ContainsKey(room)) return;
 
-            if (!_polls[room].Any())
+            _roomPolls[room].Timer.Stop();
+
+            if (!_roomPolls[room].Votes.Any())
             {
                 _bot.Say("No votes were cast for the poll.", room);
             }
             else
             {
                 string message = "poll results ";
-                foreach (var kvp in _polls[room])
+                foreach (var kvp in _roomPolls[room].Votes)
                 {
                     message += string.Format("{0} vote{2} for ({1}). ", kvp.Value, kvp.Key, kvp.Value == 1 ? "" : "s");
                 }
-                _polls.Remove(room);
-                _pollTimers.Remove(room);
+                _roomPolls.Remove(room);
 
                 _bot.Say(message.Trim(), room);
             }
