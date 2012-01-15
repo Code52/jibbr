@@ -8,7 +8,7 @@ namespace Jabbot.Sprockets
     {
         public abstract Regex Pattern { get; }
 
-        public bool Handle(ChatMessage message, Bot bot)
+        public bool Handle(ChatMessage message, IBot bot)
         {
             if (Pattern == null)
             {
@@ -26,6 +26,6 @@ namespace Jabbot.Sprockets
             return true;
         }
 
-        protected abstract void ProcessMatch(Match match, ChatMessage message, Bot bot);
+        protected abstract void ProcessMatch(Match match, ChatMessage message, IBot bot);
     }
 }

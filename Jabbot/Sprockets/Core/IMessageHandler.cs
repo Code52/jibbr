@@ -10,6 +10,6 @@ namespace Jabbot.Sprockets.Core
         /// <param name="message">Incoming message</param>
         /// <param name="bot">bot instance</param>
         /// <returns>true if handled, false if not</returns>
-        bool Handle(ChatMessage message, Bot bot);
+        bool Handle(ChatMessage message, IBot bot);
     }
 }

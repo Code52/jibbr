@@ -1,13 +1,13 @@
-﻿body {     background : #cacaca; }
+﻿body { font-family: Segoe UI, Segoe WP, sans-serif; background: url('/Resources/logo.png') no-repeat right center; }
 #container 
 {
     margin-left: auto;
     margin-right: auto;
     width: 800px;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
 }
-
-#logo { text-align: center;clear: both; }
+h3 { margin-bottom: -5px; }
+#logo { font-size: 12em;font-weight: bold;line-height: 1em; }
 #login { float: right; }
+
+a, a:visited { text-decoration: none;color: #004393;}
+a:hover { text-decoration: underline;color: #0074d3;}
