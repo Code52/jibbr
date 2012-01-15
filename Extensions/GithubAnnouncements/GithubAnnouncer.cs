@@ -28,7 +28,7 @@ namespace GithubAnnouncements
             get { return "Github Bot"; }
         }
 
-        public void Execute(IBot bot)
+        public void Execute(Bot bot)
         {
             var baseUrl = string.Format(GitHub.UrlFormat, Account, Repo);
             foreach (var task in Tasks)
