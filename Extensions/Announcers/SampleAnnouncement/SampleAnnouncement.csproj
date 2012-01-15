@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3E8A88F3-737F-4F93-92EA-151B1FE3A44B}</ProjectGuid>
+    <ProjectGuid>{00F173A5-6E02-412A-A885-774DFAEB9612}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExtensionTests</RootNamespace>
-    <AssemblyName>ExtensionTests</AssemblyName>
+    <RootNamespace>SampleAnnouncement</RootNamespace>
+    <AssemblyName>SampleAnnouncement</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\jibbr\</SolutionDir>
@@ -33,19 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Moq">
-      <HintPath>..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.mocks, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
-    </Reference>
-    <Reference Include="pnunit.framework">
-      <HintPath>..\..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -54,22 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="QuizSprocketTest.cs" />
+    <Compile Include="EchoAnnouncement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Extensions\Sprockets\QuizSprocket\QuizSprocket.csproj">
-      <Project>{F605C520-C301-48D7-AA80-C0BC42FCDD9F}</Project>
-      <Name>QuizSprocket</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
-      <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
-      <Name>Jabbot.CommandSprockets</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Jabbot\Jabbot.csproj">
+    <ProjectReference Include="..\..\..\Jabbot\Jabbot.csproj">
       <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
       <Name>Jabbot</Name>
     </ProjectReference>

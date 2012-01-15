@@ -13,25 +13,37 @@ using Nancy;
 using System.Diagnostics;
 using MomentApp;
 using TinyMessenger;
-using Environment = IronJS.Environment;
 
 namespace Jabbot.AspNetBotHost.Modules
 {
+    // TODO: scheduler running with MomentApp
+    // TODO: integrate announcers
+
     public class BotHostModule : NancyModule
     {
-        private static readonly string _hostBaseUrl = ConfigurationManager.AppSettings["Application.HostBaseUrl"];
-        private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
+        static readonly string _hostBaseUrl = ConfigurationManager.AppSettings["Application.HostBaseUrl"];
+        static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
         private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
+        
+        readonly IEnumerable<ISprocket> _sprockets;
+        readonly IEnumerable<IAnnounce> _announcers;
+        readonly IEnumerable<ISprocketInitializer> _sprocketInitializers;
+
         public static Bot _bot;
-        private readonly IEnumerable<ISprocket> _sprockets;
-        private readonly IEnumerable<ISprocketInitializer> _sprocketInitializers;
+
         public static Dictionary<Regex, FunctionObject> HubotRespond = new Dictionary<Regex, FunctionObject>();
         public static Dictionary<Regex, FunctionObject> HubotListen = new Dictionary<Regex, FunctionObject>();
-        public BotHostModule(Bot bot, IEnumerable<ISprocket> sprockets, IEnumerable<ISprocketInitializer> sprocketInitializers)
+		
+        public BotHostModule(
+            Bot bot, 
+            IEnumerable<ISprocket> sprockets,
+            IEnumerable<IAnnounce> announcers,
+            IEnumerable<ISprocketInitializer> sprocketInitializers)
             : base("bot")
         {
             _bot = bot;
             _sprockets = sprockets;
+            _announcers = announcers;
             _sprocketInitializers = sprocketInitializers;
 
             Get["/start"] = _ =>
@@ -101,8 +113,6 @@ namespace Jabbot.AspNetBotHost.Modules
 
         }
 
-
-
         private static void ScheduleKeepAlive(string Url)
         {
             new Moment(_momentApiKey).ScheduleJob(new Job()
@@ -119,12 +129,13 @@ namespace Jabbot.AspNetBotHost.Modules
             {
                 ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
             }
+
+            _bot.PowerUp(_sprocketInitializers);
+
             foreach (var sprocket in _sprockets)
                 _bot.AddSprocket(sprocket);
 
-            _bot.PowerUp(_sprocketInitializers);
             JoinRooms(_bot);
-
             _bot.MessageReceived += BotMessageReceived;
             LoadCoffeeScript();
             TinyMessengerHub.Instance.Subscribe<TalkMessage>(m => _bot.Say(m.Text, _bot.Rooms.First()));
@@ -207,6 +218,7 @@ namespace Jabbot.AspNetBotHost.Modules
         }
 
         static CSharp.Context context;
+
         private static void CompileCoffeeScriptUsingIronJs(string coffeeCompiler, string input)
         {
             context = new CSharp.Context();

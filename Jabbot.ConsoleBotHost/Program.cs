@@ -31,28 +31,30 @@ namespace Jabbot.ConsoleBotHost
 
         private static void RunBot()
         {
+            var container = CreateCompositionContainer();
+            var announcements = container.GetExportedValues<IAnnounce>();
+
+            var logger = container.GetExportedValue<ILogger>();
+            logger.Write("Connecting to {0} ...", _serverUrl);
+
+            var scheduler = new Scheduler { Logger = logger };
+
             try
             {
-                var scheduler = new Scheduler();
+                var bot = new Bot(_serverUrl, _botName, _botPassword);
 
-                var container = CreateCompositionContainer();
-                // Add all the sprockets to the sprocket list
-                var announcements = container.GetExportedValues<IAnnounce>();
-
-                Console.WriteLine(String.Format("Connecting to {0}...", _serverUrl));
-                Bot bot = new Bot(_serverUrl, _botName, _botPassword); 
-                
                 foreach (var s in container.GetExportedValues<ISprocket>())
                     bot.AddSprocket(s);
 
                 bot.PowerUp();
-                JoinRooms(bot);
-                var users = bot.GetUsers(bot.Rooms.First());
-                var user = bot.GetUserInfo(bot.Rooms.First(), users.First().Name.ToString());
+                JoinRooms(bot, logger);
 
+                var users = bot.GetUsers(bot.Rooms.First());
+                logger.Write("Found {0} users in the room", users.Count());
+                
                 scheduler.Start(announcements, bot);
 
-                Console.Write("Press enter to quit...");
+                logger.Write("Press enter to quit...");
                 Console.ReadLine();
 
                 scheduler.Stop();
@@ -62,23 +64,23 @@ namespace Jabbot.ConsoleBotHost
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR: " + e.GetBaseException().Message);
+                logger.Write("ERROR: " + e.GetBaseException().Message);
             }
-
         }
-        private static void JoinRooms(Bot bot)
+
+        private static void JoinRooms(Bot bot, ILogger logger)
         {
             foreach (var room in _botRooms.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()))
             {
-                Console.Write("Joining {0}...", room);
+                logger.Write("Joining {0}...", room);
                 if (TryCreateRoomIfNotExists(room, bot))
                 {
                     bot.Join(room);
-                    Console.WriteLine("OK");
+                    logger.WriteMessage("OK");
                 }
                 else
                 {
-                    Console.WriteLine("Failed");
+                    logger.WriteMessage("Failed");
                 }
             }
         }
@@ -109,7 +111,10 @@ namespace Jabbot.ConsoleBotHost
             // If the extensions folder exists then use them
             if (Directory.Exists(extensionsPath))
             {
-                catalog = new AggregateCatalog(new AssemblyCatalog(typeof(Bot).Assembly), new DirectoryCatalog(extensionsPath, "*.dll"));
+                catalog = new AggregateCatalog(
+                    new AssemblyCatalog(typeof(Bot).Assembly), 
+                    new AssemblyCatalog(typeof(Program).Assembly),
+                    new DirectoryCatalog(extensionsPath, "*.dll"));
             }
             else
             {
