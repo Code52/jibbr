@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using Jabbot;
 using Jabbot.Models;
 using Moq;
-using NUnit.Framework;
+using Xunit;
 using Q = QuizSprocket;
 
 namespace ExtensionTests
 {
-    [TestFixture]
     public class QuizSprocketTest
     {
         private Q.QuizSprocket _quizSprocket;
         private Mock<IBot> _botMock;
-        [SetUp]
-        public void SetUp()
+
+        public QuizSprocketTest()
         {
             _quizSprocket = new Q.QuizSprocket();
             _botMock = new Mock<IBot>();
         }
 
-        [Test]
+        [Fact]
         public void RepliesToCorrectRoom()
         {
             //arrange
@@ -33,7 +32,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.IsAny<string>(), It.Is<string>(room => room.Equals("jibbr"))));
         }
 
-        [Test]
+        [Fact]
         public void AcceptsInfoAndHelpCommand()
         {
             //arrange
@@ -48,7 +47,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.PrivateReply(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
         }
 
-        [Test]
+        [Fact]
         public void InfoContainsSender()
         {
             //arrange
@@ -61,7 +60,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.PrivateReply(It.Is<string>(who => who.Equals("Simon")), It.Is<string>(what => what.Contains("Simon"))));
         }
 
-        [Test]
+        [Fact]
         public void CanAskCelebQuestion()
         {
             //arrange
@@ -74,7 +73,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Contains("?")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void CanAnswerQuestion()
         {
             //arrange
@@ -90,7 +89,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Contains("Correct") || what.Contains("Wrong")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void WillNotAllowANewQuestionBeforeThePreviousWasAnswered()
         {
             //arrange
@@ -106,7 +105,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.PrivateReply(It.Is<string>(what => what.Equals("A question is currently waiting for the correct answer")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void CanAnswerQuestionCorrect()
         {
             //arrange
@@ -125,7 +124,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Contains("Correct")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void CanAnswerQuestionCorrectWithAnswerWithSpace()
         {
             //arrange
@@ -144,7 +143,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Contains("Correct")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void BotRepliesWithNoScoreWhenNoScoreExists()
         {
             //arrange
@@ -157,7 +156,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Equals("No score recorded for Simon")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void BotRepliesWithScoreWhenItExists()
         {
             //arrange
@@ -171,7 +170,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Contains("10")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void BotRepliesWithScoreboardWhenItExists()
         {
             //arrange
