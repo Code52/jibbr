@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionTests", "Tests\Ext
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizSprocket", "Extensions\QuizSprocket\QuizSprocket.csproj", "{93DB29BE-BC75-4D59-9313-891A1245940D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherSprocket", "Extensions\WeatherSprocket\WeatherSprocket.csproj", "{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -189,6 +191,16 @@ Global
 		{93DB29BE-BC75-4D59-9313-891A1245940D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{93DB29BE-BC75-4D59-9313-891A1245940D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{93DB29BE-BC75-4D59-9313-891A1245940D}.Release|x86.ActiveCfg = Release|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -202,6 +214,7 @@ Global
 		{ED3BAD8A-2972-4D52-BE1E-9B73EE43E53C} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{D05250A1-6F48-49F1-967C-BCB25213EA06} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{93DB29BE-BC75-4D59-9313-891A1245940D} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
+		{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{3E8A88F3-737F-4F93-92EA-151B1FE3A44B} = {A3A6EC44-1F10-4427-98DC-CF13D11F8C79}
 	EndGlobalSection
 EndGlobal
