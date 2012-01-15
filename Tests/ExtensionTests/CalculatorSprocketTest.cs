@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Jabbot;
+﻿using Jabbot;
 using Jabbot.Extensions;
 using Jabbot.Models;
 using Moq;
-using NUnit.Framework;
+using Xunit;
+
 
 namespace ExtensionTests
 {
-    [TestFixture]
     public class CalculatorSprocketTest
     {
-        private CalculatorSprocket _calculatorSprocket;
-        private Mock<IBot> _botMock;
-        [SetUp]
-        public void SetUp()
+        private readonly CalculatorSprocket _calculatorSprocket;
+        private readonly Mock<IBot> _botMock;
+    
+        public CalculatorSprocketTest()
         {
             _calculatorSprocket = new CalculatorSprocket();
             _botMock = new Mock<IBot>();
         }
 
-        [Test]
+        [Fact]
         public void AcceptsInfoAndHelpCommand()
         {
             //arrange
@@ -37,7 +33,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.PrivateReply(It.Is<string>(who => who.Contains("Simon")), It.IsAny<string>()), Times.Exactly(2));
         }
 
-        [Test]
+        [Fact]
         public void CanRequestValidCalculation()
         {
             //arrange
@@ -51,7 +47,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Equals(string.Format("{0} = {1}", expression, "4"))), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void CanRequestInValidCalculation()
         {
             //arrange
@@ -64,7 +60,7 @@ namespace ExtensionTests
             _botMock.Verify(b => b.Say(It.Is<string>(what => what.Contains("Sorry")), It.IsAny<string>()));
         }
 
-        [Test]
+        [Fact]
         public void CanCalculateSquareRoot()
         {
             //arrange
