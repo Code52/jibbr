@@ -19,7 +19,7 @@ namespace BitbucketAnnouncer
 
         public TimeSpan Interval
         {
-            get { return TimeSpan.FromSeconds(10); }
+            get { return TimeSpan.FromMinutes(5); }
         }
 
         public DateTime LastUpdate_Commits { get; set; }
