@@ -17,14 +17,13 @@ namespace WeatherSprocket
             get { return new Regex(@"(?<=\bweather[ ])\d{4,5}", RegexOptions.IgnoreCase); }
         }
 
-        protected override void ProcessMatch(Match match, ChatMessage message, Bot bot)
+        protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
         {
             if (match.Length > 0)
             {
                 var matchResult = match.Captures[0].ToString();
-                bot.Say(getWeather(matchResult), message.Receiver);;
+                bot.Say(getWeather(matchResult), message.Receiver); ;
             }
-            
         }
 
         private string getWeather(string zipcode)
