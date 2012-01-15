@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Extensions\Sprockets\QuizSprocket\QuizSprocket.csproj">
+      <Project>{93DB29BE-BC75-4D59-9313-891A1245940D}</Project>
+      <Name>QuizSprocket</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
       <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
       <Name>Jabbot.CommandSprockets</Name>
