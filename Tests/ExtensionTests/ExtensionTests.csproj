@@ -61,7 +61,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Extensions\QuizSprocket\QuizSprocket.csproj">
+    <ProjectReference Include="..\..\Extensions\Sprockets\QuizSprocket\QuizSprocket.csproj">
       <Project>{93DB29BE-BC75-4D59-9313-891A1245940D}</Project>
       <Name>QuizSprocket</Name>
     </ProjectReference>
