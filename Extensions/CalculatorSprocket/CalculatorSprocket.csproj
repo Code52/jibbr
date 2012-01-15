@@ -5,14 +5,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</ProjectGuid>
+    <ProjectGuid>{6416F073-97F1-4DBB-B8D6-2011BE448D98}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jabbot</RootNamespace>
-    <AssemblyName>Jabbot</AssemblyName>
+    <RootNamespace>Jabbot.Extensions</RootNamespace>
+    <AssemblyName>Jabbot.Extensions.CalculatorSprocket</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\jibbr\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\jibbr\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -33,18 +33,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.0.5.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SignalR.Client, Version=0.3.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SignalR.Client.0.3.7\lib\net40\SignalR.Client.dll</HintPath>
+    <Reference Include="NCalc">
+      <HintPath>..\..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,26 +45,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bot.cs" />
-    <Compile Include="BotExtensions.cs" />
-    <Compile Include="IBot.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="ISettingsService.cs" />
-    <Compile Include="Models\ChatMessage.cs" />
-    <Compile Include="Models\ChatUser.cs" />
+    <Compile Include="CalculatorSprocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sprockets\Core\IAnnounce.cs" />
-    <Compile Include="Sprockets\Core\IMessageHandler.cs" />
-    <Compile Include="Sprockets\Core\ISprocket.cs" />
-    <Compile Include="Sprockets\Core\ISprocketInitializer.cs" />
-    <Compile Include="Sprockets\Core\IUnhandledMessageSprocket.cs" />
-    <Compile Include="Sprockets\RegexSprocket.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
+      <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
+      <Name>Jabbot.CommandSprockets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Jabbot\Jabbot.csproj">
+      <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
+      <Name>Jabbot</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

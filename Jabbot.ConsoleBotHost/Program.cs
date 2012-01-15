@@ -109,7 +109,10 @@ namespace Jabbot.ConsoleBotHost
             // If the extensions folder exists then use them
             if (Directory.Exists(extensionsPath))
             {
-                catalog = new AggregateCatalog(new AssemblyCatalog(typeof(Bot).Assembly), new DirectoryCatalog(extensionsPath, "*.dll"));
+                catalog = new AggregateCatalog(
+                    new AssemblyCatalog(typeof(Bot).Assembly),
+                    new AssemblyCatalog(typeof(Program).Assembly), 
+                    new DirectoryCatalog(extensionsPath, "*.dll"));
             }
             else
             {

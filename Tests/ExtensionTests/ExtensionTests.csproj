@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalculatorSprocketTest.cs" />
     <Compile Include="QuizSprocketTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,6 +62,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Extensions\CalculatorSprocket\CalculatorSprocket.csproj">
+      <Project>{6416F073-97F1-4DBB-B8D6-2011BE448D98}</Project>
+      <Name>CalculatorSprocket</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Extensions\QuizSprocket\QuizSprocket.csproj">
       <Project>{93DB29BE-BC75-4D59-9313-891A1245940D}</Project>
       <Name>QuizSprocket</Name>
