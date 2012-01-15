@@ -46,7 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Jabbot\Jabbot.csproj">
+    <ProjectReference Include="..\..\..\Jabbot\Jabbot.csproj">
       <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
       <Name>Jabbot</Name>
     </ProjectReference>
