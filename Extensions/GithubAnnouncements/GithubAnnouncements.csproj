@@ -5,14 +5,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</ProjectGuid>
+    <ProjectGuid>{9518C000-0F98-41B0-81E9-5E065CF5387E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jabbot</RootNamespace>
-    <AssemblyName>Jabbot</AssemblyName>
+    <RootNamespace>GithubAnnouncements</RootNamespace>
+    <AssemblyName>GithubAnnouncements</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\jibbr\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\jibbr\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -33,18 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.0.5.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SignalR.Client, Version=0.3.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SignalR.Client.0.3.7\lib\net40\SignalR.Client.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.4.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,25 +46,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bot.cs" />
-    <Compile Include="BotExtensions.cs" />
-    <Compile Include="IBot.cs" />
-    <Compile Include="ILogger.cs" />
-    <Compile Include="ISettingsService.cs" />
-    <Compile Include="Models\ChatMessage.cs" />
-    <Compile Include="Models\ChatUser.cs" />
+    <Compile Include="Extensions\BotCommitExtensions.cs" />
+    <Compile Include="Extensions\BotForkExtensions.cs" />
+    <Compile Include="Extensions\BotIssuesExtensions.cs" />
+    <Compile Include="Extensions\BotPullRequestExtensions.cs" />
+    <Compile Include="Extensions\BotWatcherExtensions.cs" />
+    <Compile Include="Extensions\SettingsExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="GithubAnnouncer.cs" />
+    <Compile Include="GitHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sprockets\Core\IAnnounce.cs" />
-    <Compile Include="Sprockets\Core\IMessageHandler.cs" />
-    <Compile Include="Sprockets\Core\ISprocket.cs" />
-    <Compile Include="Sprockets\Core\ISprocketInitializer.cs" />
-    <Compile Include="Sprockets\Core\IUnhandledMessageSprocket.cs" />
-    <Compile Include="Sprockets\RegexSprocket.cs" />
+    <Compile Include="Tasks\CommitTask.cs" />
+    <Compile Include="Tasks\ForksTask.cs" />
+    <Compile Include="Tasks\IGithubTask.cs" />
+    <Compile Include="Tasks\IssuesTask.cs" />
+    <Compile Include="Tasks\PullRequestsTask.cs" />
+    <Compile Include="Tasks\WatchersTask.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <ProjectReference Include="..\..\Jabbot\Jabbot.csproj">
+      <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
+      <Name>Jabbot</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
