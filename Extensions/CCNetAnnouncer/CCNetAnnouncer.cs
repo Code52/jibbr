@@ -16,7 +16,7 @@ namespace CCNetAnnouncer
 
         public TimeSpan Interval
         {
-            get { return TimeSpan.FromSeconds(10); }
+            get { return TimeSpan.FromMinutes(5); }
         }
 
         public const string ipAddressOrHostNameOfCCServer = ""; // Complete this value             
