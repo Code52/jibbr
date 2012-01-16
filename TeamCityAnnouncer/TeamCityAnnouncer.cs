@@ -26,7 +26,7 @@ namespace TeamCityAnnouncer
             foreach (var room in bot.Rooms)
             {
                 bot.Say(
-                    string.Format("CCNET Build Server: {0} / {1} - {2} ({3}) ",
+                    string.Format("TeamCity Build Server: {0} / {1} - {2} ({3}) ",
                                   project.WebUrl,
                                   project.Name,
                                   lastBuild.Status,
