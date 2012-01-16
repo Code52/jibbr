@@ -21,10 +21,10 @@ bot.ShutDown();
 ## Writing Sprockets
 
 Sprockets are things you can plug-in to enhance the behavior of your bot. Simply drop a dll with classes that implement
-ISproket into a Sprockets folder and you're done. Here's an port of the [math.coffee](https://github.com/github/hubot/blob/master/src/scripts/math.coffee) from hubot:
+ISprocket into a Sprockets folder and you're done. Here's an port of the [math.coffee](https://github.com/github/hubot/blob/master/src/scripts/math.coffee) from hubot:
 
 ```csharp
-public class MathSproket : RegexSproket
+public class MathSprocket : RegexSprocket
 {
     public override Regex Pattern
     {
