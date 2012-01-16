@@ -22,6 +22,5 @@ namespace TeamCityAnnouncer.Extensions
         {
             return DateTime.ParseExact(build.StartDate, "yyyyMMdd'T'HHmmss-ffff", null);
         }
-
     }
 }
