@@ -16,11 +16,8 @@ namespace BlogRss
 
         public TimeSpan Interval
         {
-            get { return TimeSpan.FromMinutes(60); }
+            get { return TimeSpan.FromMinutes(90); }
         }
-
-        //TODO: take input about new blogs to add to feed collection
-        //TODO: determine how often feed is checked
 
         /// <summary>
         /// This method uses 2 configuration variables, feed list, and hour threshold see private members
@@ -72,7 +69,7 @@ namespace BlogRss
             }
         }
 
-        public bool Handle(ChatMessage message, Bot bot)
+        public bool Handle(ChatMessage message, IBot bot)
         {
             return true;
         }

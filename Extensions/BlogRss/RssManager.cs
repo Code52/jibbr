@@ -20,6 +20,7 @@ namespace BlogRss
             var request = (HttpWebRequest) WebRequest.Create(url);
             using (var response = request.GetResponse())
             {
+                XNamespace ns = "http://www.w3.org/2005/Atom"; 
                 var xmlDoc = XDocument.Load(response.GetResponseStream());
 
                 // This seems really inefficient, I haven't worked out a way to quickly determine if the format style of a blog feed
@@ -27,8 +28,7 @@ namespace BlogRss
                 var posts = ProcessAsWordpress(xmlDoc);
                 if (!posts.Any())
                 {
-                    //TODO: fix this, right now it doesn't process the feed at all can't find the 'entries' hating on XML
-                    posts = ProcessAsFunnelWeb(xmlDoc);
+                    posts = ProcessAsFunnelWeb(xmlDoc, ns);
                 }
 
                 // the reason the above probing was required is to ensure 
@@ -43,9 +43,9 @@ namespace BlogRss
                     from q in posts
                     select new FeedItem
                                {
-                                   Title = q.AttemptToGetElement("title"),
-                                   PublishDate = q.AttemptToGetElementsFromChoices(dateOptions).AsDate(),
-                                   Url = q.AttemptToGetElementsFromChoices(linkOptions),
+                                   Title = q.AttemptToGetElement("title", ns),
+                                   PublishDate = q.AttemptToGetElementsFromChoices(dateOptions, ns).AsDate(),
+                                   Url = q.AttemptToGetElementsFromChoices(linkOptions, ns),
                                    //Summary = q.AttemptToGetElement("summary"),
                                    //PostText = q.AttemptToGetElementsFromChoices(blogContentOptions)
                                };
@@ -54,6 +54,11 @@ namespace BlogRss
             }
         }
 
+        /// <summary>
+        /// Returns XElements based on the Wordpress/Feedburner style of atom feed
+        /// </summary>
+        /// <param name="xmlDoc"></param>
+        /// <returns></returns>
         public static List<XElement> ProcessAsWordpress(XDocument xmlDoc)
         {
             return xmlDoc.Descendants(
@@ -65,33 +70,24 @@ namespace BlogRss
         }
 
         /// <summary>
-        /// TODO: fix this, it doesn't work :(
+        /// Returns XElements based on the FunnelWeb style of atom feed
         /// </summary>
         /// <param name="xmlDoc"></param>
+        /// <param name="ns"></param>
         /// <returns></returns>
-        public static List<XElement> ProcessAsFunnelWeb(XDocument xmlDoc)
+        public static List<XElement> ProcessAsFunnelWeb(XDocument xmlDoc, XNamespace ns)
         {
-            //debug code:
-            var result = new List<XElement>();
-            var nodes = xmlDoc.DescendantNodes().ToList();
-            nodes.ForEach(x => { result.AddRange(x.Document.Elements()); });
-
-            //doesn't detect 'entry' at all in the Descendants()
-            var basic = xmlDoc.Elements("entry").ToList();
-            var c = result.Count;
-            return xmlDoc.Descendants(
-                    XName.Get("entry"))/*.Where(x =>
-                                             x.Element(XName.Get("published")) != null
-                                             && x.Element(XName.Get("title")) != null
-                                             && x.Element(XName.Get("id")) != null
-                                             //&& x.Element(XName.Get("summary")) != null
-                    )*/.ToList();
+            return xmlDoc.Descendants(ns + "entry").Where(x =>
+                                             x.Element(ns + "published") != null
+                                             && x.Element(ns + "id") != null
+                                             && x.Element(ns + "title") != null
+                    ).ToList();
         }
     }
 
     public static class XElementExtensions
     {
-        public static String AttemptToGetElement(this XElement xElement, String node)
+        public static string AttemptToGetElement(this XElement xElement, string node, XNamespace ns)
         {
             if (node.Contains(":"))
             {
@@ -106,13 +102,17 @@ namespace BlogRss
                            : "";
             }
 
-            return xElement.Element(XName.Get(node)) != null ? xElement.Element(XName.Get(node)).Value : "";
+            var regular = xElement.Element(XName.Get(node)) != null ? xElement.Element(XName.Get(node)).Value : "";
+            if (String.IsNullOrWhiteSpace(regular))
+                regular = xElement.Element(ns + node) != null ? xElement.Element(ns + node).Value : "";
+
+            return regular;
         }
 
-        public static String AttemptToGetElementsFromChoices(this XElement xElement, IEnumerable<String> nodes)
+        public static String AttemptToGetElementsFromChoices(this XElement xElement, IEnumerable<String> nodes, XNamespace ns)
         {
             var elementValue = "";
-            foreach (var result in nodes.ToList().Select(n => AttemptToGetElement(xElement, n)).Where(result => !String.IsNullOrWhiteSpace(result)))
+            foreach (var result in nodes.ToList().Select(n => AttemptToGetElement(xElement, n, ns)).Where(result => !String.IsNullOrWhiteSpace(result)))
             {
                 elementValue = result;
                 break;
