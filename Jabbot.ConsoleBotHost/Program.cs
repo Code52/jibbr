@@ -40,7 +40,11 @@ namespace Jabbot.ConsoleBotHost
                 var announcements = container.GetExportedValues<IAnnounce>();
 
                 Console.WriteLine(String.Format("Connecting to {0}...", _serverUrl));
-                Bot bot = new Bot(_serverUrl, _botName, _botPassword);
+                Bot bot = new Bot(_serverUrl, _botName, _botPassword); 
+                
+                foreach (var s in container.GetExportedValues<ISprocket>())
+                    bot.AddSprocket(s);
+
                 bot.PowerUp();
                 JoinRooms(bot);
                 var users = bot.GetUsers(bot.Rooms.First());
@@ -107,7 +111,10 @@ namespace Jabbot.ConsoleBotHost
             // If the extensions folder exists then use them
             if (Directory.Exists(extensionsPath))
             {
-                catalog = new AggregateCatalog(new AssemblyCatalog(typeof(Bot).Assembly), new DirectoryCatalog(extensionsPath, "*.dll"));
+                catalog = new AggregateCatalog(
+                    new AssemblyCatalog(typeof(Bot).Assembly),
+                    new AssemblyCatalog(typeof(Program).Assembly), 
+                    new DirectoryCatalog(extensionsPath, "*.dll"));
             }
             else
             {

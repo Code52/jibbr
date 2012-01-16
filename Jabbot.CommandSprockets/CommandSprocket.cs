@@ -14,7 +14,7 @@ namespace Jabbot.CommandSprockets
         public string Command { get; protected set; }
         public string[] Arguments { get; protected set; }
         public ChatMessage Message { get; protected set; }
-        public Bot Bot { get; protected set; }
+        public IBot Bot { get; protected set; }
         public bool HasArguments { get { return Arguments.Length > 0; } }
 
         public virtual bool MayHandle(string initiator, string command)
@@ -23,7 +23,7 @@ namespace Jabbot.CommandSprockets
                 SupportedCommands.Any(c => c.Equals(command, StringComparison.OrdinalIgnoreCase));
         }
 
-        public virtual bool Handle(ChatMessage message, Bot bot)
+        public virtual bool Handle(ChatMessage message, IBot bot)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace Jabbot.CommandSprockets
             }
             catch (InvalidOperationException e)
             {
-                Bot.PrivateReply(Message.FromUser, e.GetBaseException().Message);
+                Bot.PrivateReply(Message.Sender, e.GetBaseException().Message);
             }
             return false;
         }
