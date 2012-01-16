@@ -50,8 +50,6 @@ namespace Jabbot.ConsoleBotHost
                 var users = bot.GetUsers(bot.Rooms.First());
                 var user = bot.GetUserInfo(bot.Rooms.First(), users.First().Name.ToString());
 
-                bot.Say("Up and running...", "Code52-testing4");
-
                 scheduler.Start(announcements, bot);
 
                 Console.Write("Press enter to quit...");
