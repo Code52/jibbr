@@ -11,7 +11,7 @@ namespace GithubAnnouncements.Extensions
         public static void ProcessCommits(this IBot bot, string repositoryName ,string lastCommit, IEnumerable<dynamic> commits)
         {
             // find new commits since 
-            var groupedCommits = commits.TakeWhile(c => c.commit.tree.sha != lastCommit).GroupBy(c => c.committer.login);
+            var groupedCommits = commits.TakeWhile(c => c.commit.tree.sha != lastCommit && DateTime.Parse(c.commit.committer.date.ToString()) > DateTime.Now.AddDays(-1)).GroupBy(c => c.committer.login);
 
             // create string to send as message
             var sb = new StringBuilder();
