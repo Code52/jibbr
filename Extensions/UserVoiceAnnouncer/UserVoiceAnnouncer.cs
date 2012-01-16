@@ -9,52 +9,57 @@ using Newtonsoft.Json;
 
 namespace UserVoiceAnnouncer
 {
-    public class UserVoiceAnnouncer : IAnnounce
-    {
-        public TimeSpan Interval
-        {
-            get { return TimeSpan.FromMinutes(5); }
-        }
+	public class UserVoiceAnnouncer : IAnnounce
+	{
+		public string AnnouncerName
+		{
+			get { return "UserVoiceSprocket"; }
+		}
 
-        public DateTime LastUpdate { get; set; }
+		public TimeSpan Interval
+		{
+			get { return TimeSpan.FromMinutes(5); }
+		}
 
-        public const string APIKey = "zQX9WWRrXjaBvyDiOM3A";
-        public const string SuggestionsChannel = "code52";
-        public const string ForumID = "143105";
+		public DateTime LastUpdate { get; set; }
 
-        public static bool Lock { get; set; }
+		public const string APIKey = "zQX9WWRrXjaBvyDiOM3A";
+		public const string SuggestionsChannel = "code52";
+		public const string ForumID = "143105";
 
-        public void Execute(Bot bot)
-        {
-            if (Lock == true) return;
-            Lock = true;
+		public static bool Lock { get; set; }
 
-            Debug.WriteLine(string.Format("Fetching from Uservoice! - {0:HH.mm.ss}", DateTime.Now));
+		public void Execute(Bot bot)
+		{
+			if (Lock == true) return;
+			Lock = true;
 
-            var client = new WebClient();
+			Debug.WriteLine(string.Format("Fetching from Uservoice! - {0:HH.mm.ss}", DateTime.Now));
 
-            var suggestions = GetSuggestions(client).ToList();
+			var client = new WebClient();
 
-            foreach (var suggestion in suggestions.Where(s => DateTime.Parse(s.created_at.ToString()) > LastUpdate && DateTime.Parse(s.created_at.ToString()) > DateTime.Now.AddDays(-1)).OrderBy(s => DateTime.Parse(s.created_at.ToString())))
-            {
-                    foreach (var room in bot.Rooms)
-                    {
-                        bot.Say(
-                            string.Format("{0}", suggestion.url), room);
-                    }
+			var suggestions = GetSuggestions(client).ToList();
 
-                LastUpdate = DateTime.Parse(suggestion.created_at.ToString());
-            }
+			foreach (var suggestion in suggestions.Where(s => DateTime.Parse(s.created_at.ToString()) > LastUpdate && DateTime.Parse(s.created_at.ToString()) > DateTime.Now.AddDays(-1)).OrderBy(s => DateTime.Parse(s.created_at.ToString())))
+			{
+				foreach (var room in bot.Rooms)
+				{
+					bot.Say(
+						string.Format("{0}", suggestion.url), room);
+				}
 
-            Lock = false;
-        }
+				LastUpdate = DateTime.Parse(suggestion.created_at.ToString());
+			}
 
-        private static IEnumerable<dynamic> GetSuggestions(WebClient client)
-        {
-            var uvResponse = client.DownloadString(new Uri(string.Format("http://{0}.uservoice.com/api/v1/forums/{1}/suggestions.json?per_page=50&sort=newest&client={2}", SuggestionsChannel, ForumID, APIKey)));
-            var suggestions = JsonConvert.DeserializeObject<dynamic>(uvResponse).suggestions;
+			Lock = false;
+		}
 
-            return suggestions;
-        }
-    }
+		private static IEnumerable<dynamic> GetSuggestions(WebClient client)
+		{
+			var uvResponse = client.DownloadString(new Uri(string.Format("http://{0}.uservoice.com/api/v1/forums/{1}/suggestions.json?per_page=50&sort=newest&client={2}", SuggestionsChannel, ForumID, APIKey)));
+			var suggestions = JsonConvert.DeserializeObject<dynamic>(uvResponse).suggestions;
+
+			return suggestions;
+		}
+	}
 }

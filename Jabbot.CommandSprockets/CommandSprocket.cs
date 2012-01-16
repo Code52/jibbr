@@ -46,5 +46,7 @@ namespace Jabbot.CommandSprockets
             }
             return false;
         }
+
+    	public abstract string SprocketName { get; }
     }
 }
