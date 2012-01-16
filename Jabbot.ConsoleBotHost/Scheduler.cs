@@ -6,44 +6,44 @@ using Jabbot.Sprockets.Core;
 
 namespace Jabbot.ConsoleBotHost
 {
-    public class Scheduler : IScheduler
-    {
-        private readonly Timer _timer = new Timer { Interval = 60000 };
-        private readonly IDictionary<IAnnounce, DateTime> _scheduledAnnouncements = new Dictionary<IAnnounce, DateTime>();
-        private Bot _bot;
+	public class Scheduler : IScheduler
+	{
+		private readonly Timer _timer = new Timer { Interval = 10000 };
+		private readonly IDictionary<IAnnounce, DateTime> _scheduledAnnouncements = new Dictionary<IAnnounce, DateTime>();
+		private Bot _bot;
 
-        public void Start(IEnumerable<IAnnounce> tasks, Bot bot)
-        {
-            _bot = bot;
+		public void Start(IEnumerable<IAnnounce> tasks, Bot bot)
+		{
+			_bot = bot;
 
-            var startTime = DateTime.Now;
-            foreach (var task in tasks)
-            {
-                _scheduledAnnouncements.Add(task, startTime.Add(task.Interval));
-            }
+			var startTime = DateTime.Now;
+			foreach (var task in tasks)
+			{
+				_scheduledAnnouncements.Add(task, startTime.Add(task.Interval));
+			}
 
-            _timer.Elapsed += HandleResult;
-            _timer.Start();
-        }
+			_timer.Elapsed += HandleResult;
+			_timer.Start();
+		}
 
-        private void HandleResult(object state, ElapsedEventArgs elapsedEventArgs)
-        {
-            var now = DateTime.Now;
+		private void HandleResult(object state, ElapsedEventArgs elapsedEventArgs)
+		{
+			var now = DateTime.Now;
 
-            var currentItems = _scheduledAnnouncements.Where(c => c.Value < now).ToList();
+			var currentItems = _scheduledAnnouncements.Where(c => c.Value < now).ToList();
 
-            foreach (var scheduleItem in currentItems)
-            {
-                var announcement = scheduleItem.Key;
+			foreach (var scheduleItem in currentItems)
+			{
+				var announcement = scheduleItem.Key;
 
-                announcement.Execute(_bot);
-                _scheduledAnnouncements[announcement] = now.Add(announcement.Interval);
-            }
-        }
+				announcement.Execute(_bot);
+				_scheduledAnnouncements[announcement] = now.Add(announcement.Interval);
+			}
+		}
 
-        public void Stop()
-        {
-            _timer.Stop();
-        }
-    }
+		public void Stop()
+		{
+			_timer.Stop();
+		}
+	}
 }
