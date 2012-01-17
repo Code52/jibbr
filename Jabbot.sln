@@ -66,7 +66,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculatorSprocket", "Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubAnnouncements", "Extensions\GithubAnnouncements\GithubAnnouncements.csproj", "{9518C000-0F98-41B0-81E9-5E065CF5387E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCityAnnouncer", "TeamCityAnnouncer\TeamCityAnnouncer.csproj", "{577B79CF-B210-4ED1-8D1C-AF51BDAA2344}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCityAnnouncer", "Extensions\TeamCityAnnouncer\TeamCityAnnouncer.csproj", "{577B79CF-B210-4ED1-8D1C-AF51BDAA2344}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
