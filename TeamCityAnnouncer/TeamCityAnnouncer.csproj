@@ -49,7 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\TeamCitySharpEx.cs" />
+    <Compile Include="ProjectModel.cs" />
     <Compile Include="TeamCityAnnouncer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
