@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Jabbot.Models;
 using Jabbot.Sprockets.Core;
 using SignalR.Client.Hubs;
+using System.Linq;
 
 namespace Jabbot
 {
@@ -58,6 +59,24 @@ namespace Jabbot
         public void RemoveSprocket(ISprocket sprocket)
         {
             _sprockets.Remove(sprocket);
+        }
+
+        /// <summary>
+        /// Enable a specific sprocket specified by Type Name
+        /// </summary>
+        /// <param name="sprocketTypeName">The Type Name of the sprocket (what's returned by mySprocket.GetType().FullName</param>
+        public void EnableSprocket(string sprocketTypeName)
+        {
+               SetSprocketEnabled(sprocketTypeName,true);
+        }
+
+        /// <summary>
+        /// Disable a specific sprocket specified by Type Name
+        /// </summary>
+        /// <param name="sprocketTypeName">The Type Name of the sprocket (what's returned by mySprocket.GetType().FullName</param>
+        public void DisableSprocket(string sprocketTypeName)
+        {
+            SetSprocketEnabled(sprocketTypeName, false);
         }
 
         /// <summary>
@@ -112,6 +131,10 @@ namespace Jabbot
 
                     if (sprocketInitializers != null)
                         IntializeSprockets(sprocketInitializers);
+                    foreach(var sprocket in _sprockets)
+                    {
+                        sprocket.Enabled = true;
+                    }
                 }
             }
         }
@@ -387,6 +410,10 @@ namespace Jabbot
 
                 foreach (var handler in _sprockets)
                 {
+                    if(!handler.Enabled)
+                    {
+                        continue;
+                    }
                     if (handler.Handle(message, this))
                     {
                         handled = true;
@@ -430,6 +457,10 @@ namespace Jabbot
 
                 foreach (var handler in _sprockets)
                 {
+                    if(!handler.Enabled)
+                    {
+                        continue;
+                    }
                     if (handler.Handle(new ChatMessage("[JABBR] - " + name + " just entered " + room, name, room), this))
                     {
                         handled = true;
@@ -461,7 +492,6 @@ namespace Jabbot
             });
 
         }
-
 
         private void OnLeave(dynamic user)
         {
@@ -502,5 +532,17 @@ namespace Jabbot
             _chat.Invoke("send", command).Wait();
         }
 
+        private void SetSprocketEnabled(string sprocketTypeName, bool enabled)
+        {
+            if (String.IsNullOrEmpty(sprocketTypeName))
+            {
+                return;
+            }
+
+            foreach (var sprocket in _sprockets.Where(s => s.GetType().FullName == sprocketTypeName))
+            {
+                sprocket.Enabled = enabled;
+            }
+        }
     }
 }

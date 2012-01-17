@@ -7,7 +7,12 @@
 <ul>
     @foreach (var m in Model.Sprockets)
     {
-        <li>@m</li>
+        string enabledText = m.Enabled ? "Disable" : "Enable";
+         <form method="POST" action="/bot/@enabledText/@m">
+             <li>@m
+                    <input type="submit" value="@enabledText"/>
+             </li>
+            </form>
     }
 </ul>
 

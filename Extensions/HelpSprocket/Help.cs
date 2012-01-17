@@ -23,5 +23,7 @@ namespace HelpSprocket
 
 			return false;
 		}
+
+	    public bool Enabled { get; set; }
 	}
 }

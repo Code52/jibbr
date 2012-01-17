@@ -99,6 +99,18 @@ namespace Jabbot.AspNetBotHost.Modules
                                       return Response.AsRedirect("/");
                                   };
 
+            Post["/disable/{sprocket}"] = _ =>
+                                              {
+                                                  _bot.DisableSprocket(_.Sprocket);
+                                                  return Response.AsRedirect("/");
+                                              };
+
+            Post["/enable/{sprocket}"] = _ =>
+                                              {
+                                                  _bot.EnableSprocket(_.Sprocket);
+                                                  return Response.AsRedirect("/");
+                                              };
+
         }
 
 
