@@ -18,7 +18,11 @@ namespace GithubAnnouncements
         [Import]
         public ILogger Log { get; set; }
 
-        public TimeSpan Interval
+    	public string AnnouncerName
+    	{
+    		get { return "GitHub Announcer"; }
+    	}
+    	public TimeSpan Interval
         {
             get { return TimeSpan.FromMinutes(10); }
         }

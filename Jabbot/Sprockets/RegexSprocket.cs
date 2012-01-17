@@ -4,28 +4,30 @@ using Jabbot.Sprockets.Core;
 
 namespace Jabbot.Sprockets
 {
-    public abstract class RegexSprocket : ISprocket
-    {
-        public abstract Regex Pattern { get; }
+	public abstract class RegexSprocket : ISprocket
+	{
+		public abstract Regex Pattern { get; }
 
-        public bool Handle(ChatMessage message, IBot bot)
-        {
-            if (Pattern == null)
-            {
-                return false;
-            }
-            
-            Match match;
-            if (!(match = Pattern.Match(message.Content)).Success)
-            {
-                return false;
-            }
+		public bool Handle(ChatMessage message, IBot bot)
+		{
+			if (Pattern == null)
+			{
+				return false;
+			}
 
-            ProcessMatch(match, message, bot);
+			Match match;
+			if (!(match = Pattern.Match(message.Content)).Success)
+			{
+				return false;
+			}
 
-            return true;
-        }
+			ProcessMatch(match, message, bot);
 
-        protected abstract void ProcessMatch(Match match, ChatMessage message, IBot bot);
-    }
+			return true;
+		}
+
+		protected abstract void ProcessMatch(Match match, ChatMessage message, IBot bot);
+
+		public abstract string SprocketName { get; }
+	}
 }

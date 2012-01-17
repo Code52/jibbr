@@ -21,5 +21,10 @@ namespace SampleSprocket
 
 			return true;
 		}
+
+		public override string SprocketName
+		{
+			get { return "Hello Sprocket"; }
+		}
 	}
 }

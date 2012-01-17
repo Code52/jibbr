@@ -37,5 +37,10 @@ namespace VolunteerSprocket
                 bot.Say(string.Format("I volunteer {0} for that!", users[randomUser].Name), message.Receiver);
             }
         }
+
+    	public override string SprocketName
+    	{
+    		get { return "Volunteer Sprocket"; }
+    	}
     }
 }

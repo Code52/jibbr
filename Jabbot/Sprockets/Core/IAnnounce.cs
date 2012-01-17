@@ -9,6 +9,8 @@ namespace Jabbot.Sprockets.Core
     [InheritedExport]
     public interface IAnnounce
     {
+    	string AnnouncerName { get; }
+
         TimeSpan Interval { get; }
         void Execute(Bot bot);
     }

@@ -16,5 +16,10 @@ namespace IPityTheFoolSprocket
 		{
 			bot.Say("http://xamldev.dk/IPityTheFool.gif", message.Receiver);
 		}
+
+		public override string SprocketName
+		{
+			get { return "I Pity the Fool Sprocket"; }
+		}
 	}
 }

@@ -12,7 +12,11 @@ namespace DisqusAnnouncer
 {
     public class DisqusAnnouncer : IAnnounce
     {
-        public TimeSpan Interval
+    	public string AnnouncerName
+    	{
+    		get { return "Disqus Announcer"; }
+    	}
+    	public TimeSpan Interval
         {
             get { return TimeSpan.FromMinutes(5); }
         }

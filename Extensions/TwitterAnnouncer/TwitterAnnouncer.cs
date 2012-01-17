@@ -21,6 +21,10 @@ namespace TwitterAnnouncer
 		private DateTime lastRun = DateTime.Now;
 		private TwitterStatus latestTweet;
 
+		public string AnnouncerName
+		{
+			get { return "Twitter Announcer"; }
+		}
 		public TimeSpan Interval
 		{
 			get { return TimeSpan.FromMinutes(10); }

@@ -36,7 +36,13 @@ namespace Jabbot.CommandSprockets
             }
             return false;
         }
-        protected void EnsureRequestorIsNotBanned()
+
+    	public override string SprocketName
+    	{
+    		get { return "Restricted Command Sprocket"; }
+    	}
+
+    	protected void EnsureRequestorIsNotBanned()
         {
             if (RequestorIsBanned)
             {

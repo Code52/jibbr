@@ -9,6 +9,6 @@ namespace Jabbot.Sprockets.Core
     [InheritedExport]
     public interface ISprocket : IMessageHandler
     {
-
+    	string SprocketName { get; }
     }
 }

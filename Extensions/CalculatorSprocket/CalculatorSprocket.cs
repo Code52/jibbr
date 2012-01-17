@@ -59,7 +59,12 @@ namespace Jabbot.Extensions
             }
         }
 
-        private bool CalculateExpression(string mathExpression)
+    	public override string SprocketName
+    	{
+    		get { return "Calculator Sprocket"; }
+    	}
+
+    	private bool CalculateExpression(string mathExpression)
         {
             var expression = new Expression(mathExpression, EvaluateOptions.IgnoreCase);
             object result = null;

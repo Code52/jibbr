@@ -11,7 +11,11 @@ namespace UserVoiceAnnouncer
 {
     public class UserVoiceAnnouncer : IAnnounce
     {
-        public TimeSpan Interval
+    	public string AnnouncerName
+    	{
+    		get { return "UserVoice Announcer"; }
+    	}
+    	public TimeSpan Interval
         {
             get { return TimeSpan.FromMinutes(5); }
         }

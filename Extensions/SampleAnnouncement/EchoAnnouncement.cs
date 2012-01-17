@@ -6,6 +6,10 @@ namespace SampleAnnouncement
 {
 	public class EchoAnnouncement : IAnnounce
 	{
+		public string AnnouncerName
+		{
+			get { return "Aussie Time Announcer"; }
+		}
 		public TimeSpan Interval
 		{
             get { return TimeSpan.FromMinutes(10); }

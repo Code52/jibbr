@@ -264,7 +264,12 @@ namespace QuizSprocket
             }
         }
 
-        private bool ShowTop10()
+    	public override string SprocketName
+    	{
+    		get { return "Quiz Sprocket"; }
+    	}
+
+    	private bool ShowTop10()
         {
             var stringBuilder = new StringBuilder();
 
