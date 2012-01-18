@@ -6,6 +6,7 @@ using System.Web.Hosting;
 using Jabbot.Sprockets.Core;
 using Nancy;
 using TinyMessenger;
+using System.Linq;
 
 namespace Jabbot.AspNetBotHost
 {
@@ -22,7 +23,7 @@ namespace Jabbot.AspNetBotHost
 
             container.Register(mefcontainer.GetExportedValues<IAnnounce>());
             container.Register(mefcontainer.GetExportedValues<ISprocketInitializer>());
-            container.Register(mefcontainer.GetExportedValues<ISprocket>());
+            container.Register(new SprocketManager(mefcontainer.GetExportedValues<ISprocket>()));
             container.Register(new Bot(_serverUrl, _botName, _botPassword));
         }
 

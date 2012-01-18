@@ -5,11 +5,11 @@
 }
 <h3>Sprockets</h3>
 <ul>
-    @foreach (var m in Model.Sprockets)
+    @foreach (var kvp in Model.Sprockets)
     {
-        string enabledText = m.Enabled ? "Disable" : "Enable";
-         <form method="POST" action="/bot/@enabledText/@m">
-             <li>@m
+        string enabledText = kvp.Value.Enabled ? "Disable" : "Enable";
+         <form method="POST" action="/bot/@enabledText/@kvp.Key">
+             <li>@kvp.Value
                     <input type="submit" value="@enabledText"/>
              </li>
             </form>

@@ -62,21 +62,21 @@ namespace Jabbot
         }
 
         /// <summary>
-        /// Enable a specific sprocket specified by Type Name
+        /// Enable a specific sprocket
         /// </summary>
-        /// <param name="sprocketTypeName">The Type Name of the sprocket (what's returned by mySprocket.GetType().FullName</param>
-        public void EnableSprocket(string sprocketTypeName)
+        /// <param name="sprocket">The sprocket to enable</param>
+        public void EnableSprocket(ISprocket sprocket)
         {
-               SetSprocketEnabled(sprocketTypeName,true);
+               SetSprocketEnabled(sprocket,true);
         }
 
         /// <summary>
-        /// Disable a specific sprocket specified by Type Name
+        /// Disable a specific sprocket
         /// </summary>
-        /// <param name="sprocketTypeName">The Type Name of the sprocket (what's returned by mySprocket.GetType().FullName</param>
-        public void DisableSprocket(string sprocketTypeName)
+        /// <param name="sprocket">The sprocket to disable</param>
+        public void DisableSprocket(ISprocket sprocket)
         {
-            SetSprocketEnabled(sprocketTypeName, false);
+            SetSprocketEnabled(sprocket, false);
         }
 
         /// <summary>
@@ -532,17 +532,20 @@ namespace Jabbot
             _chat.Invoke("send", command).Wait();
         }
 
-        private void SetSprocketEnabled(string sprocketTypeName, bool enabled)
+        private void SetSprocketEnabled(ISprocket sprocket, bool enabled)
         {
-            if (String.IsNullOrEmpty(sprocketTypeName))
+            if (sprocket == null)
             {
                 return;
             }
 
-            foreach (var sprocket in _sprockets.Where(s => s.GetType().FullName == sprocketTypeName))
+            var sprocketToChange = _sprockets.FirstOrDefault(s => s == sprocket);
+            if(sprocketToChange == null)
             {
-                sprocket.Enabled = enabled;
+                return;
             }
+
+            sprocketToChange.Enabled = enabled;
         }
     }
 }
