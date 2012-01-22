@@ -73,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalculatorSprocket", "Exten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubAnnouncements", "Extensions\GithubAnnouncements\GithubAnnouncements.csproj", "{9518C000-0F98-41B0-81E9-5E065CF5387E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCNetAnnouncer", "Extensions\CCNetAnnouncer\CCNetAnnouncer.csproj", "{9731A150-94A1-4B46-A9AB-5B74B5D196AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -264,6 +266,16 @@ Global
 		{9518C000-0F98-41B0-81E9-5E065CF5387E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{9518C000-0F98-41B0-81E9-5E065CF5387E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{9518C000-0F98-41B0-81E9-5E065CF5387E}.Release|x86.ActiveCfg = Release|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -282,6 +294,7 @@ Global
 		{4D94EB55-9204-4579-A79C-4D42F4ED85BB} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{6416F073-97F1-4DBB-B8D6-2011BE448D98} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{9518C000-0F98-41B0-81E9-5E065CF5387E} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
+		{9731A150-94A1-4B46-A9AB-5B74B5D196AC} = {7170D00A-149E-427F-A7F9-FBA91CE3F9D7}
 		{3E8A88F3-737F-4F93-92EA-151B1FE3A44B} = {A3A6EC44-1F10-4427-98DC-CF13D11F8C79}
 	EndGlobalSection
 EndGlobal
