@@ -1,14 +1,10 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Moq;
+﻿using Moq;
 using Xunit;
 using Jabbot;
 using Jabbot.Models;
 using VotingSprocket;
 
-namespace VotingSprocketTests
+namespace ExtensionTests
 {
     public class VoteSprocketTests
     {
