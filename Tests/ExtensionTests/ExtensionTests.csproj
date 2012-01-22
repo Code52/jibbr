@@ -52,6 +52,7 @@
     <Compile Include="QuizSprocketTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VoteSprocketTests.cs" />
+    <Compile Include="WeatherSprocketTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -68,6 +69,10 @@
     <ProjectReference Include="..\..\Extensions\VotingSprocket\VotingSprocket.csproj">
       <Project>{23F45EDA-A95D-4041-8B78-6F691A98B0CB}</Project>
       <Name>VotingSprocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Extensions\WeatherSprocket\WeatherSprocket.csproj">
+      <Project>{1BCEA8B3-23C9-4087-9DC1-70EAC94D0787}</Project>
+      <Name>WeatherSprocket</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Jabbot.CommandSprockets\Jabbot.CommandSprockets.csproj">
       <Project>{FB5CE3F1-1575-440B-A6E9-4E5AFED35D8B}</Project>
