@@ -81,7 +81,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCityAnnouncer", "Extens
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VotingSprocket", "Extensions\VotingSprocket\VotingSprocket.csproj", "{23F45EDA-A95D-4041-8B78-6F691A98B0CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoClrfSprocket", "AutoclrfSprocket\AutoClrfSprocket.csproj", "{4263EE32-03CD-43D7-A308-65B977FE5CB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoClrfSprocket", "Extensions\AutoclrfSprocket\AutoClrfSprocket.csproj", "{4263EE32-03CD-43D7-A308-65B977FE5CB9}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
