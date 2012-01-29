@@ -13,7 +13,7 @@ namespace AutoClrfSprocket
     {
         public override Regex Pattern
         {
-            get { return new Regex(@".*(?:autoclrf)+.*", RegexOptions.IgnoreCase); }
+            get { return new Regex(".*(?:@autocrlf)+.*", RegexOptions.IgnoreCase); }
         }
 
         protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
