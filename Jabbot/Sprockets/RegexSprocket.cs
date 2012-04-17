@@ -27,5 +27,7 @@ namespace Jabbot.Sprockets
         }
 
         protected abstract void ProcessMatch(Match match, ChatMessage message, IBot bot);
+
+        public bool Enabled { get; set; }
     }
 }

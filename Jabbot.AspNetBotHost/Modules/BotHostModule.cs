@@ -23,11 +23,11 @@ namespace Jabbot.AspNetBotHost.Modules
         private static readonly string _botRooms = ConfigurationManager.AppSettings["Bot.RoomList"];
         private static readonly string _momentApiKey = ConfigurationManager.AppSettings["Moment.ApiKey"];
         public static Bot _bot;
-        private readonly IEnumerable<ISprocket> _sprockets;
+        private readonly SprocketManager _sprockets;
         private readonly IEnumerable<ISprocketInitializer> _sprocketInitializers;
         public static Dictionary<Regex, FunctionObject> HubotRespond = new Dictionary<Regex, FunctionObject>();
         public static Dictionary<Regex, FunctionObject> HubotListen = new Dictionary<Regex, FunctionObject>();
-        public BotHostModule(Bot bot, IEnumerable<ISprocket> sprockets, IEnumerable<ISprocketInitializer> sprocketInitializers)
+        public BotHostModule(Bot bot, SprocketManager sprockets, IEnumerable<ISprocketInitializer> sprocketInitializers)
             : base("bot")
         {
             _bot = bot;
@@ -99,6 +99,20 @@ namespace Jabbot.AspNetBotHost.Modules
                                       return Response.AsRedirect("/");
                                   };
 
+            Post["/disable/{sprocket}"] = _ =>
+                                              {
+                                                  var sprocket = sprockets[_.Sprocket];
+                                                  _bot.DisableSprocket(sprocket);
+                                                  return Response.AsRedirect("/");
+                                              };
+
+            Post["/enable/{sprocket}"] = _ =>
+                                              {
+                                                  var sprocket = sprockets[_.Sprocket];
+                                                  _bot.EnableSprocket(sprocket);
+                                                  return Response.AsRedirect("/");
+                                              };
+
         }
 
 
@@ -120,7 +134,9 @@ namespace Jabbot.AspNetBotHost.Modules
                 ScheduleKeepAlive(_hostBaseUrl + "/keepalive");
             }
             foreach (var sprocket in _sprockets)
-                _bot.AddSprocket(sprocket);
+            {
+                _bot.AddSprocket(sprocket.Value);
+            }
 
             _bot.PowerUp(_sprocketInitializers);
             JoinRooms(_bot);
