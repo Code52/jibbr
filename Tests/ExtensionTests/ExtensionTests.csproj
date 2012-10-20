@@ -51,6 +51,7 @@
     <Compile Include="CalculatorSprocketTest.cs" />
     <Compile Include="QuizSprocketTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VoicemailSprocketTest.cs" />
     <Compile Include="VoteSprocketTests.cs" />
     <Compile Include="WeatherSprocketTest.cs" />
   </ItemGroup>
