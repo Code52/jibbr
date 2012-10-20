@@ -83,6 +83,10 @@
       <Project>{478BFCF7-9397-49A7-AFD4-060B6B749E77}</Project>
       <Name>Jabbot</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\VoicemailSprocket\VoicemailSprocket.csproj">
+      <Project>{FC6FF62D-C831-43EC-9843-01D658074C07}</Project>
+      <Name>VoicemailSprocket</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
