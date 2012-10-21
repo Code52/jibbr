@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using Jabbot;
@@ -26,17 +27,18 @@ namespace ExtensionTests
             mockBot = new Mock<IBot>();
             mockBot.Setup(b => b.Name).Returns(Jibbr);
             bot = mockBot.Object;
+
+            dynamic room1 = new DynamicRoom() { Name = "room1", Users = new List<DynamicUser> { new DynamicUser() { Name = "claire" }, new DynamicUser() { Name = "mads" } } };
+            dynamic room2 = new DynamicRoom() { Name = "room2", Users = new List<DynamicUser> { new DynamicUser() { Name = "claire" }, new DynamicUser() { Name = "bryce" }, new DynamicUser() { Name = "vicky" } } };
+            mockBot.Setup(b => b.GetRooms()).Returns(new List<dynamic>() { room1, room2 });
+
+            voicemailSprocket = new VoicemailSprocket.VoicemailSprocket();
         }
 
         [Fact]
         public void CanNotifyAllUsersOfNewVoicemails()
         {
             //Setup
-            mockBot.Setup(b => b.GetRooms()).Returns(new List<dynamic>()
-                {
-                    new {Name = "room1", Users = new {Name = "claire, mads"}},
-                    new {Name = "room2", Users = new {Name = "claire, bryce, vicky"}}
-                });
             voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
             voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
 
@@ -44,7 +46,7 @@ namespace ExtensionTests
             voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
 
             //Test
-            mockBot.Verify(b => b.PrivateReply(It.IsAny<string>(), It.Is<string>(what => what == string.Format("{0} has a new voicemail for you. There are {1} in total", Jibbr, 3))));
+            mockBot.Verify(b => b.PrivateReply(It.IsAny<string>(), It.Is<string>(what => what == string.Format("{0} has a new voicemail for you. There are {1} in total", Jibbr, 3))), Times.Exactly(4));
         }
 
         [Fact]
@@ -62,5 +64,17 @@ namespace ExtensionTests
             //Test
             mockBot.Verify(b => b.PrivateReply(newlyArrivedUser, It.Is<string>(what => what == string.Format("{0} has {1} new voicemail for you", Jibbr, "1"))));
         }
+    }
+
+    public class DynamicUser : DynamicObject
+    {
+        public string Name { get; set; }
+    }
+
+    public class DynamicRoom : DynamicObject
+    {
+        public List<DynamicUser> Users { get; set; }
+
+        public string Name { get; set; }
     }
 }
