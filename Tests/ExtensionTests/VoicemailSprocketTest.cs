@@ -64,6 +64,23 @@ namespace ExtensionTests
             //Test
             mockBot.Verify(b => b.PrivateReply(newlyArrivedUser, It.Is<string>(what => what == string.Format("{0} has {1} new voicemail for you", Jibbr, "1"))));
         }
+
+        [Fact]
+        public void CanRetrieveVoicemails()
+        {
+            //Setup
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
+
+            //Act
+            voicemailSprocket.Handle(new ChatMessage("retrieve", "Jim", bot.Name), bot);
+
+            //Test
+            mockBot.Verify(b => b.PrivateReply(It.Is<string>(s => s == "Jim"), string.Format( 
+                @"@Jim said: {0}", ExampleContents)), Times.Exactly(3));
+
+        }
     }
 
     public class DynamicUser : DynamicObject
