@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Voicemail.cs" />
+    <Compile Include="VoicemailRetriever.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserRegistry.cs" />
     <Compile Include="VoicemailRecorder.cs" />

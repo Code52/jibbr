@@ -10,7 +10,7 @@ namespace VoicemailSprocket
     internal class VoicemailRecorder : RegexSprocket
     {
         internal const string RecordCommand = "record \'.*\'";
-        public IList<string> Voicemails = new List<string>();
+        public IList<Voicemail> Voicemails = new List<Voicemail>();
 
         public override Regex Pattern
         {
@@ -21,7 +21,7 @@ namespace VoicemailSprocket
 
         protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
         {
-            Voicemails.Add(message.Content.Split('\'')[1]);
+            Voicemails.Add(new Voicemail(){Sender = message.Sender, Message = message.Content.Split('\'')[1]});
             NotifyAllUsers(bot);
         }
 

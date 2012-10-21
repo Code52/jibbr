@@ -74,10 +74,10 @@ namespace ExtensionTests
             voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
 
             //Act
-            voicemailSprocket.Handle(new ChatMessage("retrieve", "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage("retrieve", "claire", bot.Name), bot);
 
             //Test
-            mockBot.Verify(b => b.PrivateReply(It.Is<string>(s => s == "Jim"), string.Format(@"@Jim said: {0}", ExampleContents)), Times.Exactly(3));
+             mockBot.Verify(b => b.PrivateReply(It.Is<string>(s => s == "claire"), string.Format(@"Jim said '{0}'", ExampleContents)), Times.Exactly(3));
 
         }
     }
