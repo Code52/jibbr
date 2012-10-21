@@ -10,7 +10,7 @@ namespace VoicemailSprocket
     internal class UserRegistry : RegexSprocket
     {
         public const string UserArrivedNotification = @"\[JABBR\] - .* just entered .*";
-        private readonly VoiceMailbox voiceMailbox;
+        private readonly VoicemailRecorder voicemailRecorder;
         private readonly IList<string> userNames = new List<string>();
 
         public override Regex Pattern
@@ -18,19 +18,24 @@ namespace VoicemailSprocket
             get { return new Regex(UserArrivedNotification, RegexOptions.IgnoreCase); }
         }
 
-        public UserRegistry(VoiceMailbox voiceMailbox)
+        public UserRegistry(VoicemailRecorder voicemailRecorder)
         {
-            if (voiceMailbox == null) throw new ArgumentNullException("voiceMailbox");
-            this.voiceMailbox = voiceMailbox;
+            if (voicemailRecorder == null) throw new ArgumentNullException("voicemailRecorder");
+            this.voicemailRecorder = voicemailRecorder;
         }
 
         protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
         {
             var username = ExtractUsernameFromMessage(message);
+            
             userNames.Add(username);
 
-            voiceMailbox.SendVoiceMails(username, bot);
+            NotifyOfWaitingVoiceMails(username, bot);
 
+        }
+        private void NotifyOfWaitingVoiceMails(string username, IBot bot)
+        {
+            bot.PrivateReply(username, string.Format("{0} has {1} new voicemail for you", bot.Name, voicemailRecorder.MessageCount));
         }
 
         private static string ExtractUsernameFromMessage(ChatMessage message)

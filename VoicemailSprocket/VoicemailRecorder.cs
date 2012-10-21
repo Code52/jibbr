@@ -6,7 +6,7 @@ using Jabbot.Sprockets;
 
 namespace VoicemailSprocket
 {
-    internal class VoiceMailbox : RegexSprocket
+    internal class VoicemailRecorder : RegexSprocket
     {
         internal const string RecordCommand = "record \'.*\'";
         public IList<string> Voicemails = new List<string>();
@@ -16,12 +16,14 @@ namespace VoicemailSprocket
             get { return new Regex(RecordCommand);}
         }
 
+        public int MessageCount { get { return Voicemails.Count; } }
+
         protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
         {
             Voicemails.Add(message.Content.Split('\'')[1]);
         }
 
-        public void SendVoiceMails(string recipient, IBot bot)
+        private void SendVoiceMail(string recipient, IBot bot)
         {
             foreach (var voicemail in Voicemails)
                 bot.PrivateReply(recipient, string.Format("@{0} said '{1}'", recipient, voicemail));

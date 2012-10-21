@@ -8,17 +8,17 @@ namespace VoicemailSprocket
     {
         public VoicemailSprocket()
         {
-            voiceMailbox = new VoiceMailbox();
-            userRegistry = new UserRegistry(voiceMailbox);
+            voicemailRecorder = new VoicemailRecorder();
+            userRegistry = new UserRegistry(voicemailRecorder);
         }
 
-        private readonly VoiceMailbox voiceMailbox;
+        private readonly VoicemailRecorder voicemailRecorder;
         private readonly UserRegistry userRegistry;
 
         public bool Handle(ChatMessage message, IBot bot)
         {
             return userRegistry.Handle(message, bot) ||
-                   voiceMailbox.Handle(message, bot);
+                   voicemailRecorder.Handle(message, bot);
         }
     }
 }
