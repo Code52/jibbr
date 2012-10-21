@@ -35,7 +35,7 @@ namespace VoicemailSprocket
         }
         private void NotifyOfWaitingVoiceMails(string username, IBot bot)
         {
-            bot.PrivateReply(username, string.Format("{0} has {1} new voicemail for you", bot.Name, voicemailRecorder.MessageCount));
+            bot.PrivateReply(username, string.Format("{0} has {1} new voicemail for you", bot.Name, voicemailRecorder.VoicemailCount));
         }
 
         private static string ExtractUsernameFromMessage(ChatMessage message)

@@ -16,7 +16,7 @@ namespace VoicemailSprocket
             get { return new Regex(RecordCommand);}
         }
 
-        public int MessageCount { get { return Voicemails.Count; } }
+        public int VoicemailCount { get { return Voicemails.Count; } }
 
         protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
         {
