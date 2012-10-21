@@ -45,11 +45,5 @@ namespace VoicemailSprocket
         {
             return bot.GetRooms();
         }
-
-        private void SendVoiceMail(string recipient, IBot bot)
-        {
-            foreach (var voicemail in Voicemails)
-                bot.PrivateReply(recipient, string.Format("@{0} said '{1}'", recipient, voicemail));
-        }
     }
 }
