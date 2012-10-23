@@ -7,9 +7,9 @@ namespace VoicemailSprocket
 {
     internal class VoicemailRecorder : CommandSprocket
     {
-        public IList<Voicemail> Voicemails = new List<Voicemail>();
+        private IList<Voicemail> voicemails = new List<Voicemail>();
         
-        public int VoicemailCount { get { return Voicemails.Count; } }
+        public int VoicemailCount { get { return voicemails.Count; } }
  
         public override IEnumerable<string> SupportedInitiators
         {
@@ -22,6 +22,7 @@ namespace VoicemailSprocket
             { 
                 yield return "record";
                 yield return "clear";
+                yield return "retrieve";
             }
         }
 
@@ -31,25 +32,33 @@ namespace VoicemailSprocket
             {
                 case "clear":
                     return ClearAllMessages();
-                    break;
                 case "record":
                     return RecordMessage();
-                    break;
+                case "retrieve":
+                    return Retrieve();
                 default:
                     return false;
             }
         }
 
+        private bool Retrieve()
+        {
+            foreach (var voicemail in voicemails)
+                Bot.PrivateReply(Message.Sender, string.Format("{0} said '{1}'", voicemail.Sender, voicemail.Message));
+
+            return false;
+        }
+
         private bool ClearAllMessages()
         {
-            Voicemails = Voicemails.Where(v => v.Sender != Message.Sender).ToList();
+            voicemails = voicemails.Where(v => v.Sender != Message.Sender).ToList();
 
             return true;
         }
 
         private bool RecordMessage()
         {
-            Voicemails.Add(new Voicemail() { Sender = Message.Sender, Message = Message.Content.Split('\'')[1] });
+            voicemails.Add(new Voicemail() { Sender = Message.Sender, Message = Message.Content.Split('\'')[1] });
             NotifyAllUsers(Bot);
 
             return true;
@@ -59,7 +68,7 @@ namespace VoicemailSprocket
         {
             var allUsersInSameRoomsAsJibber = GetAllUsersInSameRoomsAsJibber(bot);
             foreach (var user in allUsersInSameRoomsAsJibber)
-                bot.PrivateReply(user, string.Format("{0} has a new voicemail for you. There are {1} in total", bot.Name, Voicemails.Count));
+                bot.PrivateReply(user, string.Format("{0} has a new voicemail for you. There are {1} in total", bot.Name, voicemails.Count));
         }
 
         private static IEnumerable<string> GetAllUsersInSameRoomsAsJibber(IBot bot)

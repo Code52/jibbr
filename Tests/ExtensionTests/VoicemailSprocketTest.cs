@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
-using System.Text;
 using Jabbot;
-using Jabbot.CommandSprockets;
 using Jabbot.Models;
 using Moq;
 using Xunit;
@@ -74,7 +70,7 @@ namespace ExtensionTests
             voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
 
             //Act
-            voicemailSprocket.Handle(new ChatMessage("retrieve", "Claire", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage("voicemail retrieve", "Claire", bot.Name), bot);
 
             //Test
              mockBot.Verify(b => b.PrivateReply(It.Is<string>(s => s == "Claire"), string.Format(@"Jim said '{0}'", ExampleContents)), Times.Exactly(3));

@@ -9,7 +9,7 @@ namespace VoicemailSprocket
 {
     internal class UserRegistry : RegexSprocket
     {
-        public const string UserArrivedNotification = @"\[JABBR\] - .* just entered .*";
+        private const string UserArrivedNotification = @"\[JABBR\] - .* just entered .*";
         private readonly VoicemailRecorder voicemailRecorder;
         private readonly IList<string> userNames = new List<string>();
 
