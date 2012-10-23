@@ -28,8 +28,8 @@ namespace ExtensionTests
             mockBot.Setup(b => b.Name).Returns(Jibbr);
             bot = mockBot.Object;
 
-            dynamic room1 = new DynamicRoom() { Name = "room1", Users = new List<DynamicUser> { new DynamicUser() { Name = "claire" }, new DynamicUser() { Name = "mads" } } };
-            dynamic room2 = new DynamicRoom() { Name = "room2", Users = new List<DynamicUser> { new DynamicUser() { Name = "claire" }, new DynamicUser() { Name = "bryce" }, new DynamicUser() { Name = "vicky" } } };
+            dynamic room1 = new DynamicRoom() { Name = "room1", Users = new List<DynamicUser> { new DynamicUser() { Name = "Claire" }, new DynamicUser() { Name = "mads" } } };
+            dynamic room2 = new DynamicRoom() { Name = "room2", Users = new List<DynamicUser> { new DynamicUser() { Name = "Claire" }, new DynamicUser() { Name = "bryce" }, new DynamicUser() { Name = "vicky" } } };
             mockBot.Setup(b => b.GetRooms()).Returns(new List<dynamic>() { room1, room2 });
 
             voicemailSprocket = new VoicemailSprocket.VoicemailSprocket();
@@ -39,11 +39,11 @@ namespace ExtensionTests
         public void CanNotifyAllUsersOfNewVoicemails()
         {
             //Setup
-            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
-            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
 
             //Act
-            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
 
             //Test
             mockBot.Verify(b => b.PrivateReply(It.IsAny<string>(), It.Is<string>(what => what == string.Format("{0} has a new voicemail for you. There are {1} in total", Jibbr, 3))), Times.Exactly(4));
@@ -56,7 +56,7 @@ namespace ExtensionTests
             const string newlyArrivedUser = "James";
 
             voicemailSprocket = new VoicemailSprocket.VoicemailSprocket();
-            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
 
             //Act
             voicemailSprocket.Handle(new ChatMessage("[JABBR] - " + newlyArrivedUser + " just entered " + "TestRoom", newlyArrivedUser, bot.Name), bot);
@@ -69,16 +69,31 @@ namespace ExtensionTests
         public void CanRetrieveVoicemails()
         {
             //Setup
-            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
-            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
-            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
 
             //Act
-            voicemailSprocket.Handle(new ChatMessage("retrieve", "claire", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage("retrieve", "Claire", bot.Name), bot);
 
             //Test
-             mockBot.Verify(b => b.PrivateReply(It.Is<string>(s => s == "claire"), string.Format(@"Jim said '{0}'", ExampleContents)), Times.Exactly(3));
+             mockBot.Verify(b => b.PrivateReply(It.Is<string>(s => s == "Claire"), string.Format(@"Jim said '{0}'", ExampleContents)), Times.Exactly(3));
+        }
 
+        [Fact]
+        public void CanClearYourOwnVoicemails()
+        {
+            //Setup
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Jim", bot.Name), bot);
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail record", ExampleContents), "Claire", bot.Name), bot);
+
+            //Act
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail clear", ExampleContents), "Jim", bot.Name), bot);
+
+            //Test
+            voicemailSprocket.Handle(new ChatMessage(string.Format("{0} '{1}'", "voicemail retrieve", ExampleContents), "Giselle", bot.Name), bot);
+            mockBot.Verify(b => b.PrivateReply(It.Is<string>(s => s == "Giselle"), string.Format(@"Claire said '{0}'", ExampleContents)), Times.Exactly(1));
         }
     }
 

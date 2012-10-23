@@ -1,28 +1,58 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Jabbot;
-using Jabbot.Models;
-using Jabbot.Sprockets;
+using Jabbot.CommandSprockets;
 
 namespace VoicemailSprocket
 {
-    internal class VoicemailRecorder : RegexSprocket
+    internal class VoicemailRecorder : CommandSprocket
     {
-        internal const string RecordCommand = "record \'.*\'";
         public IList<Voicemail> Voicemails = new List<Voicemail>();
-
-        public override Regex Pattern
+        
+        public int VoicemailCount { get { return Voicemails.Count; } }
+ 
+        public override IEnumerable<string> SupportedInitiators
         {
-            get { return new Regex(RecordCommand);}
+            get { yield return "voicemail"; }
         }
 
-        public int VoicemailCount { get { return Voicemails.Count; } }
-
-        protected override void ProcessMatch(Match match, ChatMessage message, IBot bot)
+        public override IEnumerable<string> SupportedCommands
         {
-            Voicemails.Add(new Voicemail(){Sender = message.Sender, Message = message.Content.Split('\'')[1]});
-            NotifyAllUsers(bot);
+            get 
+            { 
+                yield return "record";
+                yield return "clear";
+            }
+        }
+
+        public override bool ExecuteCommand()
+        {
+            switch (Command)
+            {
+                case "clear":
+                    return ClearAllMessages();
+                    break;
+                case "record":
+                    return RecordMessage();
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        private bool ClearAllMessages()
+        {
+            Voicemails = Voicemails.Where(v => v.Sender != Message.Sender).ToList();
+
+            return true;
+        }
+
+        private bool RecordMessage()
+        {
+            Voicemails.Add(new Voicemail() { Sender = Message.Sender, Message = Message.Content.Split('\'')[1] });
+            NotifyAllUsers(Bot);
+
+            return true;
         }
 
         private void NotifyAllUsers(IBot bot)
@@ -39,7 +69,7 @@ namespace VoicemailSprocket
             var userNames = users.Select(u => u.Name);
             var distinctUserNames = userNames.Distinct().Cast<string>();
             return distinctUserNames;
-        } 
+        }
 
         private static IEnumerable<dynamic> GetRooms(IBot bot)
         {
