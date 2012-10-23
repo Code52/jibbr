@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Jabbot;
@@ -8,7 +9,19 @@ namespace VoicemailSprocket
     internal class VoicemailRecorder : CommandSprocket
     {
         private IList<Voicemail> voicemails = new List<Voicemail>();
-        
+
+        private readonly string _helpInfo;
+
+        public VoicemailRecorder()
+        {
+            _helpInfo = "Hi {0}," + Environment.NewLine + Environment.NewLine
+                        + "I accept the following commands:" + Environment.NewLine
+                        + "info/help:\t" + "this message" + Environment.NewLine
+                        + "record:\t" + "accepts a message to record" + Environment.NewLine
+                        + "clear:\t" + "clears all voicemails you have recorded" + Environment.NewLine
+                        + "retrieve:\t" + "retrieves any voicemails left by any other users" + Environment.NewLine;
+        }
+
         public int VoicemailCount { get { return voicemails.Count; } }
  
         public override IEnumerable<string> SupportedInitiators
@@ -18,8 +31,10 @@ namespace VoicemailSprocket
 
         public override IEnumerable<string> SupportedCommands
         {
-            get 
-            { 
+            get
+            {
+                yield return "info";
+                yield return "help";
                 yield return "record";
                 yield return "clear";
                 yield return "retrieve";
@@ -30,6 +45,9 @@ namespace VoicemailSprocket
         {
             switch (Command)
             {
+                case "info":
+                case "help":
+                    return ShowInfo();
                 case "clear":
                     return ClearAllMessages();
                 case "record":
@@ -39,6 +57,14 @@ namespace VoicemailSprocket
                 default:
                     return false;
             }
+        }
+
+        private bool ShowInfo()
+        {
+            Bot.PrivateReply(Message.Sender, string.Format(_helpInfo, Message.Sender));
+
+            return true;
+
         }
 
         private bool Retrieve()
